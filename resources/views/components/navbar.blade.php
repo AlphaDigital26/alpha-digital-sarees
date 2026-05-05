@@ -1,12 +1,19 @@
 <header class="navbar">
-    <div class="logo">ALPHA DIGITAL</div>
+    <!-- Updated Logo -->
+    <a href="{{ route('home') }}" class="logo">ALPHA DIGITAL</a>
     
     <nav class="main-nav">
-        <a href="/">HOME</a>
-        <a href="/shop">ALL SAREES</a>
-        <a href="#">NEW ARRIVAL</a>
-        <a href="#">OCCASION</a>
-        <a href="#">OUR STORY</a>
+        <a href="{{ route('home') }}">HOME</a>
+        <a href="{{ route('shop.index') }}">ALL SAREES</a>
+        
+        <!-- Updated New Arrival Link -->
+        <a href="{{ route('shop.new-arrival') }}">NEW ARRIVAL</a>
+
+        <!-- Updated Occasion Link -->
+        <a href="{{ route('shop.occasion') }}">OCCASION</a>
+
+        <!-- Updated Our Story Link -->
+        <a href="{{ route('shop.about') }}">OUR STORY</a>
     </nav>
 
     <div class="nav-actions">
@@ -16,9 +23,15 @@
         </div>
         
         <div class="nav-icons">
-            <a href="#"><i data-lucide="heart"></i></a>
-            <a href="#"><i data-lucide="shopping-bag"></i></a>
-            <a href="#"><i data-lucide="user"></i></a>
+            <a href="#" title="Wishlist">
+                <i data-lucide="heart"></i>
+            </a>
+            <a href="#" title="Cart">
+                <i data-lucide="shopping-bag"></i>
+            </a>
+            <a href="#" title="Profile">
+                <i data-lucide="user"></i>
+            </a>
         </div>
     </div>
 </header>

@@ -3,3 +3,1678 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+    /* Your Exact Palette */
+    --primary: #800020;
+    --secondary: #5D4037;
+    --tertiary: #A68A64;
+    --neutral: #FDFBF7;
+    --white: #FFFFFF;
+    
+    /* Functional Colors derived from Palette */
+    --text-dark: #2A211F;
+    --text-muted: #706663;
+    --border: #E5E0DA;
+    --input-bg: #F4F0EB;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Manrope', sans-serif;
+    background-color: var(--neutral);
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+h1, h2, h3, .logo {
+    font-family: 'Noto Serif', serif;
+}
+
+/* Typography Utility */
+.subtitle {
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.7rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--tertiary);
+    margin-bottom: 1rem;
+}
+
+/* Navbar */
+/* Navbar Container */
+.navbar { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    padding: 1rem 5%; 
+    background: #F4F0EB; 
+    border-bottom: 1px solid #E5E0DA;
+    
+    /* Fixed settings for perfect consistency */
+    position: fixed; 
+    top: 0; 
+    left: 0;
+    width: 100%;
+    height: 80px; /* Force a fixed height so it never shifts */
+    z-index: 1000;
+}
+
+/* Logo Styling */
+.logo {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--primary); /* #800020 */
+    letter-spacing: 4px;
+    text-decoration: none;
+}
+
+/* Main Menu Items */
+.main-nav {
+    display: flex;
+    gap: 2rem;
+}
+
+.main-nav a {
+    text-decoration: none;
+    color: var(--text-dark); /* #2A211F */
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 1.2px;
+    transition: color 0.3s ease;
+}
+
+.main-nav a:hover {
+    color: var(--primary); /* Hover effect using Maroon */
+}
+
+/* Actions Group (Search + Icons) */
+.nav-actions {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+}
+
+/* Search Bar - Matching your UI Style */
+.search-bar {
+    display: flex;
+    align-items: center;
+    background-color: var(--input-bg); /* #F4F0EB */
+    padding: 0.4rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 4px;
+}
+
+.search-bar input {
+    border: none;
+    background: transparent;
+    outline: none;
+    padding-left: 0.6rem;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.8rem;
+    color: var(--text-dark);
+    width: 160px;
+}
+
+.icon-search {
+    width: 16px;
+    height: 16px;
+    color: var(--text-muted); /* #706663 */
+}
+
+/* Icons Styling */
+.nav-icons {
+    display: flex;
+    gap: 1.2rem;
+    align-items: center;
+}
+
+.nav-icons a {
+    color: var(--text-dark);
+    transition: transform 0.2s ease, color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.nav-icons a:hover {
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.nav-icons svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5px; /* Clean, thin look from your UI kit */
+}
+
+/* Hero Section */
+/* Hero Container */
+.hero {
+    height: 80vh;
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding: 0 10%;
+    overflow: hidden; /* Keeps images inside */
+}
+
+/* Push the Hero or first section down */
+.hero, .content-section:first-of-type {
+    margin-top: 80px; 
+}
+
+/* Slides Wrapper */
+.hero-slides {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+}
+
+/* Individual Slides */
+.slide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0; /* Hidden by default */
+    animation: fadeHero 15s infinite; /* 15s total loop */
+}
+
+/* Animation Timing for 3 Images */
+.slide:nth-child(1) {
+    animation-delay: 0s;
+}
+.slide:nth-child(2) {
+    animation-delay: 5s;
+}
+.slide:nth-child(3) {
+    animation-delay: 10s;
+}
+
+/* Content Stays on Top */
+.hero-content {
+    position: relative;
+    z-index: 2; /* Sits above the images */
+    color: var(--white);
+    max-width: 600px;
+}
+
+.hero-content h1 {
+    font-size: 4rem;
+    font-weight: 400;
+    margin: 1rem 0 2rem;
+    line-height: 1.1;
+    text-shadow: 0 2px 10px rgba(0,0,0,0.2); /* Improves readability */
+}
+
+/* Fade Keyframes */
+@keyframes fadeHero {
+    0% { opacity: 0; transform: scale(1.05); } /* Slight zoom effect */
+    5% { opacity: 1; }
+    33% { opacity: 1; }
+    38% { opacity: 0; transform: scale(1); }
+    100% { opacity: 0; }
+}
+
+/* Darken Overlay for better text contrast */
+.hero::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.2);
+    z-index: 1.5;
+}
+
+.btn-primary {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 1rem 2.5rem;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn-primary:hover { background: var(--secondary); }
+
+/* Product Section Containers */
+/* Section Base */
+/* --- CONTENT SECTION BASE --- */
+.content-section {
+    padding: 2rem 5%; /* Side padding synced across all sections */
+}
+
+.bg-neutral { background-color: var(--neutral); }
+.bg-white { background-color: var(--white); }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 2.5rem; /* Slightly reduced for a tighter look */
+}
+
+.section-header h2 {
+    font-family: 'Noto Serif', serif;
+    font-size: 2.2rem;
+    font-weight: 400;
+    color: var(--secondary); /* #5D4037 */
+}
+
+.view-all {
+    color: var(--text-dark);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-decoration: none;
+    border-bottom: 1px solid var(--primary); /* #800020 */
+    padding-bottom: 3px;
+    letter-spacing: 1px;
+    transition: opacity 0.3s ease;
+}
+
+.view-all:hover { opacity: 0.7; }
+
+/* --- PRODUCT GRID (Best Sellers & Latest) --- */
+.product-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+}
+
+.img-wrapper {
+    overflow: hidden;
+    margin-bottom: 1rem;
+    position: relative;
+    /* FIXED RATIO: Ensures all images are the same size regardless of upload */
+    aspect-ratio: 3 / 4; 
+    background-color: var(--input-bg);
+}
+
+.product-card img {
+    width: 100%;
+    height: 100%;
+    /* COVER: Crops the image to fill the 3:4 box without stretching */
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+.product-card h3 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--secondary);
+    margin-bottom: 0.3rem;
+    /* Alignment: Keeps titles to one line */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.product-card p {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--tertiary); /* #A68A64 - Gold */
+}
+
+/* --- FABRICS GRID (Compact & Perfectly Aligned) --- */
+.fabrics-section {
+    padding: 4rem 5%; /* Adjusted from 10% back to 5% to match products */
+    background-color: var(--neutral);
+}
+
+/* Reduced margin so grid starts right below the word "Fabrics" */
+.fabrics-section .section-header {
+    margin-bottom: 1.5rem; 
+}
+
+.fabrics-grid {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 0.75rem;
+    max-width: 1400px; /* Increased to match product grid width */
+    margin: 0 auto;
+}
+
+.fab-img {
+    background-size: cover;
+    background-position: center;
+    height: 100%;
+    min-height: 320px; /* Adjusted for a better balance with products */
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    padding: 1rem;
+    border-radius: 2px;
+}
+
+/* Sidebar specifically shorter for mathematical symmetry */
+.fab-sidebar .fab-img:first-child {
+    min-height: 155px; 
+}
+
+.fab-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.fab-bottom-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.fab-bottom-row .fab-img {
+    min-height: 155px; 
+}
+
+/* Refined Labels */
+.label {
+    background-color: var(--white);
+    color: var(--primary); /* #800020 */
+    border: none;
+    padding: 0.6rem 1.2rem;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.65rem;
+    letter-spacing: 1.2px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.label:hover {
+    background-color: var(--primary);
+    color: var(--white);
+}
+
+/* --- RESPONSIVE ADJUSTMENTS --- */
+@media (max-width: 1024px) {
+    .product-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 900px) {
+    .fabrics-grid { grid-template-columns: 1fr; }
+    .fab-img { min-height: 250px; }
+}
+
+/* Heritage Crafted Section */
+.heritage-crafted {
+    padding: 5rem 5%;
+    background-color: var(--white);
+}
+
+.heritage-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Equal split for better balance */
+    gap: 5rem;
+    align-items: center;
+    max-width: 1200px; /* Reduced container width */
+    margin: 0 auto;
+}
+
+.heritage-text h2 {
+    font-size: 2.8rem; /* Slightly smaller for better focus */
+    line-height: 1.2;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.heritage-description {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    max-width: 450px;
+}
+
+/* --- IMPROVED BUTTON STYLE --- */
+.btn-heritage {
+    background-color: transparent;
+    color: var(--primary); /* #800020 */
+    border: 1.5px solid var(--primary);
+    padding: 12px 32px;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1;
+    transition: all 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+    overflow: hidden;
+}
+
+.btn-heritage:hover {
+    color: var(--white);
+    background-color: var(--primary);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(128, 0, 32, 0.2);
+}
+
+/* --- REDUCED IMAGE SIZES --- */
+.heritage-visual {
+    position: relative;
+    width: 100%;
+    max-width: 480px; /* Limits the size of the visual block */
+    margin-left: auto;
+}
+
+.main-image-frame {
+    width: 90%;
+    aspect-ratio: 4/5;
+    overflow: hidden;
+}
+
+.overlap-image-frame {
+    position: absolute;
+    width: 50%; /* Scaled down */
+    aspect-ratio: 1/1;
+    bottom: -5%;
+    left: -10%;
+    overflow: hidden;
+    border: 8px solid var(--white); /* Slightly thinner border for small size */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    z-index: 2;
+}
+
+.heritage-main-img, .heritage-sub-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.gold-text {
+    font-family: 'Manrope', sans-serif;
+    color: var(--tertiary);
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.heritage-cta {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+/* Contact Section */
+/* --- CONTACT SECTION --- */
+.contact-section {
+    padding: 8rem 5%;
+    background-color: var(--neutral); /* #FDFBF7 */
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-bg-text {
+    position: absolute;
+    top: 5%;
+    left: 2%;
+    font-size: 12rem;
+    font-family: 'Noto Serif', serif;
+    font-weight: 700;
+    color: var(--secondary);
+    opacity: 0.03;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 4rem;
+    align-items: start;
+}
+
+.contact-info h2 {
+    font-size: 3rem;
+    line-height: 1.1;
+    margin-bottom: 2.5rem;
+    font-style: italic;
+    color: var(--primary); /* #800020 */
+}
+
+.detail-item { margin-bottom: 2rem; }
+.detail-item h4 { font-size: 0.7rem; letter-spacing: 2px; color: var(--tertiary); margin-bottom: 0.5rem; }
+.detail-item p { font-size: 0.95rem; color: var(--text-dark); }
+
+.social-links { display: flex; gap: 1.5rem; margin-top: 2rem; }
+.social-links a { color: var(--primary); transition: opacity 0.3s; }
+.social-links a:hover { opacity: 0.6; }
+
+/* Contact Form Card */
+/* --- CONTACT SECTION STYLING --- */
+.contact-section {
+    padding: 8rem 5%;
+    background-color: var(--neutral); /* #FDFBF7 */
+    position: relative;
+    overflow: hidden;
+}
+
+.contact-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    z-index: 1;
+}
+
+.contact-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 5rem;
+    align-items: start;
+}
+
+/* --- LEFT SIDE: INFO & UNDERLAP --- */
+.contact-info {
+    position: relative;
+    padding-top: 2rem;
+}
+
+/* The dark underlap watermark */
+.contact-underlap {
+    position: absolute;
+    top: -20px; /* Positioned behind the 'Get in Touch' and Heading */
+    left: -15px;
+    font-size: 8.5rem;
+    font-family: 'Noto Serif', serif;
+    font-weight: 900;
+    color: var(--secondary); /* #5D4037 */
+    opacity: 0.12; /* Darker to look intentionally underlapped */
+    z-index: -1; 
+    pointer-events: none;
+    letter-spacing: -3px;
+    line-height: 1;
+    user-select: none;
+}
+
+.contact-info h2 {
+    font-size: 3.2rem;
+    line-height: 1.1;
+    margin-bottom: 3rem;
+    font-style: italic;
+    color: var(--primary); /* #800020 */
+    position: relative;
+}
+
+.contact-info .subtitle {
+    position: relative;
+    z-index: 1;
+    color: var(--tertiary); /* #A68A64 */
+}
+
+.contact-details {
+    margin-top: 4rem;
+}
+
+.detail-item {
+    margin-bottom: 2.5rem;
+}
+
+.detail-item h4 {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+}
+
+.detail-item p {
+    font-size: 1rem;
+    color: var(--text-dark);
+    line-height: 1.6;
+}
+
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 3rem;
+}
+
+.social-links a {
+    color: var(--primary);
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.social-links a:hover {
+    transform: translateY(-3px);
+    opacity: 0.7;
+}
+
+/* --- RIGHT SIDE: FORM CARD --- */
+.contact-form-card {
+    background: var(--white);
+    padding: 3.5rem;
+    box-shadow: 0 30px 60px rgba(93, 64, 55, 0.1);
+    border-radius: 4px;
+}
+
+.social-links svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5px;
+    display: block;
+}
+
+/* Ensure the contact-info isn't hiding them */
+.social-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-top: 3rem;
+    position: relative;
+    z-index: 5; /* Brings them above the watermark */
+}
+
+.contact-form-card form {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group label {
+    font-size: 0.65rem;
+    font-weight: 800;
+    margin-bottom: 0.8rem;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    letter-spacing: 1px;
+}
+
+.contact-form-card input, 
+.contact-form-card select, 
+.contact-form-card textarea {
+    padding: 0.8rem 0;
+    border: none;
+    border-bottom: 1px solid var(--border); /* #E5E0DA */
+    background: transparent;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.4s ease;
+}
+.contact-underlap{
+    position: absolute;
+    top: -10px; /* Positioned behind the 'Get in Touch' and Heading */
+    left: -15px;
+    font-size: 7rem;
+    font-family: 'Noto Serif', serif;
+    font-weight: 900;
+    color: var(--secondary); /* #5D4037 */
+    opacity: 0.12; /* Darker to look intentionally underlapped */
+    z-index: -1; 
+    pointer-events: none;
+    letter-spacing: -3px;
+    line-height: 0.5;
+    user-select: none;
+}
+
+.contact-form-card input::placeholder,
+.contact-form-card textarea::placeholder {
+    color: #ccc;
+    font-size: 0.85rem;
+}
+
+.contact-form-card input:focus, 
+.contact-form-card textarea:focus {
+    border-color: var(--primary);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.contact-form-card textarea {
+    height: 100px;
+    resize: none;
+}
+
+/* Select styling reset */
+.contact-form-card select {
+    cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23800020' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right center;
+}
+
+/* SUBMIT BUTTON */
+.btn-submit {
+    background: var(--primary);
+    color: var(--white);
+    border: none;
+    padding: 1.2rem;
+    width: 100%;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 1rem;
+    transition: background 0.4s ease, transform 0.2s ease;
+}
+
+.btn-submit:hover {
+    background: var(--secondary);
+    transform: translateY(-2px);
+}
+
+.btn-submit svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 4rem;
+    }
+    
+    .contact-info {
+        text-align: center;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .contact-underlap {
+        left: 50%;
+        transform: translateX(-50%);
+        font-size: 5rem;
+    }
+    
+    .social-links {
+        justify-content: center;
+    }
+    
+    .contact-form-card {
+        padding: 2.5rem 1.5rem;
+    }
+}
+/* --- FOOTER --- */
+.main-footer {
+    background-color: var(--secondary); /* #5D4037 */
+    color: var(--neutral);
+    padding: 5rem 5% 2rem;
+}
+
+.footer-container { max-width: 1400px; margin: 0 auto; }
+
+.footer-grid {
+    display: grid;
+    grid-template-columns: 1.5fr 0.8fr 0.8fr 1.2fr;
+    gap: 4rem;
+    padding-bottom: 4rem;
+    border-bottom: 1px solid rgba(253, 251, 247, 0.1);
+}
+
+.footer-brand .logo { color: var(--neutral); font-size: 1.8rem; margin-bottom: 1rem; }
+.footer-brand p { font-size: 0.9rem; opacity: 0.8; max-width: 300px; }
+
+.footer-links h4, .footer-newsletter h4 { font-size: 0.75rem; letter-spacing: 2px; margin-bottom: 1.5rem; }
+.footer-links a { display: block; text-decoration: none; color: var(--neutral); opacity: 0.7; font-size: 0.85rem; margin-bottom: 0.8rem; transition: opacity 0.3s; }
+.footer-links a:hover { opacity: 1; color: var(--tertiary); }
+
+.footer-newsletter p { font-size: 0.85rem; opacity: 0.7; margin-bottom: 1.2rem; }
+
+.newsletter-input {
+    display: flex;
+    border-bottom: 1px solid var(--neutral);
+}
+
+.newsletter-input input {
+    background: transparent;
+    border: none;
+    color: var(--white);
+    padding: 0.5rem 0;
+    outline: none;
+    flex: 1;
+}
+
+.newsletter-input button {
+    background: transparent;
+    border: none;
+    color: var(--tertiary); /* Gold */
+    font-weight: 700;
+    cursor: pointer;
+    font-size: 0.75rem;
+}
+
+.footer-bottom {
+    padding-top: 2rem;
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.75rem;
+    opacity: 0.5;
+}
+
+.footer-legal a { color: var(--white); text-decoration: none; margin-left: 1.5rem; }
+
+/* Responsive Footer */
+@media (max-width: 1024px) {
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+    .contact-grid { grid-template-columns: 1fr; }
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .main-nav, .search-bar { display: none; }
+    .hero h1 { font-size: 3rem; }
+    .product-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 768px) {
+    .categories, .heritage, .contact { grid-template-columns: 1fr; }
+}
+
+
+/* --- SHOP PAGE SPECIFIC STYLES --- */
+
+/* Page Layout */
+.shop-container {
+    display: flex;
+    padding: 3rem 5%;
+    gap: 4rem;
+    background-color: var(--neutral);
+    min-height: 100vh;
+    margin-top: 80px; /* Accounts for the fixed navbar */
+}
+
+/* --- SIDEBAR FILTERS --- */
+.sidebar {
+    width: 260px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px; /* Stays visible while scrolling */
+    height: fit-content;
+}
+
+.filter-title {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.4rem;
+    letter-spacing: 2px;
+    color: var(--primary);
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 1rem;
+    margin-bottom: 2rem;
+}
+
+.filter-group {
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid rgba(229, 224, 218, 0.5);
+    padding-bottom: 1.5rem;
+}
+
+.filter-group:last-child { border: none; }
+
+.filter-group h3 {
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 1.2rem;
+    color: var(--secondary);
+}
+
+.filter-group label {
+    display: flex;
+    align-items: center;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.9rem;
+    margin-bottom: 0.8rem;
+    cursor: pointer;
+    color: var(--text-dark);
+    transition: color 0.3s;
+}
+
+.filter-group label:hover { color: var(--primary); }
+
+.filter-group input[type="checkbox"], 
+.filter-group input[type="radio"] {
+    accent-color: var(--primary);
+    margin-right: 12px;
+    width: 16px;
+    height: 16px;
+}
+
+/* Color Palette Circles */
+.color-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.color-circle {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+}
+
+.color-circle:hover { transform: scale(1.2); border-color: var(--primary); }
+
+/* Price Range Inputs */
+.price-range {
+    margin-top: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Manrope', sans-serif;
+}
+
+.price-range p { font-size: 0.8rem; font-weight: 700; color: var(--secondary); }
+
+.price-range input {
+    width: 70px;
+    padding: 6px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    font-size: 0.8rem;
+    outline: none;
+    border-radius: 2px;
+}
+
+.price-range input:focus { border-color: var(--primary); }
+
+/* --- LISTING AREA --- */
+.listing-area {
+    flex-grow: 1;
+}
+
+.listing-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2.5rem;
+    font-family: 'Manrope', sans-serif;
+}
+
+.item-count { font-size: 0.9rem; color: var(--text-muted); font-weight: 500; }
+
+.sort-dropdown { display: flex; align-items: center; gap: 10px; }
+.sort-dropdown span { font-size: 0.85rem; font-weight: 600; color: var(--text-muted); }
+
+.sort-dropdown select {
+    border: none;
+    background: transparent;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    color: var(--primary);
+    cursor: pointer;
+    outline: none;
+    padding: 5px;
+}
+
+/* Wishlist Heart Overlay */
+.wishlist-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: var(--white);
+    border: none;
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 5;
+    color: var(--text-dark);
+    transition: 0.3s;
+}
+
+.wishlist-btn:hover { color: var(--primary); }
+.wishlist-btn svg { width: 18px; height: 18px; }
+
+/* Discover More Button */
+.load-more {
+    text-align: center;
+    margin: 5rem 0 2rem;
+}
+
+.btn-discover {
+    background: transparent;
+    border: 1.5px solid var(--primary);
+    padding: 14px 50px;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 0.8rem;
+    letter-spacing: 2px;
+    color: var(--primary);
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.4s;
+}
+
+.btn-discover:hover {
+    background: var(--primary);
+    color: var(--white);
+    box-shadow: 0 10px 20px rgba(128, 0, 32, 0.15);
+}
+
+/* Mobile Responsive */
+@media (max-width: 1100px) {
+    .product-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 768px) {
+    .shop-container { flex-direction: column; }
+    .sidebar { width: 100%; position: relative; top: 0; }
+}
+
+/* --- NEW ARRIVALS SPECIFIC STYLES --- */
+.arrival-container {
+    margin-top: 80px; /* Offset for Fixed Nav */
+    padding: 6rem 8%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.arrival-header {
+    text-align: center;
+    margin-bottom: 5rem;
+}
+
+.arrival-header .subtitle {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 4px;
+    color: var(--tertiary);
+    margin-bottom: 1rem;
+}
+
+.arrival-header h1 {
+    font-family: 'Noto Serif', serif;
+    font-size: 3.5rem;
+    color: var(--primary);
+    margin-bottom: 1.5rem;
+}
+
+.arrival-header .description {
+    max-width: 600px;
+    margin: 0 auto;
+    color: var(--text-dark);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.8;
+}
+
+/* Grid Layout */
+.arrival-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 4rem 2.5rem;
+}
+
+.arrival-card {
+    background: transparent;
+    transition: transform 0.4s ease;
+}
+
+.arrival-card .img-box {
+    position: relative;
+    aspect-ratio: 3/4;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+    background: var(--input-bg);
+}
+
+.arrival-card .img-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s ease;
+}
+
+.arrival-card .tag {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: var(--primary);
+    color: white;
+    padding: 6px 15px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+}
+
+/* Info Section */
+.arrival-info {
+    text-align: center;
+}
+
+.arrival-info h3 {
+    font-family: 'Noto Serif', serif;
+    font-size: 1.1rem;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+
+.arrival-info .price {
+    font-weight: 700;
+    color: var(--tertiary);
+    margin-bottom: 1.5rem;
+}
+
+.btn-view {
+    background: transparent;
+    border: 1px solid var(--border);
+    padding: 10px 25px;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.arrival-card:hover .btn-view {
+    background: var(--primary);
+    color: white;
+    border-color: var(--primary);
+}
+
+.arrival-card:hover img {
+    transform: scale(1.08);
+}
+
+/* Responsive */
+@media (max-width: 1024px) {
+    .arrival-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+    .arrival-grid { grid-template-columns: 1fr; }
+    .arrival-header h1 { font-size: 2.5rem; }
+}
+
+/* --- OCCASIONS SPECIFIC STYLES (KALKI EFFECT) --- */
+.occasion-container {
+    margin-top: 80px;
+    padding: 5rem 5%;
+    max-width: 1400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.page-header {
+    text-align: center;
+    margin-bottom: 4rem;
+}
+
+.page-header h1 {
+    font-family: 'Noto Serif', serif;
+    font-size: 3.5rem;
+    color: var(--secondary);
+    margin-top: 0.5rem;
+}
+
+.page-header .subtitle {
+    font-size: 0.75rem;
+    letter-spacing: 3px;
+    font-weight: 800;
+    color: var(--primary);
+}
+
+/* Updated Layout: 1 Feature Card + 1 Slider Wrapper */
+.occasion-row {
+    display: grid;
+    grid-template-columns: 1.2fr 2.8fr; /* Defines ratio between image and slider */
+    gap: 2.5rem;
+    margin-bottom: 5rem;
+    align-items: stretch;
+}
+
+.occ-feature-card {
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    background-color: var(--input-bg);
+}
+
+.occ-feature-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    position: absolute;
+    transition: transform 1.2s ease;
+}
+
+.occ-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(42, 33, 31, 0.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--white);
+    z-index: 2;
+    transition: background 0.4s ease;
+    padding: 2rem;
+    text-align: center;
+}
+
+.occ-overlay h2 {
+    font-family: 'Noto Serif', serif;
+    font-size: 2.8rem;
+    margin-bottom: 1.5rem;
+    text-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    line-height: 1.1;
+}
+
+.occ-btn {
+    color: var(--white);
+    text-decoration: none;
+    font-family: 'Manrope', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    border-bottom: 1.5px solid var(--white);
+    padding-bottom: 5px;
+    transition: all 0.3s ease;
+}
+
+/* --- THE SLIDER EFFECT --- */
+.slider-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+    min-width: 0; /* Prevents the grid from blowing out on smaller screens */
+}
+
+.occ-slider-container {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory; /* Smooth snapping to cards */
+    scrollbar-width: none; /* Hides scrollbar in Firefox */
+    -ms-overflow-style: none; /* Hides scrollbar in IE/Edge */
+    width: 100%;
+    padding-bottom: 1rem;
+}
+
+.occ-slider-container::-webkit-scrollbar {
+    display: none; /* Hides scrollbar in Chrome/Safari */
+}
+
+.occ-slider-container .product-card {
+    flex: 0 0 calc(33.333% - 1rem); /* Shows exactly 3 cards at a time */
+    scroll-snap-align: start;
+    min-width: 240px; /* Ensures cards don't shrink too small on mobile */
+}
+
+/* Slider Arrow Buttons */
+.slider-btn {
+    position: absolute;
+    top: 45%;
+    transform: translateY(-50%);
+    background: var(--white);
+    border: 1px solid var(--border);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    color: var(--text-dark);
+    transition: all 0.3s ease;
+}
+
+.slider-btn:hover {
+    background: var(--primary);
+    color: var(--white);
+    border-color: var(--primary);
+}
+
+.slider-btn.left { left: -20px; }
+.slider-btn.right { right: -20px; }
+
+/* Hover Effects */
+.occ-feature-card:hover .occ-feature-img { transform: scale(1.05); }
+.occ-feature-card:hover .occ-overlay { background: rgba(128, 0, 32, 0.5); }
+.occ-btn:hover { color: var(--tertiary); border-bottom-color: var(--tertiary); }
+
+/* Responsive adjustments */
+@media (max-width: 1100px) {
+    .occasion-row { grid-template-columns: 1fr; }
+    .occ-feature-card { aspect-ratio: 21/9; }
+    .slider-btn.left { left: 0; }
+    .slider-btn.right { right: 0; }
+}
+
+@media (max-width: 600px) {
+    .occ-slider-container .product-card { flex: 0 0 calc(50% - 0.75rem); }
+    .occ-feature-card { aspect-ratio: 4/5; }
+}
+
+
+/* --- OUR STORY (ABOUT) SPECIFIC STYLES --- */
+.about-hero {
+    height: 90vh;
+    margin-top: 80px;
+    background: linear-gradient(to bottom, rgba(253,251,247,0) 60%, rgba(253,251,247,1) 100%),
+                url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80');
+    background-size: cover; background-position: center;
+    display: flex; align-items: center; justify-content: center; text-align: center;
+}
+
+.about-hero .hero-content h1 { 
+    font-family: 'Noto Serif', serif; 
+    font-size: 5rem; 
+    color: var(--text-dark); 
+    line-height: 1.1; 
+}
+
+.about-hero .label { 
+    font-size: 0.7rem; 
+    font-weight: 800; 
+    letter-spacing: 4px; 
+    color: var(--tertiary); 
+    display: block; 
+    margin-bottom: 1.5rem; 
+    
+    /* These 3 lines fix the conflict from the Fabrics section */
+    background: transparent;
+    padding: 0;
+    box-shadow: none;
+}
+
+/* --- INTRO & DROP CAP --- */
+.container { max-width: 1200px; margin: 0 auto; padding: 0 5%; }
+.intro-section { padding: 10rem 0; text-align: center; }
+.drop-cap-text { font-size: 1.2rem; color: #444; max-width: 800px; margin: 0 auto; }
+.drop-cap { float: left; font-family: 'Noto Serif', serif; font-size: 6.5rem; line-height: 0.7; color: var(--primary); margin: 10px 20px 0 0; }
+
+/* --- CRAFTSMANSHIP (THE OVERLAP) --- */
+.craft-grid { display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 8rem; align-items: center; padding: 5rem 0; }
+.craft-images { position: relative; }
+.img-base { width: 100%; aspect-ratio: 4/5; object-fit: cover; }
+.img-overlay-frame { 
+    position: absolute; bottom: -10%; right: -10%; width: 55%; aspect-ratio: 1/1; 
+    border: 15px solid var(--white); box-shadow: 0 30px 60px rgba(0,0,0,0.1); object-fit: cover; 
+}
+.craft-text h2 { font-family: 'Noto Serif', serif; font-size: 3.5rem; margin-bottom: 2.5rem; color: var(--secondary); }
+.craft-text p { margin-bottom: 1.5rem; color: #555; }
+
+/* --- JOURNEY GALLERY --- */
+.journey-section { padding: 8rem 0; text-align: center; }
+.journey-header h2 { font-family: 'Noto Serif', serif; font-size: 3rem; margin-bottom: 4rem; }
+.journey-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+.grid-left img, .grid-right img { width: 100%; object-fit: cover; margin-bottom: 1.5rem; }
+.grid-left img:first-child { height: 600px; }
+.grid-right img:first-child { height: 350px; }
+
+/* --- EMPOWERMENT SECTION --- */
+.empowerment-section { 
+    background: var(--primary); 
+    display: flex; 
+    min-height: 500px; 
+    margin-top: 6rem; 
+}
+
+.empowerment-container { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    width: 100%; 
+}
+
+.empower-text { 
+    padding: 6% 8%; 
+    display: flex; 
+    flex-direction: column; 
+    justify-content: center; 
+    color: var(--white); 
+}
+
+.empower-text h2 { 
+    font-family: 'Noto Serif', serif; 
+    font-size: 2.8rem; 
+    line-height: 1.2; 
+    margin-bottom: 1.5rem; 
+}
+
+.quote { 
+    font-family: 'Noto Serif', serif; 
+    font-style: italic; 
+    font-size: 1.3rem; 
+    border-left: 2px solid var(--tertiary); 
+    padding-left: 1.5rem; 
+    margin-bottom: 1.5rem; 
+    color: var(--neutral); 
+}
+
+.empower-text p {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    opacity: 0.9;
+}
+
+.empower-visual {
+    height: 500px; 
+    overflow: hidden;
+}
+
+.portrait-bw { 
+    width: 100%; 
+    height: 100%; 
+    object-fit: cover; 
+    filter: grayscale(100%) contrast(1.1); 
+}
+
+/* Responsive adjustment */
+@media (max-width: 1024px) {
+    .empowerment-section { min-height: auto; }
+    .empower-visual { height: 400px; }
+    .craft-grid, .empowerment-container, .journey-grid { grid-template-columns: 1fr; }
+    .about-hero .hero-content h1 { font-size: 3.5rem; }
+    .img-overlay-frame { display: none; }
+}
+
+/* --- PRODUCT DETAILS SPECIFIC STYLES --- */
+.product-main { 
+    margin-top: 80px; 
+    padding: 4rem 5%; 
+    max-width: 1300px; 
+    margin-left: auto; 
+    margin-right: auto; 
+}
+
+.product-container { 
+    display: grid; 
+    grid-template-columns: 1.2fr 1fr; 
+    gap: 4rem; 
+    margin-bottom: 5rem; 
+}
+
+/* Gallery */
+.product-gallery { display: flex; gap: 1.5rem; }
+.thumbnails { display: flex; flex-direction: column; gap: 1rem; }
+.thumb { 
+    width: 80px; 
+    aspect-ratio: 3/4; 
+    object-fit: cover; 
+    cursor: pointer; 
+    opacity: 0.6; 
+    transition: 0.3s; 
+    border: 1px solid transparent; 
+}
+.thumb.active, .thumb:hover { opacity: 1; border-color: var(--primary); }
+.main-display { flex: 1; overflow: hidden; }
+.main-display img { width: 100%; aspect-ratio: 3/4; object-fit: cover; transition: opacity 0.3s ease; }
+
+/* Info Section */
+.stock-status { font-size: 0.8rem; color: #999; font-style: italic; }
+.product-info h1 { font-family: 'Noto Serif', serif; font-size: 2.2rem; margin: 1rem 0; line-height: 1.3; color: var(--secondary); }
+.product-info .price { font-size: 1.8rem; font-weight: 700; color: var(--primary); }
+.tax-tag { font-size: 0.85rem; color: #777; margin-bottom: 2rem; }
+
+.similar-products h4 { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; color: var(--secondary); }
+.similar-grid { display: flex; gap: 10px; margin-bottom: 2.5rem; }
+.sim-item img { width: 70px; height: 90px; object-fit: cover; border: 1px solid var(--border); cursor: pointer; transition: transform 0.3s; }
+.sim-item img:hover { transform: scale(1.05); }
+
+/* --- Buttons & Controls (Refined) --- */
+.qty-selector { 
+    display: flex; 
+    border: 1px solid var(--border); 
+    width: fit-content; 
+    margin: 0.5rem 0 2.5rem; 
+    border-radius: 2px;
+}
+
+.qty-selector button { 
+    padding: 10px 18px; 
+    border: none; 
+    background: transparent; 
+    cursor: pointer; 
+    font-size: 1.2rem; 
+    color: var(--text-dark); 
+    transition: background 0.2s ease;
+}
+
+.qty-selector button:hover {
+    background: var(--input-bg);
+}
+
+.qty-selector span { 
+    padding: 10px 20px; 
+    font-weight: 700; 
+    font-family: 'Manrope', sans-serif;
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    min-width: 50px;
+    border-left: 1px solid var(--border);
+    border-right: 1px solid var(--border);
+}
+
+.purchase-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem; /* Creates perfect, even spacing between buttons */
+}
+
+.purchase-controls button {
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    width: 100%; 
+    padding: 1.1rem; 
+    font-family: 'Manrope', sans-serif;
+    font-weight: 800; 
+    font-size: 0.8rem;
+    text-transform: uppercase; 
+    letter-spacing: 2px; 
+    cursor: pointer; 
+    border: none; 
+    border-radius: 2px;
+    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* 1. Add to Cart (Secondary Action) */
+.btn-cart { 
+    background: transparent; 
+    border: 1.5px solid var(--primary) !important; 
+    color: var(--primary); 
+}
+.btn-cart:hover { 
+    background: var(--primary); 
+    color: var(--white); 
+}
+
+/* 2. Buy Now (Primary Action) */
+.btn-buy { 
+    background: var(--primary); 
+    border: 1.5px solid var(--primary) !important;
+    color: var(--white); 
+}
+.btn-buy:hover { 
+    background: var(--secondary); 
+    border-color: var(--secondary) !important;
+}
+
+/* 3. WhatsApp (Special Action) */
+.btn-whatsapp { 
+    background: #1EBE5D; /* Sophisticated WhatsApp Green */
+    color: var(--white); 
+    gap: 10px; 
+}
+.btn-whatsapp:hover { 
+    background: #17994A; /* Deeper green on hover */
+    transform: translateY(-2px); /* Slight lift effect */
+    box-shadow: 0 5px 15px rgba(30, 190, 93, 0.2);
+}
+.btn-whatsapp svg {
+    width: 18px;
+    height: 18px;
+}
+
+/* Descriptions Section */
+.product-tabs { border-top: 1px solid var(--border); padding-top: 3rem; }
+.tab-item { margin-bottom: 3rem; }
+.tab-item h3 { font-family: 'Noto Serif', serif; font-size: 1.2rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); padding-bottom: 10px; width: fit-content; color: var(--secondary); }
+.tab-item p { color: #555; line-height: 1.8; max-width: 800px; }
+
+@media (max-width: 900px) {
+    .product-container { grid-template-columns: 1fr; }
+    .product-gallery { flex-direction: column-reverse; }
+    .thumbnails { flex-direction: row; }
+}
