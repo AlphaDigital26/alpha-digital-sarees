@@ -15,7 +15,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ProductResource extends Resource
 {
-    protected static ?string $model = Product::class;
+
+    protected static ?string $navigationLabel = 'Sarees';
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
@@ -49,17 +50,27 @@ class ProductResource extends Resource
         ]);
 }
 
-    public static function table(Table $table): Table
+public static function table(Table $table): Table
 {
     return $table
+        ->contentGrid([ 'md' => 2, 'xl' => 3 ]) // Creates the grid from your image
         ->columns([
-            Tables\Columns\TextColumn::make('name'),
-            Tables\Columns\TextColumn::make('fabric'),
-            Tables\Columns\TextColumn::make('price'),
-            Tables\Columns\IconColumn::make('is_featured')->boolean(),
+            \Filament\Tables\Columns\Layout\Stack::make([
+                \Filament\Tables\Columns\ImageColumn::make('image')
+                    ->height('300px')->width('100%')
+                    ->extraImgAttributes(['class' => 'object-cover w-full h-full rounded-2xl']),
+                \Filament\Tables\Columns\TextColumn::make('name')
+                    ->weight('bold')->size('lg'),
+                \Filament\Tables\Columns\TextColumn::make('price')
+                    ->money('INR'),
+            ]),
         ])
-        ->actions([
-            Tables\Actions\EditAction::make(),
+        ->headerActions([
+            // This is the "Add Product" button that opens the modal (Image 2)
+            \Filament\Tables\Actions\CreateAction::make()
+                ->label('New Product')
+                ->modalHeading('Add New Saree Design')
+                ->slideOver() // Use slideOver() if you want the side-drawer look
         ]);
 }
 
