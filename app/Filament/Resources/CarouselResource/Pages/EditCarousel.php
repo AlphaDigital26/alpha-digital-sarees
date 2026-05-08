@@ -16,4 +16,10 @@ class EditCarousel extends EditRecord
             Actions\DeleteAction::make(),
         ];
     }
+
+    // Forces redirect back to the list
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('index');
+    }
 }
