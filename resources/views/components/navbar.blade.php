@@ -1,11 +1,17 @@
 <header class="navbar">
     <!-- Updated Logo -->
-    <a href="{{ route('home') }}" class="logo">ALPHA DIGITAL</a>
-    
+    <a href="/" class="flex items-center gap-2 text-2xl font-bold tracking-widest">
+        @if($settings && $settings->logo_type === 'image' && $settings->logo_image)
+        <img src="{{ asset('storage/' . $settings->logo_image) }}" alt="Logo" class="h-12 w-auto object-contain">
+        @else
+        {{ $settings->logo_text ?? 'ALMAARI' }}
+        @endif
+    </a>
+
     <nav class="main-nav">
         <a href="{{ route('home') }}">HOME</a>
         <a href="{{ route('shop.index') }}">ALL SAREES</a>
-        
+
         <!-- Updated New Arrival Link -->
         <a href="{{ route('shop.new-arrival') }}">NEW ARRIVAL</a>
 
@@ -21,7 +27,7 @@
             <i data-lucide="search" class="icon-search"></i>
             <input type="text" placeholder="Search">
         </div>
-        
+
         <div class="nav-icons">
             <a href="#" title="Wishlist">
                 <i data-lucide="heart"></i>

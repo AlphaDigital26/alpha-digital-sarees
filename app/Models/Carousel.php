@@ -6,8 +6,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class Carousel extends Model
 {
-    // Add this property to allow the image path to be saved
     protected $fillable = [
         'image',
+        'heading',
+        'sub_heading',
+        'text',
+        'button_text',
+        'button_link',
+        'is_active',
+        'sort_order',
+    ];
+
+    protected $casts = [
+        'is_active' => 'boolean',
     ];
 }

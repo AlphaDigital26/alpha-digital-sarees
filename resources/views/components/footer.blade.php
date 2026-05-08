@@ -3,7 +3,7 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <div class="logo">ALMAARI</div>
-                <p>Curating the finest Indian handlooms since 1994. Every weave tells a story of heritage and timeless grace.</p>
+                <p>{{ $settings->footer_text ?? 'Default fallback text goes here.' }}</p>
             </div>
             
             <div class="footer-links">

@@ -88,13 +88,13 @@ class AdminPanelProvider extends PanelProvider
                 }
                 .fi-sidebar-nav-item-active .fi-sidebar-nav-label, 
                 .fi-sidebar-nav-item-active .fi-sidebar-nav-item-icon { 
-                    color: white !important; 
+                    color: #fcfcfc !important; 
                     opacity: 1 !important; 
                 }
                 
                 /* Brand Logo Styling */
                 .fi-brand { 
-                    color: white !important; 
+                    color: #fcfcfc !important; 
                     font-weight: 900 !important; 
                     letter-spacing: 2px !important; 
                     text-transform: uppercase !important; 
