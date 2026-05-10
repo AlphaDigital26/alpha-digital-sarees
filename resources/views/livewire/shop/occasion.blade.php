@@ -1,6 +1,3 @@
-<!-- <div>
-    {{-- Close your eyes. Count to one. That is how long forever feels. --}}
-</div> -->
 
 <main class="occasion-container">
     <div class="page-header">

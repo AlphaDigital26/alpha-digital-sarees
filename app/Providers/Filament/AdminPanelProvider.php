@@ -30,6 +30,13 @@ class AdminPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Amber,
             ])
+<<<<<<< Updated upstream
+=======
+            // 2. Force Light Mode for the boutique aesthetic
+            ->darkMode(false)
+            ->brandName('ALPHA DIGITAL')
+            ->font('Inter')
+>>>>>>> Stashed changes
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -55,4 +62,59 @@ class AdminPanelProvider extends PanelProvider
                 Authenticate::class,
             ]);
     }
+<<<<<<< Updated upstream
 }
+=======
+
+    /**
+     * Injects custom CSS to match the ALPHA DIGITAL video exactly.
+     */
+    public function boot(): void
+    {
+        FilamentView::registerRenderHook(
+            'panels::head.end',
+            fn (): string => Blade::render('<style>
+                /* Sidebar: Dark Background with Burgundy Active States */
+                .fi-sidebar { background-color: #1a1515 !important; }
+                .fi-sidebar-header { background-color: #1a1515 !important; border-bottom: none !important; }
+                
+                /* Sidebar Text & Icons */
+                .fi-sidebar-nav-label, .fi-sidebar-nav-item-icon { 
+                    color: rgba(255,255,255,0.6) !important; 
+                }
+                
+                /* Active Sidebar Item - Burgundy Highlight */
+                .fi-sidebar-nav-item-active { 
+                    background-color: #7c061a !important; 
+                    border-radius: 12px !important; 
+                    margin: 0 12px !important; 
+                }
+                .fi-sidebar-nav-item-active .fi-sidebar-nav-label, 
+                .fi-sidebar-nav-item-active .fi-sidebar-nav-item-icon { 
+                    color: #fcfcfc !important; 
+                    opacity: 1 !important; 
+                }
+                
+                /* Brand Logo Styling */
+                .fi-brand { 
+                    color: #fcfcfc !important; 
+                    font-weight: 900 !important; 
+                    letter-spacing: 2px !important; 
+                    text-transform: uppercase !important; 
+                }
+                
+                /* Global Background Styling */
+                .fi-main { background-color: #fcfcfc !important; }
+                .fi-topbar { display: none !important; } /* Hidden as per video */
+                
+                /* Form Inputs Styling */
+                input, textarea, select {
+                    background-color: #f8f8f8 !important;
+                    border: none !important;
+                    border-radius: 16px !important;
+                }
+            </style>'),
+        );
+    }
+}
+>>>>>>> Stashed changes

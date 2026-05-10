@@ -39,11 +39,77 @@
                     </div>
                 </div>
 
+<<<<<<< Updated upstream
                 <button class="btn-cart">Add to cart</button>
                 <button class="btn-buy">Buy Now</button>
                 <button class="btn-whatsapp">
                     <i data-lucide="message-circle"></i> Order on WhatsApp
                 </button>
+=======
+                <div class="flex flex-col gap-3 mb-10 mt-6">
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button class="flex-1 bg-white border-2 border-[#800020] text-[#800020] font-bold py-3.5 px-6 rounded-xl hover:bg-[#800020] hover:text-white transition-colors shadow-sm disabled:opacity-50" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                            ADD TO CART
+                        </button>
+                        
+                        <button class="flex-1 bg-[#800020] text-white font-bold py-3.5 px-6 rounded-xl hover:bg-[#5D4037] transition-colors shadow-md disabled:opacity-50" {{ $product->stock < 1 ? 'disabled' : '' }}>
+                            BUY IT NOW
+                        </button>
+                    </div>
+                    
+                    <a href="https://wa.me{{ $settings->whatsapp_number ?? '919876543210' }}?text=Hello!%20I%20am%20interested%20in%20buying%20{{ $quantity }}x%20{{ urlencode($product->name) }}." 
+                    target="_blank" 
+                    class="mt-3 flex w-full items-center justify-center gap-2 rounded-sm bg-[#25D366] px-6 py-4 text-[13px] font-bold uppercase tracking-widest text-white transition hover:bg-[#20ba5a] shadow-sm">
+                        
+                        <!-- WhatsApp Icon -->
+                        <svg xmlns="http://w3.org" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/>
+                        </svg>
+                        
+                        Inquire on WhatsApp
+                    </a>
+
+                </div>
+
+                <div class="space-y-3">
+                    <details class="group bg-white border border-gray-200 rounded-xl" open>
+                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-gray-900 select-none">
+                            <span>Product Description</span>
+                            <span class="transition group-open:rotate-180">
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                            </span>
+                        </summary>
+                        <div class="text-gray-600 p-4 border-t prose prose-sm max-w-none">
+                            {!! $product->description ?? 'No description available.' !!}
+                        </div>
+                    </details>
+
+                    <details class="group bg-white border border-gray-200 rounded-xl">
+                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-gray-900 select-none">
+                            <span>Specification & Dimension</span>
+                            <span class="transition group-open:rotate-180">
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                            </span>
+                        </summary>
+                        <div class="text-gray-600 p-4 border-t prose prose-sm max-w-none">
+                            {!! $product->specifications ?? 'No specifications available.' !!}
+                        </div>
+                    </details>
+
+                    <details class="group bg-white border border-gray-200 rounded-xl">
+                        <summary class="flex justify-between items-center font-medium cursor-pointer list-none p-4 text-gray-900 select-none">
+                            <span>Care & Maintenance</span>
+                            <span class="transition group-open:rotate-180">
+                                <svg fill="none" height="24" shape-rendering="geometricPrecision" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" viewBox="0 0 24 24" width="24"><path d="M6 9l6 6 6-6"></path></svg>
+                            </span>
+                        </summary>
+                        <div class="text-gray-600 p-4 border-t prose prose-sm max-w-none">
+                            {!! $product->care_instructions ?? 'Dry clean recommended.' !!}
+                        </div>
+                    </details>
+                </div>
+>>>>>>> Stashed changes
             </div>
         </div>
     </div>
