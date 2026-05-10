@@ -3,13 +3,25 @@
 namespace App\Livewire\Shop;
 
 use Livewire\Component;
-use Livewire\Attributes\Title;
+use App\Models\Product;
+use App\Models\Occasion as OccasionModel;
 
-#[Title('Occasions | Alpha Digital')]
 class Occasion extends Component
 {
     public function render()
     {
-        return view('livewire.shop.occasion');
+        // Fetch all occasions created in the admin panel
+        $occasions = OccasionModel::orderBy('name')->get();
+
+        // Fetch all products that have an occasion assigned, and group them by that occasion
+        $productsByOccasion = Product::whereNotNull('occasion')
+            ->latest()
+            ->get()
+            ->groupBy('occasion');
+
+        return view('livewire.shop.occasion', [
+            'occasions' => $occasions,
+            'productsByOccasion' => $productsByOccasion
+        ]);
     }
 }

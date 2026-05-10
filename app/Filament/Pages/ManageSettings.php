@@ -115,11 +115,22 @@ class ManageSettings extends Page implements HasForms
                                 Forms\Components\Tabs\Tab::make('Footer')
                                     ->icon('heroicon-o-document-text')
                                     ->schema([
+                                        // NEW: Footer Brand Heading
+                                        Forms\Components\TextInput::make('footer_brand_heading')
+                                            ->label('Footer Brand Heading')
+                                            ->placeholder('e.g., ALMAARI'),
+                                            
                                         Forms\Components\Textarea::make('footer_text')
-                                            ->label('Footer About Text')
-                                            ->rows(4)
-                                            ->columnSpanFull(),
-                                    ]),
+                                            ->label('Brand Description (Under Heading)')
+                                            ->rows(3),
+                                            
+                                        Forms\Components\TextInput::make('footer_newsletter_text')
+                                            ->label('Newsletter Text'),
+                                            
+                                        Forms\Components\TextInput::make('footer_copyright_company')
+                                            ->label('Copyright Company Name')
+                                            ->placeholder('e.g., ALPHA DIGITAL PVT. LTD.'),
+                                    ])->columns(1),
                             ])->columnSpanFull(),
                     ])->columnSpanFull()
             ])

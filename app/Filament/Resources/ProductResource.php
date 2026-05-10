@@ -89,36 +89,10 @@ class ProductResource extends Resource
                             ->preload()
                             ->label('Pattern'),
                             
-                        // ADDED "+" button: Dynamically adds and remembers new occasions
                         Forms\Components\Select::make('occasion')
                             ->label('Occasion')
-                            ->options(function () {
-                                // Your default list of options
-                                $defaults = [
-                                    'Wedding' => 'Wedding',
-                                    'Party Wear' => 'Party Wear',
-                                    'Casual' => 'Casual',
-                                    'Festival' => 'Festival',
-                                    'Office Wear' => 'Office Wear'
-                                ];
-                                
-                                // Automatically pulls any custom occasions you've previously added
-                                $existing = \App\Models\Product::whereNotNull('occasion')
-                                    ->pluck('occasion', 'occasion')
-                                    ->toArray();
-                                    
-                                return array_merge($defaults, $existing);
-                            })
-                            ->searchable()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('new_occasion')
-                                    ->label('New Occasion Name')
-                                    ->required(),
-                            ])
-                            ->createOptionUsing(function (array $data) {
-                                // Returns the newly typed name so it gets saved to the database
-                                return $data['new_occasion'];
-                            }),
+                            ->options(\App\Models\Occasion::pluck('name', 'name'))
+                            ->searchable(),
                     ])->columns(2),
 
                 Forms\Components\Section::make('Media & Highlights')
