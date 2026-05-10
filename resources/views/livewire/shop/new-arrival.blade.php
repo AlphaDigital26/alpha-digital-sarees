@@ -1,81 +1,71 @@
-<main class="arrival-container">
-    <div class="arrival-header">
+<main class="arrival-container" style="padding-top: 1.5rem;">
+    
+    <div class="arrival-header" style="margin-bottom: 2rem;">
         <p class="subtitle">SPRING SUMMER 2026</p>
-        <h1>Just Introduced</h1>
+        <h1 style="margin-top: 0.5rem;">Just Introduced</h1>
         <p class="description">Discover the latest masterpieces from our looms, where traditional artistry meets modern silhouettes.</p>
     </div>
 
-    <div class="arrival-grid">
-        <div class="arrival-card">
-            <div class="img-box">
-                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" alt="New Arrival">
-                <span class="tag">NEW</span>
-            </div>
-            <div class="arrival-info">
-                <h3>Velvet Border Chanderi</h3>
-                <p class="price">₹18,900</p>
-                <button class="btn-view">QUICK VIEW</button>
-            </div>
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; border-bottom: 1px solid #eaeaea; padding-bottom: 1rem; gap: 1rem;">
+        
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            
+            <select wire:model.live="selectedFabric" style="padding: 8px 12px; border: 1px solid #ddd; font-size: 0.85rem; color: #333; outline: none; cursor: pointer; background-color: transparent;">
+                <option value="">All Fabrics</option>
+                @foreach($fabrics as $fabric)
+                    <option value="{{ $fabric->id }}">{{ $fabric->name }}</option>
+                @endforeach
+            </select>
+
+            <select wire:model.live="selectedColor" style="padding: 8px 12px; border: 1px solid #ddd; font-size: 0.85rem; color: #333; outline: none; cursor: pointer; background-color: transparent;">
+                <option value="">All Colors</option>
+                @foreach($colors as $color)
+                    <option value="{{ $color->id }}">{{ $color->name }}</option>
+                @endforeach
+            </select>
+
+            <select wire:model.live="selectedPattern" style="padding: 8px 12px; border: 1px solid #ddd; font-size: 0.85rem; color: #333; outline: none; cursor: pointer; background-color: transparent;">
+                <option value="">All Patterns</option>
+                @foreach($patterns as $pattern)
+                    <option value="{{ $pattern->id }}">{{ $pattern->name }}</option>
+                @endforeach
+            </select>
+
         </div>
 
-        <div class="arrival-card">
-            <div class="img-box">
-                <img src="https://images.unsplash.com/photo-1617627143750-d86bc21e42bb?auto=format&fit=crop&q=80" alt="New Arrival">
-                <span class="tag">NEW</span>
-            </div>
-            <div class="arrival-info">
-                <h3>Golden Zari Tussar</h3>
-                <p class="price">₹24,500</p>
-                <button class="btn-view">QUICK VIEW</button>
-            </div>
+        <div>
+            <select wire:model.live="sort" style="padding: 8px 12px; border: 1px solid #ddd; font-size: 0.85rem; color: #333; outline: none; cursor: pointer; background-color: transparent;">
+                <option value="latest">Sort by: Latest</option>
+                <option value="price_asc">Price: Low to High</option>
+                <option value="price_desc">Price: High to Low</option>
+            </select>
         </div>
+    </div>
 
-        <div class="arrival-card">
-            <div class="img-box">
-                <img src="https://images.unsplash.com/photo-1595967783875-c371f35d8049?auto=format&fit=crop&q=80" alt="New Arrival">
-                <span class="tag">NEW</span>
+    <div class="arrival-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;">
+        @forelse($products as $product)
+            <div class="arrival-card">
+                <a href="{{ route('shop.product', $product->id) }}" style="text-decoration: none; color: inherit; display: block;">
+                    <div class="img-box">
+                        @php
+                            $img = is_array($product->images) && count($product->images) > 0 
+                                ? asset('storage/' . $product->images[0]) 
+                                : 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80';
+                        @endphp
+                        <img src="{{ $img }}" alt="{{ $product->name }}">
+                        <span class="tag">NEW</span>
+                    </div>
+                    <div class="arrival-info">
+                        <h3>{{ $product->name }}</h3>
+                        <p class="price">₹{{ number_format($product->current_price, 2) }}</p>
+                        <button class="btn-view">QUICK VIEW</button>
+                    </div>
+                </a>
             </div>
-            <div class="arrival-info">
-                <h3>Rose Bloom Organza</h3>
-                <p class="price">₹15,200</p>
-                <button class="btn-view">QUICK VIEW</button>
-            </div>
-        </div>
-
-        <div class="arrival-card">
-            <div class="img-box">
-                <img src="https://images.unsplash.com/photo-1610030469613-22878897539f?auto=format&fit=crop&q=80" alt="New Arrival">
-                <span class="tag">NEW</span>
-            </div>
-            <div class="arrival-info">
-                <h3>Ivory Tissue Silk</h3>
-                <p class="price">₹32,000</p>
-                <button class="btn-view">QUICK VIEW</button>
-            </div>
-        </div>
-
-        <div class="arrival-card">
-            <div class="img-box">
-                <img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80" alt="New Arrival">
-                <span class="tag">NEW</span>
-            </div>
-            <div class="arrival-info">
-                <h3>Linen Pastels</h3>
-                <p class="price">₹12,400</p>
-                <button class="btn-view">QUICK VIEW</button>
-            </div>
-        </div>
-
-        <div class="arrival-card">
-            <div class="img-box">
-                <img src="https://images.unsplash.com/photo-1610030469915-055106670868?auto=format&fit=crop&q=80" alt="New Arrival">
-                <span class="tag">NEW</span>
-            </div>
-            <div class="arrival-info">
-                <h3>Sunset Handloom</h3>
-                <p class="price">₹21,000</p>
-                <button class="btn-view">QUICK VIEW</button>
-            </div>
-        </div>
+        @empty
+            <p style="grid-column: 1 / -1; text-align: center; padding: 4rem 0; color: #666; font-style: italic;">
+                No new arrivals match these filters.
+            </p>
+        @endforelse
     </div>
 </main>

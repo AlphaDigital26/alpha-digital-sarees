@@ -115,26 +115,53 @@
                 <h2>Fabrics</h2>
             </div>
         </div>
-        <div class="fabrics-grid">
-            <div class="fab-large">
-                <div class="fab-img" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80');">
-                    <button class="label">KANCHIPURAM</button>
-                </div>
-            </div>
-            <div class="fab-sidebar">
-                <div class="fab-img" style="background-image: url('https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80');">
-                    <button class="label">PURE LINEN</button>
-                </div>
-                <div class="fab-bottom-row">
-                    <div class="fab-img" style="background-image: url('https://images.unsplash.com/photo-1544441893-675973eebb39?auto=format&fit=crop&q=80');">
-                        <button class="label">BANARASI</button>
+
+        @php
+            // Fetch exactly up to 4 fabrics that are marked as featured AND have an image uploaded
+            $featuredFabrics = \App\Models\Fabric::where('is_featured', true)
+                                ->whereNotNull('image')
+                                ->take(4)
+                                ->get();
+        @endphp
+
+        @if($featuredFabrics->count() > 0)
+            <div class="fabrics-grid">
+                
+                @if(isset($featuredFabrics[0]))
+                    <div class="fab-large">
+                        <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[0]->image) }}');">
+                            <button class="label">{{ strtoupper($featuredFabrics[0]->name) }}</button>
+                        </div>
                     </div>
-                    <div class="fab-img" style="background-image: url('https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&q=80');">
-                        <button class="label">COTTON</button>
+                @endif
+
+                <div class="fab-sidebar">
+                    
+                    @if(isset($featuredFabrics[1]))
+                        <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[1]->image) }}');">
+                            <button class="label">{{ strtoupper($featuredFabrics[1]->name) }}</button>
+                        </div>
+                    @endif
+
+                    <div class="fab-bottom-row">
+                        @if(isset($featuredFabrics[2]))
+                            <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[2]->image) }}');">
+                                <button class="label">{{ strtoupper($featuredFabrics[2]->name) }}</button>
+                            </div>
+                        @endif
+                        
+                        @if(isset($featuredFabrics[3]))
+                            <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[3]->image) }}');">
+                                <button class="label">{{ strtoupper($featuredFabrics[3]->name) }}</button>
+                            </div>
+                        @endif
                     </div>
                 </div>
+
             </div>
-        </div>
+        @else
+            <p class="text-gray-500 italic text-center py-10">Add fabric images in the admin panel and mark them as "Feature on Homepage" to see them here.</p>
+        @endif
     </section>
 
     <section class="heritage-crafted">
