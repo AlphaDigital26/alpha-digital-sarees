@@ -8,6 +8,7 @@ use App\Livewire\Shop\NewArrival;
 use App\Livewire\Shop\Occasion;
 use App\Livewire\Shop\About;
 use App\Livewire\Shop\Product as ProductComponent; // CHANGED: Aliased to prevent collision
+use App\Livewire\Shop\Cart; // Added Cart component
 
 // Database Models
 use App\Models\Carousel;
@@ -36,3 +37,6 @@ Route::get('/about', About::class)->name('shop.about');
 
 // --- SINGLE PRODUCT PAGE ---
 Route::get('/product/{id}', ProductComponent::class)->name('shop.product');
+
+// --- CART PAGE ---
+Route::get('/cart', Cart::class)->name('cart');
