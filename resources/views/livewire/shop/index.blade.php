@@ -1,3 +1,4 @@
+
 <main class="shop-container">
     <aside class="sidebar">
         <h2 class="filter-title">
@@ -22,7 +23,7 @@
                     <label style="cursor: pointer;">
                         <input type="checkbox" wire:model.live="selectedColors" value="{{ $color->id }}" style="display: none;">
                         <span class="color-circle" 
-                              style="background: {{ strtolower($color->name) }}; {{ in_array($color->id, $selectedColors) ? 'border: 2px solid #000; transform: scale(1.1);' : '' }}" 
+                              style="background-color: {{ str_replace(' ', '', strtolower($color->name)) }}; {{ in_array($color->id, $selectedColors) ? 'border: 2px solid #000; transform: scale(1.1);' : '' }}" 
                               title="{{ $color->name }}">
                         </span>
                     </label>

@@ -23,8 +23,10 @@
             </div>
 
             <div class="footer-newsletter">
-                <h4>NEWSLETTER</h4>
-                <p>Join the Almaari circle for exclusive previews.</p>
+                <h4 class="text-2xl font-bold tracking-widest mb-6">
+                {{ $settings->footer_brand_heading ?? 'NEWSLETTER' }}</h4>
+                <p>{{ $settings->footer_newsletter_text ?? 'Join the Almaari circle for exclusive previews.' }}</p>
+
                 <div class="newsletter-input">
                     <input type="email" placeholder="Email Address">
                     <button>JOIN</button>
@@ -33,7 +35,7 @@
         </div>
 
         <div class="footer-bottom">
-            <p>&copy; 2026 ALPHA DIGITAL PVT. LTD.</p>
+            <p>&copy; {{ date('Y') }} {{ $settings->footer_copyright_company ?? 'ALPHA DIGITAL PVT. LTD.' }}</p>
             <div class="footer-legal">
                 <a href="#">Privacy Policy</a>
                 <a href="#">Terms of Service</a>
