@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\ProductResource\Pages;
+namespace App\Filament\Resources\CarouselResource\Pages;
 
-use App\Filament\Resources\ProductResource;
+use App\Filament\Resources\CarouselResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
-class EditProduct extends EditRecord
+class EditCarousel extends EditRecord
 {
-    protected static string $resource = ProductResource::class;
+    protected static string $resource = CarouselResource::class;
 
     protected function getHeaderActions(): array
     {
@@ -17,7 +17,7 @@ class EditProduct extends EditRecord
         ];
     }
 
-    // This forces the redirect back to the main products table
+    // Forces redirect back to the list
     protected function getRedirectUrl(): string
     {
         return $this->getResource()::getUrl('index');

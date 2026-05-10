@@ -1,86 +1,113 @@
 <x-layouts.app>
-    <!-- HERO SECTION -->
     <section class="hero">
-        <div class="hero-slides">
-            <div class="slide" style="background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRFV6eMgrKiFEjW3xfhIuWOP58j5fwWw0tIpA&s');"></div>
-            <div class="slide" style="background-image: url('https://static.wixstatic.com/media/ef7393_12cb531a01cb4dfcadc4b1b1ac5e599f~mv2.jpg/v1/fill/w_1347,h_1050,al_c,q_85,usm_0.66_1.00_0.01,enc_avif,quality_auto/ef7393_12cb531a01cb4dfcadc4b1b1ac5e599f~mv2.jpg');"></div>
-            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80');"></div>
-        </div>
+    <div class="hero-slides">
+        @php 
+            $totalSlides = $carousels->count(); 
+            $animationDuration = $totalSlides > 0 ? $totalSlides * 5 : 5;
+        @endphp
 
-        <div class="hero-content">
-            <p class="subtitle">SPRING SUMMER 2026</p>
-            <h1>The Heirloom Collection</h1>
-            <button class="btn-primary">DISCOVER</button>
-        </div>
+        @foreach($carousels as $index => $carousel)
+            <div class="slide" 
+                 style="background-image: url('{{ asset("storage/" . $carousel->image) }}');
+                        animation: fadeHero {{ $animationDuration }}s infinite;
+                        animation-delay: {{ $index * 5 }}s;
+                        display: flex; align-items: center; justify-content: flex-start; padding: 0 10%;">
+                
+                <div class="hero-content" style="position: relative; z-index: 2;">
+                    
+                    @if($carousel->sub_heading)
+                        <p class="subtitle" style="color: white;">{{ $carousel->sub_heading }}</p>
+                    @endif
+
+                    @if($carousel->heading)
+                        <h1>{{ $carousel->heading }}</h1>
+                    @endif
+
+                    @if($carousel->text)
+                        <p style="margin-bottom: 2rem; max-width: 500px; line-height: 1.6;">{{ $carousel->text }}</p>
+                    @endif
+
+                    @if($carousel->button_text && $carousel->button_link)
+                        <a href="{{ $carousel->button_link }}" class="btn-primary" style="display: inline-block; text-decoration: none;">
+                            {{ $carousel->button_text }}
+                        </a>
+                    @endif
+
+                </div>
+            </div>
+        @endforeach
+        
+        @if($totalSlides === 0)
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80'); opacity: 1;">
+                <div class="hero-content" style="position: relative; z-index: 2;">
+                    <h1>Welcome to Our Store</h1>
+                    <a href="/shop" class="btn-primary" style="display: inline-block; text-decoration: none;">SHOP NOW</a>
+                </div>
+            </div>
+        @endif
+    </div>
     </section>
 
-    <!-- BEST SELLERS SECTION -->
     <section class="content-section bg-neutral">
         <div class="section-header">
             <div>
                 <p class="subtitle">TIMELESS FAVORITES</p>
                 <h2>Best Sellers</h2>
             </div>
-            <a href="#" class="view-all">EXPLORE ALL</a>
+            <a href="/shop" class="view-all">EXPLORE ALL</a>
         </div>
         <div class="product-grid">
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80" alt="Saree"></div>
-                <h3>Midnight Banarasi Silk</h3>
-                <p>₹45,500</p>
-            </div>
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" alt="Saree"></div>
-                <h3>Ruby Red Kanchipuram</h3>
-                <p>₹58,000</p>
-            </div>
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqyCxAoKeViAhMthlKFQRapsHWDYX1PNfPGQ&s" alt="Saree"></div>
-                <h3>Champagne Organza</h3>
-                <p>₹22,200</p>
-            </div>
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1544441893-675973eebb39?auto=format&fit=crop&q=80" alt="Saree"></div>
-                <h3>Classic Ivory Tissue</h3>
-                <p>₹34,000</p>
-            </div>
+            @forelse($bestSellers as $product)
+                <div class="product-card">
+                    <a href="{{ route('shop.product', $product->id) }}" class="block">
+                        <div class="img-wrapper">
+                            @php
+                                $img = is_array($product->images) && count($product->images) > 0 
+                                    ? asset('storage/' . $product->images[0]) 
+                                    : 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80';
+                            @endphp
+                            <img src="{{ $img }}" alt="{{ $product->name }}">
+                        </div>
+                        <h3>{{ $product->name }}</h3>
+                    </a>
+                    <p>₹{{ number_format($product->current_price, 2) }}</p>
+                </div>
+            @empty
+                <p class="text-gray-500 italic col-span-full">Add products to your admin panel and mark them as "Best Seller" to see them here.</p>
+            @endforelse
         </div>
     </section>
 
-    <!-- LATEST COLLECTION SECTION -->
     <section class="content-section bg-white">
         <div class="section-header">
             <div>
                 <p class="subtitle">THE NEW ETHEREAL</p>
                 <h2>Latest Collection</h2>
             </div>
-            <a href="#" class="view-all">VIEW COLLECTION</a>
+            <a href="/shop" class="view-all">VIEW COLLECTION</a>
         </div>
         <div class="product-grid">
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80" alt="Saree"></div>
-                <h3>Floral Linen Bloom</h3>
-                <p>₹12,500</p>
-            </div>
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" alt="Saree"></div>
-                <h3>Emerald Forest Handloom</h3>
-                <p>₹28,000</p>
-            </div>
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1544441893-675973eebb39?auto=format&fit=crop&q=80" alt="Saree"></div>
-                <h3>Pastel Chanderi Dream</h3>
-                <p>₹15,200</p>
-            </div>
-            <div class="product-card">
-                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1528459801416-a9e53bbf4e17?auto=format&fit=crop&q=80" alt="Saree"></div>
-                <h3>Sunset Tussar Silk</h3>
-                <p>₹19,000</p>
-            </div>
+            @forelse($latestCollection as $product)
+                <div class="product-card">
+                    <a href="{{ route('shop.product', $product->id) }}" class="block">
+                        <div class="img-wrapper">
+                            @php
+                                $img = is_array($product->images) && count($product->images) > 0 
+                                    ? asset('storage/' . $product->images[0]) 
+                                    : 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80';
+                            @endphp
+                            <img src="{{ $img }}" alt="{{ $product->name }}">
+                        </div>
+                        <h3>{{ $product->name }}</h3>
+                    </a>
+                    <p>₹{{ number_format($product->current_price, 2) }}</p>
+                </div>
+            @empty
+                <p class="text-gray-500 italic col-span-full">Add products to your admin panel and mark them as "New Arrival" to see them here.</p>
+            @endforelse
         </div>
     </section>
 
-    <!-- FABRICS SECTION -->
     <section class="content-section bg-neutral">
         <div class="section-header">
             <div>
@@ -110,7 +137,6 @@
         </div>
     </section>
 
-    <!-- HERITAGE SECTION -->
     <section class="heritage-crafted">
         <div class="heritage-container">
             <div class="heritage-text">
@@ -139,10 +165,13 @@
         </div>
     </section>
 
-    <!-- CONTACT SECTION -->
     <section class="contact-section">
         <div class="contact-container">
             <div class="contact-grid">
+                
+                @php
+                    $settings = \App\Models\Setting::getSiteSettings();
+                @endphp
                 
                 <div class="contact-info">
                     <div class="contact-underlap">CONTACT</div>
@@ -151,22 +180,47 @@
                     <h2>We'd love to hear from you.</h2>
                     
                     <div class="contact-details">
-                        <div class="detail-item">
-                            <h4>THE SHOWROOM</h4>
-                            <p>No. 42 Heritage Street, Near Opera Park,<br>Mumbai - 400001, India</p>
-                        </div>
+                        @if($settings && $settings->contact_address)
+                            <div class="detail-item">
+                                <h4>THE SHOWROOM</h4>
+                                <p>{!! nl2br(e($settings->contact_address)) !!}</p>
+                            </div>
+                        @endif
                         
-                        <div class="detail-item">
-                            <h4>ASSISTANCE</h4>
-                            <p>care@almaari.com<br>+91 22 4567 8910</p>
-                        </div>
+                        @if($settings && ($settings->contact_email || $settings->contact_phone))
+                            <div class="detail-item">
+                                <h4>ASSISTANCE</h4>
+                                <p>
+                                    @if($settings->contact_email)
+                                        {{ $settings->contact_email }}
+                                    @endif
+                                    
+                                    @if($settings->contact_email && $settings->contact_phone)
+                                        <br>
+                                    @endif
+                                    
+                                    @if($settings->contact_phone)
+                                        {{ $settings->contact_phone }}
+                                    @endif
+                                </p>
+                            </div>
+                        @endif
                     </div>
                     
                     <div class="social-links">
-                        <a href="#"><i data-lucide="instagram"></i></a>
-                        <a href="#"><i data-lucide="facebook"></i></a>
-                        <a href="#"><i data-lucide="twitter"></i></a>
-                    </div>
+                        @if($settings && $settings->instagram_link)
+                            <a href="{{ $settings->instagram_link }}" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect width="20" height="20" x="2" y="2" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" x2="17.51" y1="6.5" y2="6.5"/></svg>
+                            </a>
+                        @endif
+
+                        @if($settings && $settings->facebook_link)
+                            <a href="{{ $settings->facebook_link }}" target="_blank">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+                            </a>
+                        @endif
+                        
+                        </div>
                 </div>
 
                 <div class="contact-form-card">
@@ -205,7 +259,7 @@
 
                         <button type="submit" class="btn-submit">
                             SEND INQUIRY 
-                            <i data-lucide="arrow-right"></i>
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
                         </button>
                     </form>
                 </div>
@@ -213,4 +267,28 @@
             </div>
         </div>
     </section>
+
+    <script>
+        function fixCarouselClicks() {
+            // Check the opacity of the slides every 100 milliseconds
+            setInterval(() => {
+                const slides = document.querySelectorAll('.hero-slides .slide');
+                slides.forEach(slide => {
+                    // Get the current opacity from the CSS animation
+                    const opacity = parseFloat(window.getComputedStyle(slide).opacity);
+                    
+                    // If the slide is visible, allow clicks. If it's fading out/invisible, disable clicks.
+                    if (opacity > 0.1) {
+                        slide.style.pointerEvents = 'auto';
+                    } else {
+                        slide.style.pointerEvents = 'none';
+                    }
+                });
+            }, 100);
+        }
+
+        // Run the fix when the page loads
+        document.addEventListener('DOMContentLoaded', fixCarouselClicks);
+        document.addEventListener('livewire:navigated', fixCarouselClicks);
+    </script>
 </x-layouts.app>
