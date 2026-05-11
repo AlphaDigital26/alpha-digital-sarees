@@ -3,83 +3,84 @@
 namespace App\Livewire\Shop;
 
 use Livewire\Component;
+use Livewire\Attributes\Computed;
+use App\Models\Product;
 
 class Cart extends Component
 {
-    public $cartItems = [];
-    public $subtotal = 0;
-    public $shipping = 0;
-    public $total = 0;
-
-    public function mount()
+    // Using Computed properties is the most secure way to handle Cart models in Livewire 3
+    #[Computed]
+    public function cartData()
     {
-        // Fetch cart from session, or load default items matching your design
-        $this->cartItems = session()->get('cart', [
-            1 => [
-                'id' => 1,
-                'name' => 'Pure Linen Saree | Pastel Pink',
-                'price' => 4500,
-                'qty' => 1,
-                'image' => 'https://images.unsplash.com/photo-1610030469613-22878897539f?auto=format&fit=crop&q=80'
-            ],
-            2 => [
-                'id' => 2,
-                'name' => 'Handloom Silk | Sunset Orange',
-                'price' => 3999,
-                'qty' => 1,
-                'image' => 'https://images.unsplash.com/photo-1610030469915-055106670868?auto=format&fit=crop&q=80'
-            ]
-        ]);
+        $sessionCart = session()->get('cart', []);
+        $items = [];
+        $subtotal = 0;
 
-        $this->calculateTotals();
+        if (!empty($sessionCart)) {
+            // Fetch products along with their fabric names
+            $products = Product::with('fabric')->whereIn('id', array_keys($sessionCart))->get();
+
+            foreach ($products as $product) {
+                $qty = $sessionCart[$product->id] ?? 1;
+                $items[$product->id] = [
+                    'product' => $product,
+                    'qty' => $qty,
+                ];
+                
+                // FIXED: Using current_price from your database
+                $subtotal += ($product->current_price * $qty); 
+            }
+        }
+
+        // Apply complimentary shipping over 10,000
+        $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150;
+
+        return [
+            'items' => $items,
+            'subtotal' => $subtotal,
+            'shipping' => $shipping,
+            'total' => $subtotal + $shipping,
+        ];
     }
 
-    public function incrementQty($id)
+    public function incrementQty($productId)
     {
-        if (isset($this->cartItems[$id])) {
-            $this->cartItems[$id]['qty']++;
-            $this->updateCart();
+        $cart = session()->get('cart', []);
+        if (isset($cart[$productId])) {
+            $cart[$productId]++;
+            session()->put('cart', $cart);
         }
     }
 
-    public function decrementQty($id)
+    public function decrementQty($productId)
     {
-        if (isset($this->cartItems[$id]) && $this->cartItems[$id]['qty'] > 1) {
-            $this->cartItems[$id]['qty']--;
-            $this->updateCart();
+        $cart = session()->get('cart', []);
+        if (isset($cart[$productId])) {
+            if ($cart[$productId] > 1) {
+                $cart[$productId]--;
+            } else {
+                unset($cart[$productId]);
+            }
+            session()->put('cart', $cart);
         }
     }
 
-    public function removeItem($id)
+    public function removeItem($productId)
     {
-        if (isset($this->cartItems[$id])) {
-            unset($this->cartItems[$id]);
-            $this->updateCart();
+        $cart = session()->get('cart', []);
+        if (isset($cart[$productId])) {
+            unset($cart[$productId]);
+            session()->put('cart', $cart);
         }
-    }
-
-    public function updateCart()
-    {
-        session()->put('cart', $this->cartItems);
-        $this->calculateTotals();
-    }
-
-    public function calculateTotals()
-    {
-        $this->subtotal = 0;
-        foreach ($this->cartItems as $item) {
-            $this->subtotal += ($item['price'] * $item['qty']);
-        }
-        
-        // Example: Free shipping over 10000, otherwise 150
-        $this->shipping = ($this->subtotal > 10000 || $this->subtotal == 0) ? 0 : 150;
-        $this->total = $this->subtotal + $this->shipping;
     }
 
     public function checkout()
     {
-        // This will be connected to Razorpay later
-        session()->flash('message', 'Proceeding to checkout...');
+        if (empty(session()->get('cart', []))) {
+            session()->flash('error', 'Your cart is empty.');
+            return;
+        }
+        session()->flash('message', 'Proceeding to secure checkout...');
     }
 
     public function render()

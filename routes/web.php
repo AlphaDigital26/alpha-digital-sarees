@@ -7,12 +7,12 @@ use App\Livewire\Shop\Index;
 use App\Livewire\Shop\NewArrival;
 use App\Livewire\Shop\Occasion;
 use App\Livewire\Shop\About;
-use App\Livewire\Shop\Product as ProductComponent; // CHANGED: Aliased to prevent collision
-use App\Livewire\Shop\Cart; // Added Cart component
+use App\Livewire\Shop\Cart; // <-- Added Cart Component Import
+use App\Livewire\Shop\Product as ProductComponent; 
 
 // Database Models
 use App\Models\Carousel;
-use App\Models\Product as ProductModel; // CHANGED: Aliased to prevent collision
+use App\Models\Product as ProductModel; 
 
 // --- HOME PAGE (Combined into a single route) ---
 Route::get('/', function () {
@@ -28,15 +28,15 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
-
 // --- SHOP PAGES ---
 Route::get('/all-sarees', Index::class)->name('shop.index');
 Route::get('/new-arrival', NewArrival::class)->name('shop.new-arrival');
 Route::get('/occasion', Occasion::class)->name('shop.occasion');
 Route::get('/about', About::class)->name('shop.about');
 
+// --- CART PAGE ---
+// <-- Added the named Cart Route
+Route::get('/cart', Cart::class)->name('cart'); 
+
 // --- SINGLE PRODUCT PAGE ---
 Route::get('/product/{id}', ProductComponent::class)->name('shop.product');
-
-// --- CART PAGE ---
-Route::get('/cart', Cart::class)->name('cart');

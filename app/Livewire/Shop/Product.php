@@ -70,4 +70,27 @@ class Product extends Component
             'settings' => \App\Models\Setting::first(), // Pass settings to the frontend
         ]);
     }
+
+    // Handles the "Add to Cart" button
+    public function addToCart($productId)
+    {
+        // 1. Get current cart from session
+        $cart = session()->get('cart', []);
+
+        // 2. Add or increment quantity
+        if (isset($cart[$productId])) {
+            $cart[$productId]++;
+        } else {
+            $cart[$productId] = 1;
+        }
+
+        // 3. Save back to session
+        session()->put('cart', $cart);
+
+        // 4. Show success message (Optional: You can trigger a SweetAlert or Toast here)
+        session()->flash('success', 'Added to your bag!');
+        
+        // 5. Redirect to cart automatically (Optional, but good UX for luxury brands)
+        return redirect('/cart');
+    }
 }
