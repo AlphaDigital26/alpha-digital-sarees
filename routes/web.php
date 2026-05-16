@@ -1,13 +1,16 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth; // Added for the logout route
 
 // Livewire Components
 use App\Livewire\Shop\Index;
 use App\Livewire\Shop\NewArrival;
 use App\Livewire\Shop\Occasion;
 use App\Livewire\Shop\About;
-use App\Livewire\Shop\Cart; // <-- Added Cart Component Import
+use App\Livewire\Shop\Cart; 
+use App\Livewire\Shop\Wishlist;
+use App\Livewire\Auth\CustomerLogin;
 use App\Livewire\Shop\Product as ProductComponent; 
 
 // Database Models
@@ -35,8 +38,18 @@ Route::get('/occasion', Occasion::class)->name('shop.occasion');
 Route::get('/about', About::class)->name('shop.about');
 
 // --- CART PAGE ---
-// <-- Added the named Cart Route
 Route::get('/cart', Cart::class)->name('cart'); 
+
+// --- WISHLIST PAGE ---
+Route::get('/wishlist', Wishlist::class)->name('wishlist');
 
 // --- SINGLE PRODUCT PAGE ---
 Route::get('/product/{id}', ProductComponent::class)->name('shop.product');
+
+// --- CUSTOMER LOGOUT ROUTE ---
+Route::post('/customer/logout', function () {
+    Auth::guard('customer')->logout();
+    session()->invalidate();
+    session()->regenerateToken();
+    return redirect()->route('home');
+})->name('customer.logout');

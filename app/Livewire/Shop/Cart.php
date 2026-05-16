@@ -76,6 +76,12 @@ class Cart extends Component
 
     public function checkout()
     {
+        // 1. Check if logged in first
+        if (!auth('customer')->check()) {
+            $this->dispatch('open-login-modal');
+            return;
+        }
+        
         if (empty(session()->get('cart', []))) {
             session()->flash('error', 'Your cart is empty.');
             return;
