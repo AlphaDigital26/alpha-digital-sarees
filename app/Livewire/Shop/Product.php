@@ -45,6 +45,55 @@ class Product extends Component
         }
     }
 
+    // Handles the "Add to Cart" button
+    public function addToCart($productId)
+    {
+        // 1. Get current cart from session
+        $cart = session()->get('cart', []);
+
+        // 2. Add or increment quantity
+        if (isset($cart[$productId])) {
+            $cart[$productId]++;
+        } else {
+            $cart[$productId] = 1;
+        }
+
+        // 3. Save back to session
+        session()->put('cart', $cart);
+
+        // 4. Show success message (Optional: You can trigger a SweetAlert or Toast here)
+        session()->put('cart', $cart);
+        session()->flash('success', 'Added to your bag!');
+        $this->redirect(request()->header('Referer'), navigate: true); // Add this line instead of redirecting to the cart page
+        
+        // 5. Redirect to cart automatically (Optional, but good UX for luxury brands)
+        return redirect('/cart');
+    }
+
+        // Handles the "Add to Wishlist" button
+    public function toggleWishlist($productId)
+    {
+        // 1. If they are a guest, stop them and open the Login Popup!
+        if (!auth('customer')->check()) {
+            $this->dispatch('open-login-modal');
+            return; 
+        }
+
+        // 2. If they are logged in, run your normal wishlist logic
+        $wishlist = session()->get('wishlist', []);
+        
+        if (in_array($productId, $wishlist)) {
+            $wishlist = array_filter($wishlist, fn($id) => $id != $productId);
+            session()->flash('success', 'Removed from Wishlist');
+        } else {
+            $wishlist[] = $productId;
+            session()->flash('success', 'Added to Wishlist!');
+        }
+        
+        session()->put('wishlist', $wishlist);
+        $this->dispatch('wishlist-updated');
+    }
+
     public function render()
     {
         // Fetch 3 similar products based on the same fabric (excluding this one)

@@ -1679,7 +1679,7 @@ h1, h2, h3, .logo {
     .thumbnails { flex-direction: row; }
 }
 
-/* --- CART LAYOUT --- */
+/* --- CART LAYOUT ---
 .cart-main { padding: 4rem 5%; }
 .container { max-width: 1200px; margin: 0 auto; }
 
@@ -1834,4 +1834,4 @@ h1, h2, h3, .logo {
 @media (max-width: 900px) {
     .cart-layout { grid-template-columns: 1fr; }
     .order-summary { position: relative; top: 0; }
-}
+} */
