@@ -4,6 +4,7 @@ namespace App\Livewire\Shop;
 
 use Livewire\Component;
 use Livewire\WithPagination;
+use Livewire\Attributes\Url;
 use App\Models\Product;
 use App\Models\Fabric;
 use App\Models\Color;
@@ -13,10 +14,22 @@ class Index extends Component
 {
     use WithPagination;
 
+    #[Url]
+    public $search = '';
+
+    #[Url]
+    public $filter = null;
+
+    #[Url]
+    public $occasion = null;
+
     // Filter Arrays
     public $selectedFabrics = [];
     public $selectedColors = [];
     public $selectedPatterns = [];
+    
+    // Load More Property
+    public $amount = 6;
     
     // Price & Sorting Filters from your UI
     public $priceRange = null;
@@ -24,16 +37,22 @@ class Index extends Component
     public $maxPrice = null;
     public $sortBy = 'latest';
 
-    // Reset pagination when any filter is clicked
+    // Reset amount when any filter is clicked
     public function updated($propertyName)
     {
-        $this->resetPage();
+        $this->amount = 6;
+    }
+    
+    public function loadMore()
+    {
+        $this->amount += 6;
     }
 
     public function resetFilters()
     {
         // Removed selectedOccasions from reset
-        $this->reset(['selectedFabrics', 'selectedColors', 'selectedPatterns', 'priceRange', 'minPrice', 'maxPrice']);
+        $this->reset(['selectedFabrics', 'selectedColors', 'selectedPatterns', 'priceRange', 'minPrice', 'maxPrice', 'search']);
+        $this->amount = 6;
     }
 
     // Paste this inside the Index class, right before public function render()
@@ -41,6 +60,8 @@ class Index extends Component
     {
         // 1. If they are a guest, stop them and open the Login Popup!
         if (!auth('customer')->check()) {
+            session()->put('pending_wishlist_item', $productId);
+            session()->put('url.intended', request()->header('Referer'));
             $this->dispatch('open-login-modal');
             return; 
         }
@@ -63,6 +84,22 @@ class Index extends Component
     public function render()
     {
         $query = Product::query()->with(['fabric', 'color', 'pattern']);
+
+        // Search Filter
+        $query->when(!empty($this->search), function($q) {
+            $q->where('name', 'like', '%' . $this->search . '%')
+              ->orWhere('description', 'like', '%' . $this->search . '%');
+        });
+
+        // Best Seller Filter
+        $query->when($this->filter === 'best_seller', function($q) {
+            $q->where('is_best_seller', true);
+        });
+
+        // Occasion Filter
+        $query->when(!empty($this->occasion), function($q) {
+            $q->where('occasion', $this->occasion);
+        });
 
         // Checkbox Filters (Removed occasion filter logic)
         $query->when(!empty($this->selectedFabrics), fn($q) => $q->whereIn('fabric_id', $this->selectedFabrics));
@@ -89,10 +126,10 @@ class Index extends Component
         }
 
         return view('livewire.shop.index', [
-            'products' => $query->paginate(24), 
-            'fabrics' => Fabric::all(),
-            'colors' => Color::all(),
-            'patterns' => Pattern::all(),
+            'products' => $query->paginate($this->amount), 
+            'fabrics' => Fabric::has('products')->get(),
+            'colors' => Color::has('products')->get(),
+            'patterns' => Pattern::has('products')->get(),
         ]);
     }
 

@@ -75,6 +75,8 @@ class Product extends Component
     {
         // 1. If they are a guest, stop them and open the Login Popup!
         if (!auth('customer')->check()) {
+            session()->put('pending_wishlist_item', $productId);
+            session()->put('url.intended', request()->header('Referer'));
             $this->dispatch('open-login-modal');
             return; 
         }

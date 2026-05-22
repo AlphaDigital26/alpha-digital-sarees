@@ -45,6 +45,7 @@ class LoginPopup extends Component
 
             if ($customer && $customer->first_name) {
                 Auth::guard('customer')->login($customer);
+                $this->processPendingWishlist();
                 $this->step = 4;
             } else {
                 $this->step = 3;
@@ -81,6 +82,7 @@ class LoginPopup extends Component
 
         Auth::guard('customer')->login($customer);
         session()->forget('login_otp_' . $this->phone);
+        $this->processPendingWishlist();
 
         $this->step = 4;
     }
@@ -88,7 +90,22 @@ class LoginPopup extends Component
     public function closePopup()
     {
         $this->dispatch('close-login-modal');
-        return redirect(request()->header('Referer')); 
+        $url = session()->pull('url.intended', request()->header('Referer') ?? '/');
+        return redirect($url); 
+    }
+
+    private function processPendingWishlist()
+    {
+        if (session()->has('pending_wishlist_item')) {
+            $productId = session()->pull('pending_wishlist_item');
+            $wishlist = session()->get('wishlist', []);
+            
+            if (!in_array($productId, $wishlist)) {
+                $wishlist[] = $productId;
+                session()->put('wishlist', $wishlist);
+                session()->flash('success', 'Added to Wishlist!');
+            }
+        }
     }
 
     public function render()

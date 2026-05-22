@@ -1,4 +1,14 @@
 <main class="product-main">
+    
+    {{-- Dynamic Wishlist/Cart Success Notification Moved Outside to Prevent Pushing Title Down --}}
+    @if (session()->has('success'))
+        <div class="max-w-7xl mx-auto mb-4">
+            <div class="p-3 text-sm font-bold text-green-800 bg-green-50 border border-green-200 rounded-sm shadow-sm transition-all">
+                {{ session('success') }}
+            </div>
+        </div>
+    @endif
+
     <div class="product-container">
 
         <div class="product-gallery">
@@ -34,33 +44,16 @@
 
         </div>
 
-        <div class="product-info flex-1 flex flex-col gap-1"> 
-
-            {{-- Dynamic Wishlist/Cart Success Notification --}}
-            @if (session()->has('success'))
-                <div class="p-3 mb-2 text-sm font-bold text-green-800 bg-green-50 border border-green-200 rounded-md shadow-sm transition-all">
-                    {{ session('success') }}
-                </div>
-            @endif
-            
-            @if($product->stock > 0)
-                <span class="stock-status text-green-600 font-bold block italic text-sm mb-2">
-                    In Stock ({{ $product->stock }} left)
-                </span>
-            @else
-                <span class="stock-status text-red-500 font-bold block italic text-sm mb-2">
-                    (Out of stock)
-                </span>
-            @endif
+        <div class="product-info flex-1 flex flex-col pt-0 mt-0"> 
 
             {{-- Title & Wishlist Toggle Container --}}
             <div class="flex justify-between items-start gap-4">
-                <h1 class="leading-tight text-3xl font-bold text-[#1b1c1a]" style="font-family: 'Noto Serif', serif;">
+                <h1 class="leading-none text-3xl font-bold text-[#1b1c1a] m-0 p-0" style="font-family: 'Noto Serif', serif; line-height: 1.1;">
                     {{ $product->name }}
                 </h1>
                 
                 {{-- Interactive Wishlist Heart Button --}}
-                <button wire:click="toggleWishlist({{ $product->id }})" class="p-2 -mt-1 rounded-full hover:bg-[#F4F0EB] transition-colors flex-shrink-0" title="Add to Wishlist">
+                <button wire:click="toggleWishlist({{ $product->id }})" class="p-2 m-0 rounded-full hover:bg-[#F4F0EB] transition-colors flex-shrink-0" title="Add to Wishlist">
                     <svg xmlns="http://www.w3.org/2000/svg" 
                          class="h-7 w-7 transition-colors duration-300 {{ in_array($product->id, session()->get('wishlist', [])) ? 'fill-[#800020] text-[#800020]' : 'fill-none text-gray-400 hover:text-[#800020]' }}" 
                          viewBox="0 0 24 24" 
@@ -71,24 +64,24 @@
                 </button>
             </div>
 
-            <div class="mt-2 mb-4">
-                <p class="price text-2xl font-bold text-[#800020]">
+            <div class="mt-4 mb-0">
+                <p class="price text-2xl font-bold text-[#800020] leading-none m-0 p-0">
                     Rs. {{ number_format($product->current_price, 2) }}
                 </p>
 
                 @if($product->original_price)
-                    <p class="text-sm text-gray-400 line-through">
+                    <p class="text-sm text-gray-400 line-through mt-2">
                         Rs. {{ number_format($product->original_price, 2) }}
                     </p>
                 @endif
 
-                <p class="tax-tag text-xs text-gray-500 mt-1" style="font-family: 'Manrope', sans-serif;">
+                <p class="tax-tag text-xs text-gray-500 mt-1.5" style="font-family: 'Manrope', sans-serif;">
                     Inclusive of all taxes.
                 </p>
             </div>
 
             @if($similarProducts && $similarProducts->count() > 0)
-                <div class="similar-products my-6">
+                <div class="similar-products mt-3 mb-6">
                     <h4 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-3" style="font-family: 'Manrope', sans-serif;">Similar Products</h4>
                     <div class="similar-grid flex gap-3">
                         @foreach($similarProducts as $simProduct)
@@ -107,7 +100,18 @@
 
             <div class="purchase-controls mt-auto">
                 
-                <div class="quantity-box mb-6">
+                {{-- Stock Status --}}
+                @if($product->stock > 0)
+                    <span class="stock-status text-green-600 font-bold block italic text-sm mb-2">
+                        In Stock ({{ $product->stock }} left)
+                    </span>
+                @else
+                    <span class="stock-status text-red-500 font-bold block italic text-sm mb-2">
+                        (Out of stock)
+                    </span>
+                @endif
+
+                <div class="quantity-box mb-3">
                     <label style="font-size: 0.75rem; font-weight: 700; color: #706663; text-transform: uppercase; font-family: 'Manrope', sans-serif;">
                         Quantity
                     </label>

@@ -54,7 +54,7 @@
                 <p class="subtitle">TIMELESS FAVORITES</p>
                 <h2>Best Sellers</h2>
             </div>
-            <a href="/shop" class="view-all">EXPLORE ALL</a>
+            <a href="{{ route('shop.index', ['filter' => 'best_seller']) }}" class="view-all">EXPLORE ALL</a>
         </div>
         <div class="product-grid">
             @forelse($bestSellers as $product)
@@ -84,7 +84,7 @@
                 <p class="subtitle">THE NEW ETHEREAL</p>
                 <h2>Latest Collection</h2>
             </div>
-            <a href="/shop" class="view-all">VIEW COLLECTION</a>
+            <a href="{{ route('shop.new-arrival') }}" class="view-all">VIEW COLLECTION</a>
         </div>
         <div class="product-grid">
             @forelse($latestCollection as $product)
