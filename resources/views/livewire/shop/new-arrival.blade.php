@@ -89,4 +89,19 @@
             </p>
         @endforelse
     </div>
+
+    <div class="load-more flex justify-center mt-16 mb-20">
+        @if ($products->hasMorePages())
+            <button wire:click="loadMore" wire:loading.attr="disabled"
+                    class="px-10 py-4 border border-[#800020] text-[#800020] bg-white hover:bg-[#800020] hover:text-white transition-colors duration-300 uppercase tracking-[2px] font-bold text-[0.8rem] min-w-[250px]">
+                <span wire:loading.remove wire:target="loadMore">Discover More</span>
+                <span wire:loading wire:target="loadMore">Loading...</span>
+            </button>
+        @else
+            <button disabled
+                    class="px-10 py-4 border border-[#e5e5e5] text-[#999] bg-[#f9f9f9] uppercase tracking-[2px] font-bold text-[0.8rem] min-w-[250px] cursor-not-allowed">
+                You've Viewed All
+            </button>
+        @endif
+    </div>
 </main>

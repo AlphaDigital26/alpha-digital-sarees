@@ -1,5 +1,5 @@
-<header class="navbar">
-    <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2 text-2xl font-bold tracking-widest text-[#800020]">
+<header class="fixed top-0 left-0 w-full h-20 flex justify-between items-center px-[5%] bg-[#F4F0EB]/90 backdrop-blur-md border-b border-[#E5E0DA] z-[1000]">
+    <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2 text-2xl font-bold tracking-widest text-primary logo">
         @if($settings && $settings->logo_type === 'image' && $settings->logo_image)
             <img src="{{ asset('storage/' . $settings->logo_image) }}" alt="Alpha Digital Logo" class="h-12 w-auto object-contain">
         @else
@@ -7,21 +7,38 @@
         @endif
     </a>
 
-    <nav class="main-nav">
-        <a href="{{ route('home') }}" wire:navigate>HOME</a>
-        <a href="{{ route('shop.index') }}" wire:navigate>ALL SAREES</a>
-        <a href="{{ route('shop.new-arrival') }}" wire:navigate>NEW ARRIVAL</a>
-        <a href="{{ route('shop.occasion') }}" wire:navigate>OCCASION</a>
-        <a href="{{ route('shop.about') }}" wire:navigate>OUR STORY</a>
+    <nav class="hidden lg:flex gap-8">
+        <a href="{{ route('home') }}" wire:navigate class="relative text-[#2A211F] font-sans text-xs font-semibold tracking-[1.2px] transition-colors duration-300 hover:text-primary pb-1 group {{ request()->routeIs('home') ? 'text-primary' : '' }}">
+            HOME
+            <span class="absolute left-0 bottom-0 w-full h-[1px] bg-[#800020] transition-transform duration-300 origin-left {{ request()->routeIs('home') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' }}"></span>
+        </a>
+        <a href="{{ route('shop.index') }}" wire:navigate class="relative text-[#2A211F] font-sans text-xs font-semibold tracking-[1.2px] transition-colors duration-300 hover:text-primary pb-1 group {{ request()->routeIs('shop.index') ? 'text-primary' : '' }}">
+            ALL SAREES
+            <span class="absolute left-0 bottom-0 w-full h-[1px] bg-[#800020] transition-transform duration-300 origin-left {{ request()->routeIs('shop.index') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' }}"></span>
+        </a>
+        <a href="{{ route('shop.new-arrival') }}" wire:navigate class="relative text-[#2A211F] font-sans text-xs font-semibold tracking-[1.2px] transition-colors duration-300 hover:text-primary pb-1 group {{ request()->routeIs('shop.new-arrival') ? 'text-primary' : '' }}">
+            NEW ARRIVAL
+            <span class="absolute left-0 bottom-0 w-full h-[1px] bg-[#800020] transition-transform duration-300 origin-left {{ request()->routeIs('shop.new-arrival') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' }}"></span>
+        </a>
+        <a href="{{ route('shop.occasion') }}" wire:navigate class="relative text-[#2A211F] font-sans text-xs font-semibold tracking-[1.2px] transition-colors duration-300 hover:text-primary pb-1 group {{ request()->routeIs('shop.occasion') ? 'text-primary' : '' }}">
+            OCCASION
+            <span class="absolute left-0 bottom-0 w-full h-[1px] bg-[#800020] transition-transform duration-300 origin-left {{ request()->routeIs('shop.occasion') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' }}"></span>
+        </a>
+        <a href="{{ route('shop.about') }}" wire:navigate class="relative text-[#2A211F] font-sans text-xs font-semibold tracking-[1.2px] transition-colors duration-300 hover:text-primary pb-1 group {{ request()->routeIs('shop.about') ? 'text-primary' : '' }}">
+            OUR STORY
+            <span class="absolute left-0 bottom-0 w-full h-[1px] bg-[#800020] transition-transform duration-300 origin-left {{ request()->routeIs('shop.about') ? 'scale-x-100' : 'scale-x-0 group-hover:scale-x-100' }}"></span>
+        </a>
     </nav>
 
-    <div class="nav-actions">
-        <div class="search-bar">
-            <i data-lucide="search" class="icon-search"></i>
-            <input type="text" placeholder="Search Alpha Digital">
-        </div>
+    <div class="flex items-center gap-8">
+        <form action="{{ route('shop.index') }}" method="GET" class="hidden lg:flex items-center bg-[#F4F0EB] py-1.5 px-4 border border-[#E5E0DA] rounded">
+            <button type="submit" class="bg-transparent border-none p-0 cursor-pointer outline-none flex items-center justify-center">
+                <i data-lucide="search" class="w-4 h-4 text-[#706663]"></i>
+            </button>
+            <input type="text" name="search" placeholder="Search Alpha Digital" value="{{ request('search') }}" class="border-none bg-transparent outline-none pl-2.5 font-sans text-xs text-[#2A211F] w-[160px]">
+        </form>
 
-        <div class="nav-icons flex items-center gap-5">
+        <div class="flex items-center gap-5 nav-icons">
             @php
                 $wishlistCount = count(session()->get('wishlist', []));
                 $cartCount = array_sum(session()->get('cart', []));

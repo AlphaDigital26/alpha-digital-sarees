@@ -17,12 +17,14 @@ class ColorTable extends BaseWidget
             ->query(Color::query())
             ->columns([
                 Tables\Columns\TextColumn::make('name')->searchable(),
+                Tables\Columns\ColorColumn::make('hex_code')->label('Color'),
             ])
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->model(Color::class)
                     ->form([
                         Forms\Components\TextInput::make('name')->required()->unique(ignoreRecord: true),
+                        Forms\Components\ColorPicker::make('hex_code')->label('Color')->required(),
                     ])
                     ->label('Add Color'),
             ])
@@ -30,6 +32,7 @@ class ColorTable extends BaseWidget
                 Tables\Actions\EditAction::make()
                     ->form([
                         Forms\Components\TextInput::make('name')->required()->unique(ignoreRecord: true),
+                        Forms\Components\ColorPicker::make('hex_code')->label('Color')->required(),
                     ]),
                 Tables\Actions\DeleteAction::make(),
             ]);

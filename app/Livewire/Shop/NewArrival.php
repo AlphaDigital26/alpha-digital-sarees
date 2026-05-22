@@ -16,11 +16,27 @@ class NewArrival extends Component
     public $selectedColor = null;
     public $selectedPattern = null;
 
+    // Load More Property
+    public $amount = 3;
+    
+    // Reset amount when any filter is clicked
+    public function updated($propertyName)
+    {
+        $this->amount = 3;
+    }
+    
+    public function loadMore()
+    {
+        $this->amount += 3;
+    }
+
     // Added Wishlist Toggle Functionality
     public function toggleWishlist($productId)
     {
         // 1. If they are a guest, stop them and open the Login Popup!
         if (!auth('customer')->check()) {
+            session()->put('pending_wishlist_item', $productId);
+            session()->put('url.intended', request()->header('Referer'));
             $this->dispatch('open-login-modal');
             return; 
         }
@@ -70,7 +86,7 @@ class NewArrival extends Component
         }
 
         return view('livewire.shop.new-arrival', [
-            'products' => $query->get(),
+            'products' => $query->paginate($this->amount),
             'fabrics' => Fabric::orderBy('name')->get(),
             'colors' => Color::orderBy('name')->get(),
             'patterns' => Pattern::orderBy('name')->get(),

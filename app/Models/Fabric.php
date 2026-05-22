@@ -11,4 +11,9 @@ class Fabric extends Model
         'image', 
         'is_featured'
     ];
+
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
 }
