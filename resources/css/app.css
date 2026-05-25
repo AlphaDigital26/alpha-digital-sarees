@@ -282,6 +282,7 @@
   /* Main Footer */
   .main-footer {
     @apply relative bg-secondary text-neutral pt-24 px-[5%] pb-4 overflow-hidden bg-cover bg-bottom bg-no-repeat;
+    background-image: linear-gradient(rgba(42, 33, 31, 0.92), rgba(42, 33, 31, 0.95)), url('/images/footer-bg.jpg');
   }
   
   .footer-container {
@@ -775,13 +776,23 @@
     @apply mt-20 py-16 px-[5%] max-w-[1300px] mx-auto;
   }
   
-  .product-container {
-    @apply grid grid-cols-1 md:grid-cols-[1.2fr_1fr] gap-16 mb-20;
-  }
-  
-  .product-gallery {
-    @apply flex flex-col-reverse md:flex-row gap-6;
-  }
+  /* Update your Product Details CSS to allow Flexbox alignment */
+.product-container {
+    @apply flex flex-wrap items-stretch gap-16 mb-20;
+}
+
+.product-gallery {
+    @apply flex flex-col md:flex-row gap-6 w-full md:w-1/2;
+}
+
+.product-info {
+    @apply flex-1 flex flex-col pt-0 mt-0;
+}
+
+/* This is the key: forces the WhatsApp button/controls to the bottom */
+.purchase-controls {
+    @apply mt-auto pt-6;
+}
   
   .thumbnails {
     @apply flex flex-row md:flex-col gap-4;

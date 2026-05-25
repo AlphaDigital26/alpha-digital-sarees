@@ -19,7 +19,8 @@ class Customer extends Authenticatable
         'dob',
         'gender',
         'is_subscribed',
-        'agreed_to_tos'
+        'agreed_to_tos',
+        'is_active', 
     ];
 
     protected $hidden = [

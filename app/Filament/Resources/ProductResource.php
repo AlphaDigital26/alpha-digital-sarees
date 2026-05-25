@@ -14,7 +14,7 @@ class ProductResource extends Resource
 {
     protected static ?string $navigationLabel = 'Sarees';
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
+    protected static ?int $navigationSort = 2;
     public static function form(Form $form): Form
     {
         return $form
@@ -133,6 +133,8 @@ class ProductResource extends Resource
                     ->label('Saree Name')
                     ->searchable()
                     ->sortable()
+                    ->limit(40) // Limits the text to 40 characters so the column stays fixed
+                    ->tooltip(fn ($record) => $record->name) // Shows the full name when you hover over it
                     ->weight('bold'),
                     
                 \Filament\Tables\Columns\TextColumn::make('current_price')

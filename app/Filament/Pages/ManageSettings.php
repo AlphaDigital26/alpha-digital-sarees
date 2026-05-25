@@ -9,151 +9,115 @@ use Filament\Pages\Page;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Notifications\Notification;
+use Filament\Actions\Action;
 
 class ManageSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
+    protected static ?int $navigationSort = 7;
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static ?string $navigationLabel = 'Site Settings';
     protected static ?string $title = 'Global Website Settings';
     protected static string $view = 'filament.pages.manage-settings';
 
-    // This array holds the data for the form
     public ?array $data = [];
-
-    // This controls whether the admin is allowed to edit or not
     public bool $isEditing = false;
 
-    // When the page loads, fetch the first row of the database. If it doesn't exist, leave it blank.
     public function mount(): void
     {
-        // Instantly fetches or creates the default row
         $setting = Setting::getSiteSettings();
         $this->form->fill($setting->toArray());
     }
 
-    // Unlocks the form
     public function enableEditing(): void
     {
         $this->isEditing = true;
     }
 
-    // Locks the form and resets to database values
     public function cancelEditing(): void
     {
         $this->isEditing = false;
-        
-        // Fetch the safe settings again
-        $setting = Setting::getSiteSettings();
-        $this->form->fill($setting->toArray());
+        $this->form->fill(Setting::getSiteSettings()->toArray());
     }
 
     public function form(Form $form): Form
     {
         return $form
             ->schema([
-                // Wrapping the entire form in a Group allows us to disable it all at once
                 Forms\Components\Group::make()
-                    ->disabled(fn () => ! $this->isEditing) // Locks fields if not editing
+                    ->disabled(fn () => ! $this->isEditing)
                     ->schema([
                         Forms\Components\Tabs::make('Settings')
                             ->tabs([
-                                // LOGO TAB
+                                // TAB 1: Brand & Logo
                                 Forms\Components\Tabs\Tab::make('Brand & Logo')
                                     ->icon('heroicon-o-sparkles')
                                     ->schema([
                                         Forms\Components\Radio::make('logo_type')
-                                            ->label('Logo Format')
-                                            ->options([
-                                                'text' => 'Plain Text Logo',
-                                                'image' => 'Image Upload Logo',
-                                            ])
-                                            ->default('text')
-                                            ->inline()
-                                            ->live(), // Instantly updates the form when clicked, filling the circle
-
+                                            ->options(['text' => 'Plain Text', 'image' => 'Image Logo'])
+                                            ->inline()->live(),
                                         Forms\Components\TextInput::make('logo_text')
-                                            ->label('Logo Text')
-                                            ->placeholder('e.g., ALMAARI')
-                                            ->visible(fn (Forms\Get $get) => $get('logo_type') === 'text'), // Only shows if 'text' is selected
-
+                                            ->visible(fn ($get) => $get('logo_type') === 'text'),
                                         Forms\Components\FileUpload::make('logo_image')
-                                            ->label('Upload Logo Image')
-                                            ->image()
                                             ->directory('settings')
-                                            ->visible(fn (Forms\Get $get) => $get('logo_type') === 'image'), // Only shows if 'image' is selected
+                                            ->visible(fn ($get) => $get('logo_type') === 'image'),
                                     ]),
 
-                                // CONTACT & SOCIAL TAB
-                                Forms\Components\Tabs\Tab::make('Contact & Social')
+                                // TAB 2: Contact Details
+                                Forms\Components\Tabs\Tab::make('Contact Details')
                                     ->icon('heroicon-o-phone')
                                     ->schema([
-                                        Forms\Components\TextInput::make('whatsapp_number')
-                                            ->label('WhatsApp Number (For Orders)')
-                                            ->prefix('+91')
-                                            ->helperText('Enter the number where users will send their Saree orders. Include country code if not 91.'),
-                                        
-                                        Forms\Components\TextInput::make('contact_email')
-                                            ->label('Support Email')
-                                            ->email(),
-
-                                        Forms\Components\TextInput::make('contact_phone')
-                                            ->label('Support Phone'),
-
-                                        Forms\Components\Textarea::make('contact_address')
-                                            ->label('Showroom Address')
-                                            ->columnSpanFull(),
-                                            
-                                        Forms\Components\TextInput::make('facebook_link')
-                                            ->url()->label('Facebook URL'),
-                                        Forms\Components\TextInput::make('instagram_link')
-                                            ->url()->label('Instagram URL'),
+                                        Forms\Components\TextInput::make('whatsapp_number')->prefix('+91'),
+                                        Forms\Components\TextInput::make('contact_email')->email(),
+                                        Forms\Components\TextInput::make('contact_phone'),
+                                        Forms\Components\Textarea::make('contact_address')->columnSpanFull(),
                                     ])->columns(2),
 
-                                // FOOTER TAB
-                                Forms\Components\Tabs\Tab::make('Footer')
-                                    ->icon('heroicon-o-document-text')
+                                // TAB 3: Footer Section
+                                Forms\Components\Tabs\Tab::make('Footer Section')
+                                    ->icon('heroicon-o-bars-3-bottom-left')
                                     ->schema([
-                                        // NEW: Footer Brand Heading
-                                        Forms\Components\TextInput::make('footer_brand_heading')
-                                            ->label('Footer Brand Heading')
-                                            ->placeholder('e.g., ALMAARI'),
-                                            
-                                        Forms\Components\Textarea::make('footer_text')
-                                            ->label('Brand Description (Under Heading)')
-                                            ->rows(3),
-                                            
-                                        Forms\Components\TextInput::make('footer_newsletter_text')
-                                            ->label('Newsletter Text'),
-                                            
-                                        Forms\Components\TextInput::make('footer_copyright_company')
-                                            ->label('Copyright Company Name')
-                                            ->placeholder('e.g., ALPHA DIGITAL PVT. LTD.'),
-                                    ])->columns(1),
-                            ])->columnSpanFull(),
-                    ])->columnSpanFull()
+                                        // Removed FileUpload for footer_image here
+                                        Forms\Components\FileUpload::make('footer_background_image')
+                                            ->label('Background Image')
+                                            ->image()
+                                            ->directory('settings'),
+                                        
+                                        Forms\Components\TextInput::make('footer_brand_heading'),
+                                        Forms\Components\Textarea::make('footer_text')->rows(3),
+                                        Forms\Components\TextInput::make('footer_newsletter_text'),
+                                        Forms\Components\TextInput::make('footer_copyright_company'),
+                                        
+                                        Forms\Components\Section::make('Social Media Links')
+                                            ->columns(2)
+                                            ->schema([
+                                                Forms\Components\TextInput::make('facebook_link')->url(),
+                                                Forms\Components\TextInput::make('instagram_link')->url(),
+                                                Forms\Components\TextInput::make('twitter_link')->url(),
+                                                Forms\Components\TextInput::make('youtube_link')->url(),
+                                            ]),
+                                    ]),
+                            ])->columnSpanFull()
+                    ])
             ])
-            ->statePath('data'); // Connects the form schema to our $data array
+            ->statePath('data');
     }
 
-    // This runs when you click the Save button
     public function save(): void
     {
-        // Find the first setting record, or create a brand new one if it's the first time
-        $setting = Setting::first() ?? new Setting();
-        
-        // Fill it with the form data and save it
-        $setting->fill($this->form->getState());
-        $setting->save();
-
-        // Lock the form back up
+        $setting = Setting::getSiteSettings();
+        $setting->update($this->form->getState());
         $this->isEditing = false;
+        Notification::make()->success()->title('Settings Saved!')->send();
+    }
 
-        // Show a little green success pop-up
-        Notification::make()
-            ->success()
-            ->title('Settings Saved Successfully!')
-            ->send();
+    protected function getFormActions(): array
+    {
+        return [
+            Action::make('save')->label('Save Changes')->action('save')->visible(fn () => $this->isEditing),
+            Action::make('cancel')->label('Cancel')->color('gray')->action('cancelEditing')->visible(fn () => $this->isEditing),
+            Action::make('edit')->label('Edit Settings')->action('enableEditing')->visible(fn () => ! $this->isEditing),
+        ];
     }
 }

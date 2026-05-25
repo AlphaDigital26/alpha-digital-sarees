@@ -18,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Filament\Navigation\NavigationGroup;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -28,7 +29,11 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-
+            ->sidebarWidth('15rem')
+            ->navigationGroups([
+                NavigationGroup::make('Orders')
+                    ->icon('heroicon-o-shopping-bag'), // No sort() method needed here!
+            ])
             // Brand Color
             ->colors([
                 'primary' => '#7c061a',
