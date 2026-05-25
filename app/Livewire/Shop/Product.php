@@ -61,13 +61,8 @@ class Product extends Component
         // 3. Save back to session
         session()->put('cart', $cart);
 
-        // 4. Show success message (Optional: You can trigger a SweetAlert or Toast here)
-        session()->put('cart', $cart);
-        session()->flash('success', 'Added to your bag!');
-        $this->redirect(request()->header('Referer'), navigate: true); // Add this line instead of redirecting to the cart page
-        
-        // 5. Redirect to cart automatically (Optional, but good UX for luxury brands)
-        return redirect('/cart');
+        // 5. Update cart counter (if navbar is listening) and trigger toast
+        $this->dispatch('cart-updated');
     }
 
         // Handles the "Add to Wishlist" button

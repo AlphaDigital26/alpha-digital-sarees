@@ -62,3 +62,9 @@ Route::post('/customer/logout', function () {
     session()->regenerateToken();
     return redirect()->route('home');
 })->name('customer.logout');
+
+// --- POLICY PAGES ---
+Route::view('/privacy-policy', 'pages.privacy')->name('policy.privacy');
+Route::view('/terms-of-service', 'pages.terms')->name('policy.terms');
+Route::view('/shipping-returns', 'pages.shipping')->name('policy.shipping');
+Route::view('/faqs', 'pages.faqs')->name('policy.faqs');

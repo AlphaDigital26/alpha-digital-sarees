@@ -49,6 +49,8 @@
                 <a href="{{ $settings->shop_all_link ?? route('shop.index') }}">All Sarees</a>
                 <a href="#">Best Sellers</a>
                 <a href="{{ route('shop.new-arrival') }}">New Arrivals</a>
+                <a href="#">Fabrics</a>
+                <a href="#">Ocassion</a>
             </div>
 
             <div class="footer-links">

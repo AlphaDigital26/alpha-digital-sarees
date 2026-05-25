@@ -10,6 +10,9 @@ class AccountDetails extends Component
     public $last_name;
     public $email;
     public $dob;
+    public $phone;
+    public $gender;
+    public $isEditing = false;
     
     public $change_password = false;
     public $current_password;
@@ -23,6 +26,13 @@ class AccountDetails extends Component
         $this->last_name = $customer->last_name;
         $this->email = $customer->email;
         $this->dob = $customer->dob;
+        $this->phone = $customer->phone;
+        $this->gender = $customer->gender;
+    }
+
+    public function toggleEdit()
+    {
+        $this->isEditing = !$this->isEditing;
     }
 
     public function updateProfile()
@@ -31,6 +41,8 @@ class AccountDetails extends Component
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'email' => 'required|email|unique:customers,email,' . auth('customer')->id(),
+            'phone' => 'nullable|numeric|digits:10|unique:customers,phone,' . auth('customer')->id(),
+            'gender' => 'nullable|in:male,female,other',
             'dob' => 'nullable|date',
         ];
 
@@ -56,6 +68,8 @@ class AccountDetails extends Component
             'last_name' => $this->last_name,
             'name' => trim($this->first_name . ' ' . $this->last_name),
             'email' => $this->email,
+            'phone' => $this->phone,
+            'gender' => $this->gender,
             'dob' => $this->dob,
         ]);
 
@@ -63,6 +77,7 @@ class AccountDetails extends Component
         $this->current_password = null;
         $this->new_password = null;
         $this->new_password_confirmation = null;
+        $this->isEditing = false; // Switch back to view mode
 
         session()->flash('success', 'Account details updated successfully.');
     }

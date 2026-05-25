@@ -1,14 +1,36 @@
 <div class="bg-surface_lowest border border-outline_variant/50 rounded-sm p-8 font-sans">
-    <div class="mb-8">
+    <div class="mb-8 flex justify-between items-center">
         <h1 class="text-2xl font-bold text-secondary m-0 font-serif">Account Details</h1>
+        @if(!$isEditing)
+            <button wire:click="toggleEdit" class="border border-[#800020] text-[#800020] px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-[#800020] hover:text-white transition-colors cursor-pointer rounded-sm bg-transparent flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/></svg>
+                Edit Information
+            </button>
+        @else
+            <button wire:click="toggleEdit" class="border border-gray-300 text-gray-600 px-6 py-2.5 text-xs font-bold uppercase tracking-widest hover:bg-gray-100 hover:text-gray-900 transition-colors cursor-pointer rounded-sm bg-transparent">
+                Cancel
+            </button>
+        @endif
     </div>
 
     @if (session()->has('success'))
-        <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-sm">
+        <div x-data="{ show: true }"
+             x-show="show"
+             x-init="setTimeout(() => show = false, 3000)"
+             x-transition:enter="transition ease-out duration-300"
+             x-transition:enter-start="opacity-0 translate-x-4"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-x-0"
+             x-transition:leave-end="opacity-0 translate-x-4"
+             class="fixed top-24 right-8 z-[9999] bg-[#800020] text-white px-6 py-3 rounded-md shadow-2xl flex items-center gap-3 font-sans text-sm tracking-wide"
+        >
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
             {{ session('success') }}
         </div>
     @endif
 
+    @if($isEditing)
     <form wire:submit.prevent="updateProfile" class="space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
@@ -24,10 +46,18 @@
             </div>
         </div>
 
-        <div>
-            <label class="block text-sm font-bold text-on_surface/80 mb-2">Email</label>
-            <input type="email" wire:model="email" class="w-full border border-outline_variant/70 rounded-sm h-[48px] px-4 text-sm focus:border-primary outline-none transition-colors">
-            @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+                <label class="block text-sm font-bold text-on_surface/80 mb-2">Email</label>
+                <input type="email" wire:model="email" class="w-full border border-outline_variant/70 rounded-sm h-[48px] px-4 text-sm focus:border-primary outline-none transition-colors">
+                @error('email') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+            </div>
+
+            <div>
+                <label class="block text-sm font-bold text-on_surface/80 mb-2">Phone Number</label>
+                <input type="text" wire:model="phone" class="w-full border border-outline_variant/70 rounded-sm h-[48px] px-4 text-sm focus:border-primary outline-none transition-colors">
+                @error('phone') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+            </div>
         </div>
 
         <div>
@@ -77,14 +107,20 @@
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-6 border-t border-outline_variant/50">
             <div>
-                <div class="flex items-center gap-3 mb-2">
-                    <div class="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-primary">
-                        <i data-lucide="cake" class="w-5 h-5"></i>
-                    </div>
-                    <label class="block text-sm font-bold text-on_surface/80 uppercase tracking-wide">Birthday</label>
-                </div>
+                <label class="block text-sm font-bold text-on_surface/80 mb-2">Birthday</label>
                 <input type="date" wire:model="dob" class="w-full border border-outline_variant/70 rounded-sm h-[48px] px-4 text-sm focus:border-primary outline-none transition-colors text-on_surface">
                 @error('dob') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+            </div>
+            
+            <div>
+                <label class="block text-sm font-bold text-on_surface/80 mb-2">Gender</label>
+                <select wire:model="gender" class="w-full border border-outline_variant/70 rounded-sm h-[48px] px-4 text-sm focus:border-primary outline-none transition-colors text-on_surface bg-white">
+                    <option value="">Select Gender</option>
+                    <option value="female">Female</option>
+                    <option value="male">Male</option>
+                    <option value="other">Other</option>
+                </select>
+                @error('gender') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
             </div>
         </div>
 
@@ -94,4 +130,34 @@
             </button>
         </div>
     </form>
+    @else
+    <div class="space-y-6 text-on_surface">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="p-4 bg-surface rounded-sm border border-outline_variant/50">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">First Name</span>
+                <span class="text-[15px]">{{ $first_name ?: '-' }}</span>
+            </div>
+            <div class="p-4 bg-surface rounded-sm border border-outline_variant/50">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Last Name</span>
+                <span class="text-[15px]">{{ $last_name ?: '-' }}</span>
+            </div>
+            <div class="p-4 bg-surface rounded-sm border border-outline_variant/50">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Email Address</span>
+                <span class="text-[15px]">{{ $email ?: '-' }}</span>
+            </div>
+            <div class="p-4 bg-surface rounded-sm border border-outline_variant/50">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Phone Number</span>
+                <span class="text-[15px]">{{ $phone ?: '-' }}</span>
+            </div>
+            <div class="p-4 bg-surface rounded-sm border border-outline_variant/50">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Date of Birth</span>
+                <span class="text-[15px]">{{ $dob ? \Carbon\Carbon::parse($dob)->format('d M, Y') : '-' }}</span>
+            </div>
+            <div class="p-4 bg-surface rounded-sm border border-outline_variant/50">
+                <span class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Gender</span>
+                <span class="text-[15px] capitalize">{{ $gender ?: '-' }}</span>
+            </div>
+        </div>
+    </div>
+    @endif
 </div>
