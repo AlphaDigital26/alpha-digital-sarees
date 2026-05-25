@@ -54,6 +54,13 @@
             </div>
 
             <div class="footer-links">
+                <h4>USER POLICY</h4>
+                <a href="#">Privacy Policy</a>
+                <a href="#">Terms of Service</a>
+                <a href="#">Shipping & Returns</a>
+            </div>
+
+            <div class="footer-links">
                 <h4>COMPANY</h4>
                 <a href="#">Our Story</a>
                 <a href="#">Artisans</a>
@@ -75,14 +82,8 @@
 
         </div>
 
-        <div class="footer-bottom">
-            <p>&copy; {{ date('Y') }} {{ $settings->footer_copyright_company ?? 'ALPHA DIGITAL PVT. LTD.' }}</p>
-            <div class="footer-legal">
-                <a href="#">Track Order</a>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Shipping & Returns</a>
-            </div>
+        <div class="footer-bottom mt-6 pt-6 pb-4 flex justify-center w-full">
+            <p class="text-center m-0">&copy; {{ date('Y') }} {{ $settings->footer_copyright_company ?? 'ALPHA DIGITAL PVT. LTD.' }}</p>
         </div>
     </div>
 </footer>

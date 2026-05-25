@@ -63,6 +63,7 @@
             </a>
             
             @auth('customer')
+<<<<<<< HEAD
                 <div class="relative group cursor-pointer z-50">
                     
                     <div class="flex items-center gap-2 text-gray-800 group-hover:text-[#800020] transition py-2">
@@ -78,6 +79,28 @@
                             <hr class="my-1 border-gray-100">
                             
                             <form method="POST" action="{{ route('customer.logout') }}" class="m-0">
+=======
+                <div class="relative" x-data="{ open: false }">
+                    <button @click="open = !open" @click.outside="open = false" title="My Account" class="bg-transparent border-none cursor-pointer p-0 m-0 outline-none">
+                        <i data-lucide="user-check" class="text-[#800020]"></i>
+                    </button>
+
+                    <div x-show="open" x-cloak style="display: none;" class="absolute right-0 mt-6 w-56 bg-white border border-[#E5E0DA] shadow-xl rounded-sm py-2 z-50 text-left">
+                        <div class="px-5 py-3 border-b border-[#E5E0DA] mb-2 bg-[#fbf9f5]">
+                            <p class="text-xs font-medium text-gray-500 uppercase tracking-widest" style="font-family: 'Manrope', sans-serif;">Welcome,</p>
+                            <p class="text-base font-bold text-[#1b1c1a] truncate mt-1" style="font-family: 'Noto Serif', serif;">
+                                {{ strtoupper(auth('customer')->user()->name ?? 'USER') }}!
+                            </p>
+                        </div>
+                        <a href="{{ route('profile.account') }}" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
+                            <i data-lucide="user" style="width: 16px; height: 16px;"></i> My Profile
+                        </a>
+                        <a href="{{ route('profile.orders') }}" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
+                            <i data-lucide="package" style="width: 16px; height: 16px;"></i> Order History
+                        </a>
+                        <div class="border-t border-[#E5E0DA] mt-2 pt-2">
+                            <form method="POST" action="{{ route('customer.logout') }}" class="m-0 p-0">
+>>>>>>> 45897e8b992d3f1c676b458512fa4daea02430be
                                 @csrf
                                 <button type="submit" class="w-full text-left px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-[#800020] hover:bg-gray-50 transition-colors border-none bg-transparent cursor-pointer">
                                     Log Out
