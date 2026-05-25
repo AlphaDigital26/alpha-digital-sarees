@@ -9,49 +9,63 @@ use Illuminate\Support\Facades\Auth;
 class LoginPopup extends Component
 {
     public $step = 1;
-    public $countryCode = '+91';
-    public $phone = '';
-    public $otp = '';
+    public $email = '';
+    public $password = '';
+    public $password_confirmation = '';
+    public $remember = false;
+    public $redirectUrl = '/';
     
     public $first_name = '';
     public $last_name = '';
-    public $email = '';
+    public $phone = '';
     public $dob = '';
     public $gender = '';
     public $subscribe = false;
     public $agree_tos = false;
 
-    public function sendOtp()
+    public function checkEmail()
     {
         $this->validate([
-            'phone' => 'required|numeric|digits:10',
+            'email' => 'required|email',
         ]);
 
-        $generatedOtp = rand(1000, 9999);
-        session()->put('login_otp_' . $this->phone, $generatedOtp);
-        session()->flash('test_otp', "TEST MODE OTP: " . $generatedOtp);
+        $customer = Customer::where('email', $this->email)->first();
 
-        $this->step = 2;
+        if ($customer) {
+            $this->step = 2; // Sign in
+        } else {
+            $this->step = 3; // Register
+        }
     }
 
-    public function verifyOtp()
+    public function authenticate()
     {
-        $this->validate(['otp' => 'required|numeric|digits:4']);
+        $this->validate([
+            'password' => 'required',
+        ]);
 
-        $savedOtp = session()->get('login_otp_' . $this->phone);
-
-        if ($this->otp == $savedOtp) {
-            $customer = Customer::where('phone', $this->phone)->first();
-
-            if ($customer && $customer->first_name) {
-                Auth::guard('customer')->login($customer);
-                $this->processPendingWishlist();
-                $this->step = 4;
-            } else {
-                $this->step = 3;
-            }
+        if (Auth::guard('customer')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+            $this->redirectUrl = session()->pull('url.intended', request()->header('Referer') ?? '/');
+            session()->regenerate();
+            $this->processPendingWishlist();
+            $this->step = 4;
         } else {
-            $this->addError('otp', 'Invalid OTP. Please try again.');
+            $this->addError('password', 'Incorrect password. Please try again.');
+        }
+    }
+
+    public function sendResetLink()
+    {
+        $this->validate(['email' => 'required|email']);
+        
+        $status = \Illuminate\Support\Facades\Password::broker('customers')->sendResetLink(
+            ['email' => $this->email]
+        );
+
+        if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
+            $this->step = 6; 
+        } else {
+            $this->addError('email', __($status));
         }
     }
 
@@ -60,38 +74,32 @@ class LoginPopup extends Component
         $this->validate([
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
-            'email' => 'required|email|unique:customers,email',
+            'phone' => 'required|numeric|digits:10|unique:customers,phone',
+            'password' => 'required|string|min:6|confirmed',
             'dob' => 'required|date',
             'gender' => 'required|string',
             'agree_tos' => 'accepted', 
         ]);
 
-        $customer = Customer::updateOrCreate(
-            ['phone' => $this->phone],
-            [
-                'name' => trim($this->first_name . ' ' . $this->last_name), 
-                'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
-                'email' => $this->email,
-                'dob' => $this->dob,
-                'gender' => $this->gender,
-                'is_subscribed' => $this->subscribe ? true : false,
-                'agreed_to_tos' => true,
-            ]
-        );
+        $customer = Customer::create([
+            'name' => trim($this->first_name . ' ' . $this->last_name), 
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'email' => $this->email,
+            'phone' => $this->phone,
+            'password' => \Illuminate\Support\Facades\Hash::make($this->password),
+            'dob' => $this->dob,
+            'gender' => $this->gender,
+            'is_subscribed' => $this->subscribe ? true : false,
+            'agreed_to_tos' => true,
+        ]);
 
-        Auth::guard('customer')->login($customer);
-        session()->forget('login_otp_' . $this->phone);
+        Auth::guard('customer')->login($customer, $this->remember);
+        $this->redirectUrl = session()->pull('url.intended', request()->header('Referer') ?? '/');
+        session()->regenerate();
         $this->processPendingWishlist();
 
         $this->step = 4;
-    }
-
-    public function closePopup()
-    {
-        $this->dispatch('close-login-modal');
-        $url = session()->pull('url.intended', request()->header('Referer') ?? '/');
-        return redirect($url); 
     }
 
     private function processPendingWishlist()

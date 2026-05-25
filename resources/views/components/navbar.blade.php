@@ -75,10 +75,10 @@
                                 {{ strtoupper(auth('customer')->user()->name ?? 'USER') }}!
                             </p>
                         </div>
-                        <a href="#" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
-                            <i data-lucide="user" style="width: 16px; height: 16px;"></i> Account Details
+                        <a href="{{ route('profile.account') }}" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
+                            <i data-lucide="user" style="width: 16px; height: 16px;"></i> My Profile
                         </a>
-                        <a href="#" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
+                        <a href="{{ route('profile.orders') }}" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
                             <i data-lucide="package" style="width: 16px; height: 16px;"></i> Order History
                         </a>
                         <div class="border-t border-[#E5E0DA] mt-2 pt-2">
