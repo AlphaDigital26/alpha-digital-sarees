@@ -38,13 +38,22 @@ Route::get('/occasion', Occasion::class)->name('shop.occasion');
 Route::get('/about', About::class)->name('shop.about');
 
 // --- CART PAGE ---
-Route::get('/cart', Cart::class)->name('cart'); 
+Route::get('/cart', Cart::class)->name('cart');
+
+Route::get('/password/reset/{token}', \App\Livewire\Auth\ResetPassword::class)->name('password.reset'); 
 
 // --- WISHLIST PAGE ---
 Route::get('/wishlist', Wishlist::class)->name('wishlist');
 
 // --- SINGLE PRODUCT PAGE ---
 Route::get('/product/{id}', ProductComponent::class)->name('shop.product');
+
+// --- PROFILE PAGES ---
+Route::middleware('auth:customer')->group(function () {
+    Route::get('/profile', App\Livewire\Profile\AccountDetails::class)->name('profile.account');
+    Route::get('/profile/orders', App\Livewire\Profile\OrderHistory::class)->name('profile.orders');
+    Route::get('/profile/addresses', App\Livewire\Profile\Addresses::class)->name('profile.addresses');
+});
 
 // --- CUSTOMER LOGOUT ROUTE ---
 Route::post('/customer/logout', function () {
