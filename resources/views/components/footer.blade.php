@@ -60,7 +60,7 @@
 
         </div>
 
-        <div class="footer-bottom mt-6 pt-6 pb-4 flex justify-center w-full">
+        <div class="footer-bottom flex justify-center w-full">
             <p class="text-center m-0">&copy; {{ date('Y') }} {{ $settings->footer_copyright_company ?? 'ALPHA DIGITAL PVT. LTD.' }}</p>
         </div>
     </div>

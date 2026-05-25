@@ -281,7 +281,7 @@
 
   /* Main Footer */
   .main-footer {
-    @apply relative bg-secondary text-neutral pt-24 px-[5%] pb-12 overflow-hidden bg-cover bg-bottom bg-no-repeat;
+    @apply relative bg-secondary text-neutral pt-24 px-[5%] pb-4 overflow-hidden bg-cover bg-bottom bg-no-repeat;
     background-image: linear-gradient(rgba(42, 33, 31, 0.92), rgba(42, 33, 31, 0.95)), url('/images/footer-bg.jpg');
   }
   
@@ -290,7 +290,7 @@
   }
   
   .footer-grid {
-    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.5fr_0.8fr_0.8fr_1.2fr] gap-12 lg:gap-16 pb-16 border-b border-neutral/10;
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-[1.5fr_0.6fr_0.6fr_0.6fr_1.2fr] gap-12 lg:gap-10 pb-16 border-b border-neutral/10;
   }
   
   .footer-brand .logo {
@@ -338,7 +338,7 @@
   }
   
   .footer-bottom {
-    @apply pt-8 flex flex-col md:flex-row gap-6 md:justify-between text-[0.75rem] opacity-50 text-center md:text-left;
+    @apply pt-4 flex flex-col md:flex-row gap-6 md:justify-between text-[0.75rem] opacity-50 text-center md:text-left;
   }
   
   .footer-legal a {
