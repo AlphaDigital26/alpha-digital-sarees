@@ -138,7 +138,8 @@
                 <div class="fab-sidebar">
                     
                     @if(isset($featuredFabrics[1]))
-                        <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[1]->image) }}');">
+                        @php $fab1Url = asset('storage/' . $featuredFabrics[1]->image); @endphp
+                        <div class="fab-img" style="background-image: url('{{ $fab1Url }}');">
                             <button class="label">{{ strtoupper($featuredFabrics[1]->name) }}</button>
                         </div>
                     @endif
@@ -246,50 +247,11 @@
                                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
                             </a>
                         @endif
-                        
-                        </div>
+                    </div>
                 </div>
 
-                <div class="contact-form-card">
-                    <form>
-                        <div class="input-group">
-                            <label>Full Name</label>
-                            <input type="text" placeholder="Enter your full name">
-                        </div>
-
-                        <div class="form-row">
-                            <div class="input-group">
-                                <label>Email Address</label>
-                                <input type="email" placeholder="example@domain.com">
-                            </div>
-                            <div class="input-group">
-                                <label>Phone Number</label>
-                                <input type="text" placeholder="+91 00000 00000">
-                            </div>
-                        </div>
-
-                        <div class="input-group">
-                            <label>Reason for Inquiry</label>
-                            <select>
-                                <option value="" disabled selected>Select an option</option>
-                                <option>Personal Consultation</option>
-                                <option>Order Status & Tracking</option>
-                                <option>Bulk / Wedding Inquiry</option>
-                                <option>Collaborations</option>
-                            </select>
-                        </div>
-
-                        <div class="input-group">
-                            <label>How can we help?</label>
-                            <textarea placeholder="Write your message here..."></textarea>
-                        </div>
-
-                        <button type="submit" class="btn-submit">
-                            SEND INQUIRY 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                        </button>
-                    </form>
-                </div>
+<!-- Contact Form Livewire Component -->
+                <livewire:contact-form />
 
             </div>
         </div>

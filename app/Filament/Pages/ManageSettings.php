@@ -13,7 +13,7 @@ use Filament\Notifications\Notification;
 class ManageSettings extends Page implements HasForms
 {
     use InteractsWithForms;
-
+    protected static ?int $navigationSort = 7;
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static ?string $navigationLabel = 'Site Settings';
     protected static ?string $title = 'Global Website Settings';
@@ -104,21 +104,30 @@ class ManageSettings extends Page implements HasForms
                                         Forms\Components\Textarea::make('contact_address')
                                             ->label('Showroom Address')
                                             ->columnSpanFull(),
-                                            
-                                        Forms\Components\TextInput::make('facebook_link')
-                                            ->url()->label('Facebook URL'),
-                                        Forms\Components\TextInput::make('instagram_link')
-                                            ->url()->label('Instagram URL'),
                                     ])->columns(2),
 
                                 // FOOTER TAB
                                 Forms\Components\Tabs\Tab::make('Footer')
-                                    ->icon('heroicon-o-document-text')
+                                    ->icon('heroicon-o-bars-3-bottom-left')
                                     ->schema([
-                                        // NEW: Footer Brand Heading
+                                        // Footer Images Grid
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                Forms\Components\FileUpload::make('footer_image')
+                                                    ->label('Footer Logo / Image')
+                                                    ->image()
+                                                    ->directory('site-settings'),
+
+                                                Forms\Components\FileUpload::make('footer_background_image')
+                                                    ->label('Footer Background Image')
+                                                    ->image()
+                                                    ->directory('site-settings'),
+                                            ]),
+
+                                        // Footer Text & Branding
                                         Forms\Components\TextInput::make('footer_brand_heading')
                                             ->label('Footer Brand Heading')
-                                            ->placeholder('e.g., ALMAARI'),
+                                            ->placeholder('e.g., ALMA as you wanted!ARI'),
                                             
                                         Forms\Components\Textarea::make('footer_text')
                                             ->label('Brand Description (Under Heading)')
@@ -130,6 +139,30 @@ class ManageSettings extends Page implements HasForms
                                         Forms\Components\TextInput::make('footer_copyright_company')
                                             ->label('Copyright Company Name')
                                             ->placeholder('e.g., ALPHA DIGITAL PVT. LTD.'),
+
+                                        // Footer Social Links Grid
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                Forms\Components\TextInput::make('facebook_link')
+                                                    ->label('Facebook URL')
+                                                    ->url()
+                                                    ->prefixIcon('heroicon-o-link'),
+
+                                                Forms\Components\TextInput::make('instagram_link')
+                                                    ->label('Instagram URL')
+                                                    ->url()
+                                                    ->prefixIcon('heroicon-o-link'),
+
+                                                Forms\Components\TextInput::make('twitter_link')
+                                                    ->label('Twitter / X URL')
+                                                    ->url()
+                                                    ->prefixIcon('heroicon-o-link'),
+
+                                                Forms\Components\TextInput::make('youtube_link')
+                                                    ->label('YouTube URL')
+                                                    ->url()
+                                                    ->prefixIcon('heroicon-o-link'),
+                                            ]),
                                     ])->columns(1),
                             ])->columnSpanFull(),
                     ])->columnSpanFull()

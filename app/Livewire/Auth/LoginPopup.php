@@ -5,6 +5,7 @@ namespace App\Livewire\Auth;
 use Livewire\Component;
 use App\Models\Customer;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 
 class LoginPopup extends Component
 {
@@ -26,6 +27,13 @@ class LoginPopup extends Component
         $this->validate([
             'phone' => 'required|numeric|digits:10',
         ]);
+
+        // Block suspended users immediately
+        $customer = Customer::where('phone', $this->phone)->first();
+        if ($customer && !$customer->is_active) {
+            $this->addError('phone', 'This account has been suspended. Please contact support.');
+            return;
+        }
 
         $generatedOtp = rand(1000, 9999);
         session()->put('login_otp_' . $this->phone, $generatedOtp);
@@ -77,6 +85,7 @@ class LoginPopup extends Component
                 'gender' => $this->gender,
                 'is_subscribed' => $this->subscribe ? true : false,
                 'agreed_to_tos' => true,
+                'is_active' => true, // Ensures new customers are strictly active upon creation
             ]
         );
 

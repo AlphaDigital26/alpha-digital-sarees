@@ -37,5 +37,7 @@
             lucide.createIcons();
         });
     </script>
+
+    <livewire:auth.login-popup />
 </body>
 </html>

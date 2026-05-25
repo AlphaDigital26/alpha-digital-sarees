@@ -63,37 +63,33 @@
             </a>
             
             @auth('customer')
-                <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" @click.outside="open = false" title="My Account" class="bg-transparent border-none cursor-pointer p-0 m-0 outline-none">
-                        <i data-lucide="user-check" class="text-[#800020]"></i>
-                    </button>
-
-                    <div x-show="open" x-cloak style="display: none;" class="absolute right-0 mt-6 w-56 bg-white border border-[#E5E0DA] shadow-xl rounded-sm py-2 z-50 text-left">
-                        <div class="px-5 py-3 border-b border-[#E5E0DA] mb-2 bg-[#fbf9f5]">
-                            <p class="text-xs font-medium text-gray-500 uppercase tracking-widest" style="font-family: 'Manrope', sans-serif;">Welcome,</p>
-                            <p class="text-base font-bold text-[#1b1c1a] truncate mt-1" style="font-family: 'Noto Serif', serif;">
-                                {{ strtoupper(auth('customer')->user()->name ?? 'USER') }}!
-                            </p>
-                        </div>
-                        <a href="#" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
-                            <i data-lucide="user" style="width: 16px; height: 16px;"></i> Account Details
-                        </a>
-                        <a href="#" class="flex items-center px-5 py-3 text-sm font-medium text-[#706663] hover:bg-[#F4F0EB] hover:text-[#800020] transition-colors gap-3" style="font-family: 'Manrope', sans-serif;">
-                            <i data-lucide="package" style="width: 16px; height: 16px;"></i> Order History
-                        </a>
-                        <div class="border-t border-[#E5E0DA] mt-2 pt-2">
-                            <form method="POST" action="{{ route('customer.logout') }}" class="m-0 p-0">
+                <div class="relative group cursor-pointer z-50">
+                    
+                    <div class="flex items-center gap-2 text-gray-800 group-hover:text-[#800020] transition py-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                        <span class="text-sm font-medium hidden md:block">Hi, {{ strtok(Auth::guard('customer')->user()->name, ' ') }}</span>
+                    </div>
+                    
+                    <div class="absolute right-0 top-full w-48 bg-white border border-gray-100 shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        <div class="py-2 flex flex-col">
+                            <a href="/my-account" class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-[#800020] hover:bg-gray-50 transition-colors">My Profile</a>
+                            <a href="/orders" class="px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-[#800020] hover:bg-gray-50 transition-colors">Order History</a>
+                            
+                            <hr class="my-1 border-gray-100">
+                            
+                            <form method="POST" action="{{ route('customer.logout') }}" class="m-0">
                                 @csrf
-                                <button type="submit" class="w-full flex items-center px-5 py-3 text-sm font-bold text-[#800020] hover:bg-[#F4F0EB] transition-colors gap-3 bg-transparent border-none cursor-pointer text-left outline-none" style="font-family: 'Manrope', sans-serif;">
-                                    Sign Out
+                                <button type="submit" class="w-full text-left px-5 py-2.5 text-sm font-medium text-gray-700 hover:text-[#800020] hover:bg-gray-50 transition-colors border-none bg-transparent cursor-pointer">
+                                    Log Out
                                 </button>
                             </form>
                         </div>
                     </div>
+                    
                 </div>
             @else
-                <button x-data @click="$dispatch('open-login-modal')" title="Login / Signup" class="bg-transparent border-none cursor-pointer p-0 m-0 outline-none hover:text-[#800020] transition-colors">
-                    <i data-lucide="user"></i>
+                <button x-data @click="$dispatch('open-login-modal')" class="bg-transparent border-none cursor-pointer text-gray-800 hover:text-[#800020] transition p-0 flex items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                 </button>
             @endauth
         </div>
