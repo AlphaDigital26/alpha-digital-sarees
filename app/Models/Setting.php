@@ -7,14 +7,12 @@ use Illuminate\Database\Eloquent\Model;
 class Setting extends Model
 {
     protected $fillable = [
-        'logo_type', 'logo_text', 'logo_image', 
-        'contact_email', 'contact_phone', 'contact_address', 
-        'footer_text', 'whatsapp_number', 
-        'facebook_link', 'instagram_link', 'twitter_link', 'youtube_link',
-        'footer_newsletter_text', 'footer_copyright_company', 'footer_brand_heading',
-        'footer_image', 'footer_background_image', 'footer_description' // Added background image here
+    'logo_type', 'logo_text', 'logo_image', 
+    'whatsapp_number', 'contact_email', 'contact_phone', 'contact_address',
+    'footer_brand_heading', 'footer_text', 'footer_newsletter_text', 
+    'footer_copyright_company', 'footer_background_image',
+    'facebook_link', 'instagram_link', 'twitter_link', 'youtube_link'
     ];
-
     public static function getSiteSettings()
     {
         return self::firstOrCreate(
