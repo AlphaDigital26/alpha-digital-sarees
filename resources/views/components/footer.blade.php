@@ -1,4 +1,4 @@
-<footer class="main-footer">
+<footer class="main-footer" style="background-image: linear-gradient(rgba(42, 33, 31, 0.92), rgba(42, 33, 31, 0.95)), url('{{ asset('images/footer-bg.jpg') }}');">
     <div class="footer-container">
         <div class="footer-grid">
 
@@ -29,13 +29,15 @@
                 <a href="#">Best Sellers</a>
                 <a href="{{ route('shop.new-arrival') }}">New Arrivals</a>
                 <a href="#">Fabrics</a>
+                <a href="#">Ocassion</a>
             </div>
 
             <div class="footer-links">
                 <h4>USER POLICY</h4>
-                <a href="#">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Shipping & Returns</a>
+                <a href="{{ route('policy.privacy') }}">Privacy Policy</a>
+                <a href="{{ route('policy.terms') }}">Terms of Service</a>
+                <a href="{{ route('policy.shipping') }}">Shipping & Returns</a>
+                <a href="{{ route('policy.faqs') }}">FAQs</a>
             </div>
 
             <div class="footer-links">
@@ -43,7 +45,7 @@
                 <a href="#">Our Story</a>
                 <a href="#">Artisans</a>
                 <a href="#">Sustainability</a>
-                <a href="#">Contact Us</a>
+                <a href="{{ route('home') }}#contact">Contact Us</a>
             </div>
 
             <div class="footer-newsletter">

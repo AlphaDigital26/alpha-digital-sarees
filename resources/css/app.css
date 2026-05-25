@@ -282,7 +282,6 @@
   /* Main Footer */
   .main-footer {
     @apply relative bg-secondary text-neutral pt-24 px-[5%] pb-4 overflow-hidden bg-cover bg-bottom bg-no-repeat;
-    background-image: linear-gradient(rgba(42, 33, 31, 0.92), rgba(42, 33, 31, 0.95)), url('/images/footer-bg.jpg');
   }
   
   .footer-container {
