@@ -94,8 +94,6 @@
                         Proceed to Checkout
                     </button>
                     
-                    <x-toast-notification />
-                    
 
                     
                     <div class="text-center pt-6 border-t border-dashed border-[#E5E0DA]">

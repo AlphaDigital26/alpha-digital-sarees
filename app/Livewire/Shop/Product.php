@@ -63,7 +63,7 @@ class Product extends Component
 
         // 5. Update cart counter (if navbar is listening) and trigger toast
         $this->dispatch('cart-updated');
-        session()->flash('success', 'Item added to cart');
+        $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
     }
 
         // Handles the "Add to Wishlist" button
@@ -82,10 +82,10 @@ class Product extends Component
         
         if (in_array($productId, $wishlist)) {
             $wishlist = array_filter($wishlist, fn($id) => $id != $productId);
-            session()->flash('success', 'Removed from Wishlist');
+            $this->dispatch('toast', msg: 'Removed from Wishlist', type: 'success');
         } else {
             $wishlist[] = $productId;
-            session()->flash('success', 'Added to Wishlist!');
+            $this->dispatch('toast', msg: 'Added to Wishlist!', type: 'success');
         }
         
         session()->put('wishlist', $wishlist);

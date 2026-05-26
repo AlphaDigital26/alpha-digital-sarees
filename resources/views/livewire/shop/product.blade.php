@@ -1,17 +1,89 @@
 <main class="product-main">
     
-    {{-- Dynamic Wishlist/Cart Success Notification --}}
-    @if (session()->has('success'))
-        <div class="max-w-7xl mx-auto mb-4">
-            <div class="p-3 text-sm font-bold text-green-800 bg-green-50 border border-green-200 rounded-sm shadow-sm transition-all">
-                {{ session('success') }}
-            </div>
-        </div>
-    @endif
+    {{-- Removed upper inline notification, using toast instead --}}
 
     <div class="product-container">
 
-        <div class="product-gallery">
+        <div class="product-gallery" 
+             x-data="{ 
+                lightboxOpen: false, 
+                currentIndex: 0, 
+                isZoomed: false,
+                zoomOriginX: '50%',
+                zoomOriginY: '50%',
+                images: {{ json_encode(is_array($product->images) ? array_values(array_map(function($img) { return asset('storage/' . $img); }, $product->images)) : []) }},
+                openLightbox(imgUrl) {
+                    if (this.images.length === 0) return;
+                    let idx = this.images.indexOf(imgUrl);
+                    this.currentIndex = idx !== -1 ? idx : 0;
+                    this.isZoomed = false;
+                    this.lightboxOpen = true;
+                },
+                toggleLightboxZoom(e) {
+                    if (!this.isZoomed) {
+                        const rect = e.target.getBoundingClientRect();
+                        const x = e.clientX - rect.left;
+                        const y = e.clientY - rect.top;
+                        this.zoomOriginX = (x / rect.width * 100) + '%';
+                        this.zoomOriginY = (y / rect.height * 100) + '%';
+                        this.isZoomed = true;
+                    } else {
+                        this.isZoomed = false;
+                    }
+                },
+                next() {
+                    this.currentIndex = (this.currentIndex + 1) % this.images.length;
+                    this.isZoomed = false;
+                },
+                prev() {
+                    this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
+                    this.isZoomed = false;
+                }
+             }"
+             @keydown.escape.window="lightboxOpen = false"
+             @keydown.arrow-right.window="if(lightboxOpen) next()"
+             @keydown.arrow-left.window="if(lightboxOpen) prev()">
+
+             <!-- Lightbox Modal -->
+             <template x-teleport="body">
+                 <div x-show="lightboxOpen" style="display: none;" class="fixed inset-0 z-[2000] flex items-center justify-center bg-black bg-opacity-95 overflow-hidden" x-transition.opacity.duration.300ms>
+                     
+                     <!-- Prominent Close Button -->
+                     <button @click="lightboxOpen = false" class="absolute top-4 right-4 md:top-8 md:right-8 text-white hover:text-red-400 z-50 bg-black/60 hover:bg-black/80 p-2.5 md:p-3 rounded-full transition-colors border border-gray-600 shadow-lg">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                     </button>
+                     
+                     <!-- Previous Button -->
+                     <button @click.stop="prev()" class="absolute left-2 md:left-6 text-white hover:text-gray-300 z-40 bg-black/50 hover:bg-black/80 p-3 rounded-full transition-transform hover:scale-110" x-show="images.length > 1">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-10 md:w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                     </button>
+
+                     <!-- The Image container ensures perfect center with equal top/bottom padding -->
+                     <div class="w-full h-full flex items-center justify-center p-8 md:p-16" @click.self="lightboxOpen = false">
+                         <img :src="images[currentIndex]" 
+                              class="select-none transition-transform duration-300 max-w-full max-h-full object-contain shadow-2xl"
+                              :class="isZoomed ? 'cursor-zoom-out scale-[2.5]' : 'cursor-zoom-in scale-100'" 
+                              :style="isZoomed ? `transform-origin: ${zoomOriginX} ${zoomOriginY};` : 'transform-origin: center center;'"
+                              @click.stop="toggleLightboxZoom($event)">
+                     </div>
+
+                     <!-- Next Button -->
+                     <button @click.stop="next()" class="absolute right-2 md:right-6 text-white hover:text-gray-300 z-40 bg-black/50 hover:bg-black/80 p-3 rounded-full transition-transform hover:scale-110" x-show="images.length > 1">
+                         <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 md:h-10 md:w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                     </button>
+
+                     <!-- Progress Dots -->
+                     <div class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 px-5 py-3 bg-black/60 backdrop-blur-sm rounded-full z-40" x-show="images.length > 1">
+                         <template x-for="(img, index) in images" :key="index">
+                             <div @click.stop="currentIndex = index" 
+                                  class="w-2.5 h-2.5 rounded-full cursor-pointer transition-all"
+                                  :class="currentIndex === index ? 'bg-white scale-125 shadow-[0_0_8px_rgba(255,255,255,0.8)]' : 'bg-gray-500 hover:bg-gray-300'">
+                             </div>
+                         </template>
+                     </div>
+                 </div>
+             </template>
+
             <div class="thumbnails">
                 @if(is_array($product->images))
                     @foreach($product->images as $img)
@@ -25,18 +97,59 @@
                 @endif
             </div>
 
-            <div class="main-display relative">
+            <div class="main-display relative group cursor-crosshair" 
+                 x-data="{ 
+                     showZoom: false, 
+                     bgPosX: '0%', 
+                     bgPosY: '0%',
+                     updateZoom(e) {
+                         // Only enable hover zoom on desktop
+                         if (window.innerWidth < 1024) return;
+                         
+                         const rect = this.$refs.mainImage.getBoundingClientRect();
+                         const x = e.clientX - rect.left;
+                         const y = e.clientY - rect.top;
+                         
+                         // Calculate percentage
+                         const xPercent = Math.max(0, Math.min(100, (x / rect.width) * 100));
+                         const yPercent = Math.max(0, Math.min(100, (y / rect.height) * 100));
+                         
+                         this.bgPosX = xPercent + '%';
+                         this.bgPosY = yPercent + '%';
+                     }
+                 }"
+                 @mouseenter="if(window.innerWidth >= 1024) showZoom = true"
+                 @mouseleave="showZoom = false"
+                 @mousemove="updateZoom($event)"
+                 @click="openLightbox('{{ asset('storage/' . $activeImage) }}')">
+                 
+                <!-- Zoom Hint Overlay (Mobile) -->
+                <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center pointer-events-none z-10 lg:hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white drop-shadow-md" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" /></svg>
+                </div>
+                
                 @if($activeImage)
                     <img
+                        x-ref="mainImage"
                         src="{{ asset('storage/' . $activeImage) }}"
                         id="expandedImg"
                         wire:loading.class="opacity-50"
-                        class="transition-opacity duration-200"
+                        class="transition-opacity duration-200 w-full h-full object-cover"
                     >
+                    
+                    <!-- Amazon-style Zoom Pane (Hidden on mobile) -->
+                    <div x-show="showZoom" x-cloak
+                         x-transition.opacity.duration.200ms
+                         class="absolute top-0 left-full ml-4 w-[450px] xl:w-[550px] h-[550px] xl:h-[650px] bg-white border border-[#E5E0DA] shadow-2xl z-[150] hidden lg:block pointer-events-none"
+                         style="background-repeat: no-repeat; background-size: 250%;"
+                         :style="`background-image: url('{{ asset('storage/' . $activeImage) }}'); background-position: ${bgPosX} ${bgPosY};`">
+                    </div>
                 @else
                     <img
+                        x-ref="mainImage"
                         src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80"
                         id="expandedImg"
+                        class="w-full h-full object-cover"
                     >
                 @endif
             </div>
