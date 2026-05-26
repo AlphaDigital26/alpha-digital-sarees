@@ -11,6 +11,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Navigation\NavigationItem; 
 use Filament\Tables\Filters\SelectFilter; 
+use Illuminate\Database\Eloquent\Builder;
 
 class OrderResource extends Resource
 {
@@ -91,5 +92,14 @@ class OrderResource extends Resource
             'create' => Pages\CreateOrder::route('/create'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()
+            ->where(function (Builder $query) {
+                $query->whereNotIn('payment_status', ['pending', 'failed'])
+                      ->orWhereNull('payment_status');
+            });
     }
 }

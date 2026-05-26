@@ -52,6 +52,8 @@ Route::get('/product/{id}', ProductComponent::class)->name('shop.product');
 Route::middleware('auth:customer')->group(function () {
     Route::get('/profile', App\Livewire\Profile\AccountDetails::class)->name('profile.account');
     Route::get('/profile/orders', App\Livewire\Profile\OrderHistory::class)->name('profile.orders');
+    Route::get('/profile/orders/{id}', App\Livewire\Profile\OrderDetails::class)->name('profile.orders.details');
+    Route::get('/profile/orders/{id}/track', App\Livewire\Profile\TrackOrder::class)->name('profile.orders.track');
     Route::get('/profile/addresses', App\Livewire\Profile\Addresses::class)->name('profile.addresses');
 });
 
