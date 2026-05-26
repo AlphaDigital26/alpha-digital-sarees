@@ -55,16 +55,18 @@
 
             <div class="footer-links">
                 <h4>USER POLICY</h4>
-                <a href="{{ $settings->policy_privacy_link ?? '#' }}">Privacy Policy</a>
-                <a href="#">Terms of Service</a>
-                <a href="#">Shipping & Returns</a>
+                <a href="{{ route('policy.privacy') }}">Privacy Policy</a>
+                <a href="{{ route('policy.terms') }}">Terms of Service</a>
+                <a href="{{ route('policy.shipping') }}">Shipping & Returns</a>
+                <a href="{{ route('policy.faqs') }}">FAQs</a>
             </div>
 
             <div class="footer-links">
                 <h4>COMPANY</h4>
-                <a href="{{ $settings->company_story_link ?? '#' }}">Our Story</a>
+                <a href="#">Our Story</a>
                 <a href="#">Artisans</a>
-                <a href="#">Contact Us</a>
+                <a href="#">Sustainability</a>
+                <a href="{{ route('home') }}#contact">Contact Us</a>
             </div>
 
             <div class="footer-newsletter">

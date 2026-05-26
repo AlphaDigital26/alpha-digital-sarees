@@ -21,6 +21,8 @@ class ManageStory extends Page implements HasForms
 
     public ?array $data = [];
 
+    public bool $isEditing = false;
+
     public function mount(): void {
         $this->form->fill(Story::firstOrCreate(['id' => 1])->toArray());
     }
@@ -28,37 +30,62 @@ class ManageStory extends Page implements HasForms
     public function form(Form $form): Form
     {
         return $form->schema([
-            Forms\Components\Section::make('Main Hero')->schema([
-                Forms\Components\FileUpload::make('main_image')->directory('stories'),
-                Forms\Components\TextInput::make('main_heading'),
-                Forms\Components\Textarea::make('para_1'),
-            ]),
-            Forms\Components\Section::make('Craftsmanship')->schema([
-                Forms\Components\FileUpload::make('control_image_1')->directory('stories'),
-                Forms\Components\FileUpload::make('control_image_2')->directory('stories'),
-                Forms\Components\TextInput::make('heading_2'),
-                Forms\Components\Textarea::make('para_2'),
-            ]),
-            Forms\Components\Section::make('Journey & Content')->schema([
-                Forms\Components\TextInput::make('heading_3'),
-                Forms\Components\RichEditor::make('text_3'),
-                Forms\Components\FileUpload::make('control_image_3')->directory('stories'),
-                Forms\Components\Grid::make(4)->schema([
-                    Forms\Components\FileUpload::make('journey_img_1'),
-                    Forms\Components\FileUpload::make('journey_img_2'),
-                    Forms\Components\FileUpload::make('journey_img_3'),
-                    Forms\Components\FileUpload::make('journey_img_4'),
-                ])
-            ]),
+            Forms\Components\Group::make()->schema([
+                Forms\Components\Section::make('Main Hero')->schema([
+                    Forms\Components\FileUpload::make('main_image')->directory('stories'),
+                    Forms\Components\TextInput::make('main_heading'),
+                    Forms\Components\Textarea::make('para_1'),
+                ]),
+                Forms\Components\Section::make('Craftsmanship')->schema([
+                    Forms\Components\FileUpload::make('control_image_1')->directory('stories'),
+                    Forms\Components\FileUpload::make('control_image_2')->directory('stories'),
+                    Forms\Components\TextInput::make('heading_2'),
+                    Forms\Components\Textarea::make('para_2'),
+                ]),
+                Forms\Components\Section::make('Journey & Content')->schema([
+                    Forms\Components\TextInput::make('heading_3'),
+                    Forms\Components\RichEditor::make('text_3'),
+                    Forms\Components\FileUpload::make('control_image_3')->directory('stories'),
+                    Forms\Components\Grid::make(4)->schema([
+                        Forms\Components\FileUpload::make('journey_img_1'),
+                        Forms\Components\FileUpload::make('journey_img_2'),
+                        Forms\Components\FileUpload::make('journey_img_3'),
+                        Forms\Components\FileUpload::make('journey_img_4'),
+                    ])
+                ]),
+            ])->disabled(fn () => !$this->isEditing)
         ])->statePath('data');
     }
 
+    public function enableEditing(): void
+    {
+        $this->isEditing = true;
+    }
+
+    public function cancelEditing(): void
+    {
+        $this->isEditing = false;
+        $this->form->fill(Story::firstOrCreate(['id' => 1])->toArray());
+    }
+
     public function save(): void {
+        if (!$this->isEditing) return;
+
         Story::updateOrCreate(['id' => 1], $this->form->getState());
+        $this->isEditing = false;
         Notification::make()->success()->title('Saved!')->send();
     }
 
     protected function getFormActions(): array {
-        return [Action::make('save')->label('Save Changes')->action('save')];
+        if ($this->isEditing) {
+            return [
+                Action::make('save')->label('Save Changes')->submit('save')->color('primary'),
+                Action::make('cancel')->label('Cancel')->action('cancelEditing')->color('gray'),
+            ];
+        }
+
+        return [
+            Action::make('edit')->label('Edit')->action('enableEditing')->color('primary'),
+        ];
     }
 }
