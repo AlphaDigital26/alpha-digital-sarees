@@ -60,6 +60,7 @@ class Cart extends Component
                 $cart[$productId]--;
             } else {
                 unset($cart[$productId]);
+                session()->flash('success', 'Item removed from cart');
             }
             session()->put('cart', $cart);
         }
@@ -71,6 +72,7 @@ class Cart extends Component
         if (isset($cart[$productId])) {
             unset($cart[$productId]);
             session()->put('cart', $cart);
+            session()->flash('success', 'Item removed from cart');
         }
     }
 

@@ -63,6 +63,7 @@ class Product extends Component
 
         // 5. Update cart counter (if navbar is listening) and trigger toast
         $this->dispatch('cart-updated');
+        session()->flash('success', 'Item added to cart');
     }
 
         // Handles the "Add to Wishlist" button

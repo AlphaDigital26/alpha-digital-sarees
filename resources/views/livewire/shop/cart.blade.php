@@ -33,7 +33,7 @@
                             </a>
                             
                             {{-- Product Details --}}
-                            <div class="flex flex-1 flex-col justify-center mt-2 sm:mt-0">
+                            <div class="flex flex-1 flex-col justify-center mt-2 sm:mt-0 pr-10 sm:pr-12">
                                 <a href="{{ route('shop.product', $product->id) }}" wire:navigate>
                                     <h3 class="text-xl font-bold mb-1 text-[#1b1c1a] hover:text-[#800020] transition-colors" style="font-family: 'Noto Serif', serif;">
                                         {{ $product->name }}
@@ -94,16 +94,9 @@
                         Proceed to Checkout
                     </button>
                     
-                    @if (session()->has('message'))
-                        <div class="p-3 bg-green-50 border border-green-200 text-green-700 rounded-sm text-center text-sm font-bold mb-4">
-                            {{ session('message') }}
-                        </div>
-                    @endif
-                    @if (session()->has('error'))
-                        <div class="p-3 bg-red-50 border border-red-200 text-red-700 rounded-sm text-center text-sm font-bold mb-4">
-                            {{ session('error') }}
-                        </div>
-                    @endif
+                    <x-toast-notification />
+                    
+
                     
                     <div class="text-center pt-6 border-t border-dashed border-[#E5E0DA]">
                         <p class="text-[0.65rem] uppercase tracking-[0.2em] font-bold text-[#A68A64]" style="font-family: 'Manrope', sans-serif;">

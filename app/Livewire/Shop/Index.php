@@ -29,7 +29,7 @@ class Index extends Component
     public $selectedPatterns = [];
     
     // Load More Property
-    public $amount = 6;
+    public $amount = 8;
     
     // Price & Sorting Filters from your UI
     public $priceRange = null;
@@ -40,19 +40,19 @@ class Index extends Component
     // Reset amount when any filter is clicked
     public function updated($propertyName)
     {
-        $this->amount = 6;
+        $this->amount = 8;
     }
     
     public function loadMore()
     {
-        $this->amount += 6;
+        $this->amount += 8;
     }
 
     public function resetFilters()
     {
         // Removed selectedOccasions from reset
         $this->reset(['selectedFabrics', 'selectedColors', 'selectedPatterns', 'priceRange', 'minPrice', 'maxPrice', 'search']);
-        $this->amount = 6;
+        $this->amount = 8;
     }
 
     // Paste this inside the Index class, right before public function render()

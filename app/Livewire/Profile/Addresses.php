@@ -60,12 +60,31 @@ class Addresses extends Component
         $this->showForm = true;
     }
 
-    public function deleteAddress($id)
+    public $showDeleteModal = false;
+    public $addressIdToDelete = null;
+
+    public function confirmDelete($id)
     {
-        $address = Address::where('customer_id', auth('customer')->id())->findOrFail($id);
-        $address->delete();
-        $this->loadAddresses();
-        session()->flash('success', 'Address deleted successfully.');
+        $this->addressIdToDelete = $id;
+        $this->showDeleteModal = true;
+    }
+
+    public function cancelDelete()
+    {
+        $this->showDeleteModal = false;
+        $this->addressIdToDelete = null;
+    }
+
+    public function deleteAddress()
+    {
+        if ($this->addressIdToDelete) {
+            $address = Address::where('customer_id', auth('customer')->id())->findOrFail($this->addressIdToDelete);
+            $address->delete();
+            $this->loadAddresses();
+            $this->showDeleteModal = false;
+            $this->addressIdToDelete = null;
+            session()->flash('success', 'Address deleted successfully.');
+        }
     }
 
     public function saveAddress()

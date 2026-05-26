@@ -16,11 +16,7 @@
             </div>
         </div>
 
-        @if (session()->has('message'))
-            <div class="p-4 bg-green-50 border border-green-200 text-green-800 rounded-sm text-center text-sm font-bold mb-8 shadow-sm">
-                {{ session('message') }}
-            </div>
-        @endif
+        <x-toast-notification />
 
         @if($this->wishlistItems->count() > 0)
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
