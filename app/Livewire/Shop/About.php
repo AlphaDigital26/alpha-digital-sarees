@@ -7,16 +7,13 @@ use App\Models\Story;
 
 class About extends Component
 {
-    public $story;
-
-    public function mount()
-    {
-        // Fetches the first story (or a blank one)
-        $this->story = Story::first() ?? new Story(['title' => 'Our Story', 'content' => 'Content coming soon...']);
-    }
-
     public function render()
     {
-        return view('livewire.shop.about');
+        // Always fetch the latest record from the database
+        $story = Story::find(1) ?? new Story();
+
+        return view('livewire.shop.about', [
+            'story' => $story
+        ]);
     }
 }
