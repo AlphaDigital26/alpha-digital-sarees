@@ -12,7 +12,7 @@
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
-            <div class="filter-content" x-show="open" x-collapse>
+            <div class="filter-content max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 @foreach($fabrics as $fabric)
                     <label>
                         <input type="checkbox" wire:model.live="selectedFabrics" value="{{ $fabric->id }}"> 
@@ -28,13 +28,26 @@
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
-            <div class="filter-content color-options" x-show="open" x-collapse>
+            <div class="filter-content flex flex-col gap-3 mt-4 max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 @foreach($colors as $color)
-                    <label style="cursor: pointer;">
-                        <input type="checkbox" wire:model.live="selectedColors" value="{{ $color->id }}" style="display: none;">
-                        <span class="color-circle" 
-                              style="background-color: {{ $color->hex_code ?? str_replace(' ', '', strtolower($color->name)) }}; {{ in_array($color->id, $selectedColors) ? 'border: 2px solid #000; transform: scale(1.1);' : '' }}" 
-                              title="{{ $color->name }}">
+                    <label class="flex items-center gap-3 cursor-pointer group">
+                        <input type="checkbox" wire:model.live="selectedColors" value="{{ $color->id }}" 
+                               class="w-[18px] h-[18px] rounded-sm border-gray-300 text-[#800020] focus:ring-[#800020] cursor-pointer transition-colors shadow-sm">
+                        
+                        @php
+                            $isMulti = strtolower($color->name) === 'multi' || strtolower($color->name) === 'multicolor';
+                            $hex = $color->hex_code ?? str_replace(' ', '', strtolower($color->name));
+                            $bgStyle = $isMulti 
+                                ? 'background: conic-gradient(#ff595e 0 90deg, #ffca3a 90deg 180deg, #8ac926 180deg 270deg, #1982c4 270deg 360deg);' 
+                                : 'background-color: ' . $hex . ';';
+                        @endphp
+                        
+                        <span class="w-5 h-5 rounded-full border border-gray-200 shadow-sm block transition-transform duration-300 group-hover:scale-110" 
+                              style="{{ $bgStyle }}">
+                        </span>
+                        
+                        <span class="text-[0.9rem] font-medium text-[#555] font-sans tracking-wide group-hover:text-[#1b1c1a] transition-colors" style="font-family: 'Manrope', sans-serif;">
+                            {{ $color->name }}
                         </span>
                     </label>
                 @endforeach
@@ -47,7 +60,7 @@
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
-            <div class="filter-content" x-show="open" x-collapse>
+            <div class="filter-content max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 <label><input type="radio" wire:model.live="priceRange" value="under_5k"> Under 5k</label>
                 <label><input type="radio" wire:model.live="priceRange" value="5k_10k"> 5k - 10k</label>
                 <label><input type="radio" wire:model.live="priceRange" value="10k_20k"> 10k - 20k</label>
@@ -64,11 +77,11 @@
 
         <div class="filter-group" x-data="{ open: true }">
             <h3 @click="open = !open">
-                PATTERN (Optional)
+                PATTERN
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
                 <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
-            <div class="filter-content" x-show="open" x-collapse>
+            <div class="filter-content max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 @foreach($patterns as $pattern)
                     <label>
                         <input type="checkbox" wire:model.live="selectedPatterns" value="{{ $pattern->id }}"> 
@@ -93,7 +106,7 @@
             </div>
         </div>
 
-        <div class="product-grid" wire:loading.class="opacity-50">
+        <div class="product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" wire:loading.class="opacity-50">
             @forelse($products as $product)
                 <div class="product-card">
                     <a href="{{ route('shop.product', $product->id) }}" class="block">

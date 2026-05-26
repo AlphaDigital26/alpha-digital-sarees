@@ -6,12 +6,9 @@
         <p class="description">Discover the latest masterpieces from our looms, where traditional artistry meets modern silhouettes.</p>
     </div>
 
-    {{-- Success Notification for Wishlist Actions --}}
-    @if (session()->has('success'))
-        <div style="background-color: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; padding: 12px; text-align: center; font-weight: bold; border-radius: 4px; margin-bottom: 2rem; font-size: 0.85rem;">
-            {{ session('success') }}
-        </div>
-    @endif
+    <x-toast-notification />
+
+
 
     <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 2.5rem; border-bottom: 1px solid #eaeaea; padding-bottom: 1rem; gap: 1rem;">
         
@@ -49,7 +46,7 @@
         </div>
     </div>
 
-    <div class="arrival-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 1.5rem;">
+    <div class="arrival-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         @forelse($products as $product)
             <div class="arrival-card" wire:key="product-{{ $product->id }}">
                 <a href="{{ route('shop.product', $product->id) }}" wire:navigate style="text-decoration: none; color: inherit; display: block; position: relative;">

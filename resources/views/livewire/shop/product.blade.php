@@ -1,13 +1,8 @@
 <main class="product-main">
     
-    {{-- Dynamic Wishlist/Cart Success Notification --}}
-    @if (session()->has('success'))
-        <div class="max-w-7xl mx-auto mb-4">
-            <div class="p-3 text-sm font-bold text-green-800 bg-green-50 border border-green-200 rounded-sm shadow-sm transition-all">
-                {{ session('success') }}
-            </div>
-        </div>
-    @endif
+    <x-toast-notification />
+    
+
 
     <div class="product-container">
 

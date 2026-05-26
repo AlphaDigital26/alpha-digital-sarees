@@ -17,17 +17,17 @@ class NewArrival extends Component
     public $selectedPattern = null;
 
     // Load More Property
-    public $amount = 3;
+    public $amount = 8;
     
     // Reset amount when any filter is clicked
     public function updated($propertyName)
     {
-        $this->amount = 3;
+        $this->amount = 8;
     }
     
     public function loadMore()
     {
-        $this->amount += 3;
+        $this->amount += 8;
     }
 
     // Added Wishlist Toggle Functionality

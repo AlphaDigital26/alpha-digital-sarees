@@ -30,19 +30,21 @@ class AdminPanelProvider extends PanelProvider
             ->path('admin')
             ->login()
             ->sidebarWidth('15rem')
+            ->sidebarCollapsibleOnDesktop()
             ->navigationGroups([
                 NavigationGroup::make('Orders')
                     ->icon('heroicon-o-shopping-bag'), // No sort() method needed here!
             ])
             // Brand Color
             ->colors([
-                'primary' => '#7c061a',
+                'primary' => '#800020',
             ])
 
             // Theme Settings
             ->darkMode(false)
             ->brandName('ALPHA DIGITAL')
-            ->font('Inter')
+            ->font('Manrope')
+            ->viteTheme('resources/css/filament/admin/theme.css')
 
             ->discoverResources(
                 in: app_path('Filament/Resources'),
@@ -90,66 +92,6 @@ class AdminPanelProvider extends PanelProvider
      */
     public function boot(): void
     {
-        FilamentView::registerRenderHook(
-            'panels::head.end',
-            fn (): string => Blade::render('
-                <style>
-                    /* Sidebar */
-                    .fi-sidebar {
-                        background-color: #1a1515 !important;
-                    }
-
-                    .fi-sidebar-header {
-                        background-color: #1a1515 !important;
-                        border-bottom: none !important;
-                    }
-
-                    /* Sidebar Text & Icons */
-                    .fi-sidebar-nav-label,
-                    .fi-sidebar-nav-item-icon {
-                        color: rgba(255,255,255,0.6) !important;
-                    }
-
-                    /* Active Sidebar Item */
-                    .fi-sidebar-nav-item-active {
-                        background-color: #7c061a !important;
-                        border-radius: 12px !important;
-                        margin: 0 12px !important;
-                    }
-
-                    .fi-sidebar-nav-item-active .fi-sidebar-nav-label,
-                    .fi-sidebar-nav-item-active .fi-sidebar-nav-item-icon {
-                        color: #fcfcfc !important;
-                        opacity: 1 !important;
-                    }
-
-                    /* Brand */
-                    .fi-brand {
-                        color: #fcfcfc !important;
-                        font-weight: 900 !important;
-                        letter-spacing: 2px !important;
-                        text-transform: uppercase !important;
-                    }
-
-                    /* Main Area */
-                    .fi-main {
-                        background-color: #fcfcfc !important;
-                    }
-
-                    .fi-topbar {
-                        display: none !important;
-                    }
-
-                    /* Form Inputs */
-                    input,
-                    textarea,
-                    select {
-                        background-color: #f8f8f8 !important;
-                        border: none !important;
-                        border-radius: 16px !important;
-                    }
-                </style>
-            '),
-        );
+        // Custom styling moved to resources/css/filament/admin/theme.css
     }
 }

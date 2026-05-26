@@ -8,11 +8,7 @@
         @endif
     </div>
 
-    @if (session()->has('success'))
-        <div class="mb-6 p-4 bg-green-50 border border-green-200 text-green-700 rounded-sm">
-            {{ session('success') }}
-        </div>
-    @endif
+    <x-toast-notification />
 
     @if($showForm)
         <div class="bg-surface_lowest border border-outline_variant/50 rounded-sm p-8 mb-8 shadow-sm">
@@ -108,23 +104,35 @@
                         <button wire:click="editAddress({{ $address->id }})" class="btn-primary rounded-sm py-2 px-6 text-xs border-none">
                             Edit
                         </button>
-                        <button wire:click="deleteAddress({{ $address->id }})" class="btn-heritage rounded-sm py-2 px-6 text-xs" onclick="return confirm('Are you sure you want to delete this address?') || event.stopImmediatePropagation()">
+                        <button type="button" wire:click="confirmDelete({{ $address->id }})" class="btn-heritage rounded-sm py-2 px-6 text-xs border-none cursor-pointer">
                             Delete
                         </button>
                     </div>
                 </div>
             @empty
                 <div class="col-span-full bg-surface_lowest border border-outline_variant/50 rounded-sm p-12 text-center">
-                    <div class="w-16 h-16 bg-surface rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
-                        <i data-lucide="map-pin" class="w-8 h-8"></i>
-                    </div>
                     <h3 class="text-lg font-bold text-secondary mb-2 font-serif">No addresses saved</h3>
-                    <p class="text-tertiary mb-6">You currently don't have any saved delivery addresses.</p>
-                    <button wire:click="toggleForm" class="btn-primary rounded-sm py-3 px-8 text-sm inline-block border-none">
-                        Add a new address
-                    </button>
+                    <p class="text-tertiary m-0">You currently don't have any saved delivery addresses.</p>
                 </div>
             @endforelse
         </div>
+    @endif
+
+    <!-- Delete Confirmation Modal -->
+    @if($showDeleteModal)
+    <div class="fixed inset-0 z-[1001] flex items-center justify-center bg-black/50 backdrop-blur-sm transition-opacity">
+        <div class="bg-surface_lowest rounded-sm shadow-xl p-8 max-w-sm w-full mx-4 border border-outline_variant/50">
+            <h3 class="text-xl font-bold text-secondary mb-4 font-serif text-center">Delete Address</h3>
+            <p class="text-tertiary mb-8 text-center text-sm font-sans">Are you sure you want to delete this address? This action cannot be undone.</p>
+            <div class="flex items-center gap-4 justify-center">
+                <button type="button" wire:click="cancelDelete" class="bg-transparent text-tertiary px-6 py-2.5 font-bold text-sm tracking-widest uppercase hover:text-primary transition-colors cursor-pointer border-none">
+                    Cancel
+                </button>
+                <button type="button" wire:click="deleteAddress" class="btn-heritage rounded-sm py-2.5 px-6 text-xs border-none cursor-pointer">
+                    Delete
+                </button>
+            </div>
+        </div>
+    </div>
     @endif
 </div>
