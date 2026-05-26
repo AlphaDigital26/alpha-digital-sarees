@@ -26,7 +26,7 @@ class Wishlist extends Component
         $wishlist = array_filter($wishlist, fn($id) => $id != $productId);
         
         session()->put('wishlist', $wishlist);
-        session()->flash('success', 'Item removed from wishlist');
+        $this->dispatch('toast', msg: 'Item removed from wishlist', type: 'success');
     }
 
     public function moveToCart($productId)

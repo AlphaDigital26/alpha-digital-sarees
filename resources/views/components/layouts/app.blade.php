@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $title ?? 'ALPHA DIGITAL | The Heirloom Collection' }}</title>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
@@ -30,13 +31,26 @@
     <x-toast-notification />
 
     @livewireScripts
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
         // Render the icons on the first page load
         lucide.createIcons();
+        AOS.init({
+            duration: 800,
+            once: false,
+            offset: 100,
+            easing: 'ease-out-cubic'
+        });
 
         // Re-render the icons whenever you navigate to a new page using wire:navigate
         document.addEventListener('livewire:navigated', () => {
             lucide.createIcons();
+            AOS.init({
+                duration: 800,
+                once: false,
+                offset: 100,
+                easing: 'ease-out-cubic'
+            });
         });
     </script>
 
