@@ -58,10 +58,17 @@
                                             </div>
                                             
                                             <div class="mt-4 flex gap-4">
-                                                <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-1">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                                                    Rate Now
-                                                </a>
+                                                @if(strtolower($order->status) === 'delivered')
+                                                    <a href="{{ route('shop.product', $product->id) }}#reviews" class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-1">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                                        Rate Now
+                                                    </a>
+                                                @else
+                                                    <span class="text-[13px] font-bold text-gray-400 flex items-center gap-1 cursor-not-allowed" title="Available after delivery">
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                                        Rate Now
+                                                    </span>
+                                                @endif
                                                 <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1">
                                                     Track Order
                                                 </a>
@@ -81,7 +88,7 @@
                     {{-- Card Footer --}}
                     <div class="p-5 border-t border-[#F2F0ED] flex flex-wrap justify-between items-center gap-4">
                         <p class="text-[14px] text-gray-500">Total Amount : <span class="font-bold text-[#1b1c1a] text-base ml-1">Rs. {{ number_format($order->total_amount) }}</span></p>
-                        <a href="{{ route('profile.orders.details', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-2">
+                        <a href="{{ route('profile.orders.invoice', $order->id) }}" class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-2" style="text-decoration: none;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                             Download Invoice
                         </a>
