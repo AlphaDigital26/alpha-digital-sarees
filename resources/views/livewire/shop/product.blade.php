@@ -232,6 +232,7 @@
                             ADD TO CART
                         </button>
                         <button
+                            wire:click="buyNow({{ $product->id }})"
                             class="flex-1 bg-[#800020] text-white font-bold py-3.5 px-6 rounded-sm hover:bg-[#5D4037] transition-colors shadow-md disabled:opacity-50 uppercase tracking-widest text-xs"
                             {{ $product->stock < 1 ? 'disabled' : '' }}
                         >
