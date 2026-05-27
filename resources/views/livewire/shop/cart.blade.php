@@ -30,7 +30,7 @@
                         <div class="flex flex-col sm:flex-row gap-6 py-8 border-b border-[#E5E0DA] relative group" wire:key="item-{{ $id }}">
                             
                             {{-- Product Image --}}
-                            <a href="{{ route('shop.product', $product->id) }}" wire:navigate class="w-full sm:w-32 sm:h-44 md:w-36 md:h-48 flex-shrink-0 bg-[#F4F0EB] overflow-hidden shadow-sm block">
+                            <a href="{{ route('shop.product', $product->id) }}" wire:navigate class="w-24 h-32 sm:w-28 sm:h-36 flex-shrink-0 bg-[#F4F0EB] overflow-hidden shadow-sm block">
                                 <img src="{{ $img }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
                             </a>
                             
@@ -41,6 +41,10 @@
                                         {{ $product->name }}
                                     </h3>
                                 </a>
+                                
+                                <p class="text-sm text-gray-500 mb-6 font-medium" style="font-family: 'Manrope', sans-serif;">
+                                    Size: Free Size
+                                </p>
                                 
 
                                 
