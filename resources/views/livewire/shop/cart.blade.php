@@ -1,13 +1,15 @@
-<main class="pt-[100px] pb-16 bg-[#fbf9f5] min-h-screen">
+<main class="pt-[80px] pb-4 bg-[#fbf9f5] min-h-screen">
     <div class="max-w-7xl mx-auto px-5 lg:px-8">
 
+        <x-checkout-progress step="1" />
+
         {{-- ELEGANT EDITORIAL HEADER --}}
-        <div class="mb-10">
+        <div class="mb-4 text-left">
             <h1 class="text-3xl md:text-4xl font-bold text-[#1b1c1a] tracking-tight leading-none mb-2" style="font-family: 'Noto Serif', serif;">
-                Your Shopping Bag
+                Your Collection
             </h1>
             <p class="text-gray-500 text-xs uppercase tracking-[0.15em] font-bold" style="font-family: 'Manrope', sans-serif;">
-                Review your selected heirlooms
+                Review your selected collection
             </p>
         </div>
 
@@ -78,9 +80,23 @@
                         <span>Rs. {{ number_format($this->cartData['subtotal']) }}</span>
                     </div>
                     
-                    <div class="flex justify-between mb-4 text-[#706663] text-sm font-medium" style="font-family: 'Manrope', sans-serif;">
-                        <span class="flex items-center gap-1">Shipping 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <div class="flex justify-between mb-4 text-[#706663] text-sm font-medium relative" style="font-family: 'Manrope', sans-serif;" x-data="{ tooltipOpen: false }">
+                        <span class="flex items-center gap-1 cursor-pointer group" 
+                              @mouseenter="tooltipOpen = true" 
+                              @mouseleave="tooltipOpen = false"
+                              @click="tooltipOpen = !tooltipOpen">
+                            Shipping 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 hover:text-[#800020] transition-colors"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            
+                            <!-- Tooltip -->
+                            <div x-show="tooltipOpen" x-cloak 
+                                 x-transition.opacity.duration.200ms
+                                 class="absolute left-0 bottom-full mb-2 w-64 p-3 bg-white border border-[#E5E0DA] shadow-lg rounded-sm text-xs text-[#706663] z-50">
+                                <p class="font-bold text-[#1b1c1a] mb-1">Shipping Policy</p>
+                                <p>We offer complimentary shipping on all orders above Rs. 10,000. For orders below this amount, a standard shipping fee of Rs. 150 applies.</p>
+                                <!-- Arrow -->
+                                <div class="absolute top-full left-16 -mt-[1px] w-3 h-3 bg-white border-b border-r border-[#E5E0DA] transform rotate-45"></div>
+                            </div>
                         </span>
                         <span>{{ $this->cartData['shipping'] == 0 ? 'Complimentary' : 'Rs. ' . number_format($this->cartData['shipping']) }}</span>
                     </div>
@@ -114,7 +130,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-16 w-16 text-gray-300 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                 </svg>
-                <p class="text-gray-500 mb-8 text-lg" style="font-family: 'Manrope', sans-serif;">Your heirloom bag is currently empty.</p>
+                <p class="text-gray-500 mb-8 text-lg" style="font-family: 'Manrope', sans-serif;">Your collection is currently empty.</p>
                 <a href="{{ route('shop.index') }}" wire:navigate class="inline-block bg-[#800020] text-white px-8 py-3.5 font-bold uppercase tracking-[0.15em] text-xs hover:bg-[#570013] transition-colors shadow-md rounded-sm">
                     Discover Sarees
                 </a>
@@ -122,47 +138,4 @@
         @endif
 
     </div>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-<script>
-    document.addEventListener('livewire:initialized', () => {
-        Livewire.on('razorpay-checkout', (event) => {
-            // Livewire 3 wraps dispatched array data in index 0
-            let data = event[0]; 
-
-            var options = {
-                "key": data.key,
-                "amount": data.amount,
-                "currency": "INR",
-                "name": data.name,
-                "description": data.description,
-                "order_id": data.order_id,
-                "handler": function (response) {
-                    // Call the PHP verifyPayment method on success
-                    @this.verifyPayment(
-                        response.razorpay_payment_id,
-                        response.razorpay_order_id,
-                        response.razorpay_signature
-                    );
-                },
-                "prefill": {
-                    "name": data.prefill.name,
-                    "email": data.prefill.email,
-                    "contact": data.prefill.contact
-                },
-                "theme": {
-                    "color": "#800020" // Matches your Alpha Digital primary color
-                },
-                "modal": {
-                    "ondismiss": function() {
-                        alert('Payment was cancelled');
-                    }
-                }
-            };
-            
-            var rzp = new Razorpay(options);
-            rzp.open();
-        });
-    });
-</script>
 </main>

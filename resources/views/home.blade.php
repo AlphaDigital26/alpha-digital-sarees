@@ -62,11 +62,15 @@
                     <a href="{{ route('shop.product', $product->id) }}" class="block">
                         <div class="img-wrapper">
                             @php
-                                $img = is_array($product->images) && count($product->images) > 0 
+                                $mainImg = is_array($product->images) && count($product->images) > 0 
                                     ? asset('storage/' . $product->images[0]) 
                                     : 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80';
+                                $hoverImg = is_array($product->images) && count($product->images) > 1 
+                                    ? asset('storage/' . $product->images[1]) 
+                                    : $mainImg;
                             @endphp
-                            <img src="{{ $img }}" alt="{{ $product->name }}">
+                            <img src="{{ $mainImg }}" alt="{{ $product->name }}" class="main-img">
+                            <img src="{{ $hoverImg }}" alt="{{ $product->name }} (Hover)" class="hover-img">
                         </div>
                         <h3>{{ $product->name }}</h3>
                     </a>
@@ -92,11 +96,15 @@
                     <a href="{{ route('shop.product', $product->id) }}" class="block">
                         <div class="img-wrapper">
                             @php
-                                $img = is_array($product->images) && count($product->images) > 0 
+                                $mainImg = is_array($product->images) && count($product->images) > 0 
                                     ? asset('storage/' . $product->images[0]) 
                                     : 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80';
+                                $hoverImg = is_array($product->images) && count($product->images) > 1 
+                                    ? asset('storage/' . $product->images[1]) 
+                                    : $mainImg;
                             @endphp
-                            <img src="{{ $img }}" alt="{{ $product->name }}">
+                            <img src="{{ $mainImg }}" alt="{{ $product->name }}" class="main-img">
+                            <img src="{{ $hoverImg }}" alt="{{ $product->name }} (Hover)" class="hover-img">
                         </div>
                         <h3>{{ $product->name }}</h3>
                     </a>

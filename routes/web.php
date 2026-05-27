@@ -52,7 +52,7 @@ Route::get('/product/{id}', ProductComponent::class)->name('shop.product');
 Route::middleware('auth:customer')->group(function () {
     Route::get('/profile', App\Livewire\Profile\AccountDetails::class)->name('profile.account');
     Route::get('/profile/orders', App\Livewire\Profile\OrderHistory::class)->name('profile.orders');
-    Route::get('/profile/orders/{id}', App\Livewire\Profile\OrderDetails::class)->name('profile.orders.details');
+    Route::get('/profile/orders/{order}/invoice', [App\Http\Controllers\InvoiceController::class, 'download'])->name('profile.orders.invoice');
     Route::get('/profile/orders/{id}/track', App\Livewire\Profile\TrackOrder::class)->name('profile.orders.track');
     Route::get('/profile/addresses', App\Livewire\Profile\Addresses::class)->name('profile.addresses');
 });
@@ -81,3 +81,8 @@ Route::get('/shipping-returns', function () {
 Route::get('/faqs', function () {
     return view('pages.faqs', ['policy' => \App\Models\PolicyPage::firstOrCreate(['id' => 1])]);
 })->name('policy.faqs');
+
+// Add these inside the auth:customer middleware group in routes/web.php
+Route::get('/checkout/address', App\Livewire\Checkout\Address::class)->name('checkout.address');
+Route::get('/checkout/summary', App\Livewire\Checkout\Summary::class)->name('checkout.summary');
+Route::get('/checkout/success/{orderId}', App\Livewire\Checkout\Success::class)->name('checkout.success');

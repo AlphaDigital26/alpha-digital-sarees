@@ -11,6 +11,9 @@ class Product extends Component
     public $activeImage;
     public $quantity = 1;
 
+    public int $rating = 5;
+    public string $comment = '';
+
     public function mount($id)
     {
         // Fetch the product and its attributes
@@ -46,24 +49,41 @@ class Product extends Component
     }
 
     // Handles the "Add to Cart" button
-    public function addToCart($productId)
+    public function addToCart($productId, $isBuyNow = false)
     {
         // 1. Get current cart from session
         $cart = session()->get('cart', []);
 
-        // 2. Add or increment quantity
+        // 2. Add or increment quantity using the selected quantity
         if (isset($cart[$productId])) {
-            $cart[$productId]++;
+            $cart[$productId] += $this->quantity;
         } else {
-            $cart[$productId] = 1;
+            $cart[$productId] = $this->quantity;
         }
 
         // 3. Save back to session
         session()->put('cart', $cart);
 
-        // 5. Update cart counter (if navbar is listening) and trigger toast
+        // 5. Update cart counter (if navbar is listening)
         $this->dispatch('cart-updated');
-        $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
+        
+        if (!$isBuyNow) {
+            $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
+        }
+    }
+
+    // Handles the "Buy It Now" button
+    public function buyNow($productId)
+    {
+        // 1. Add to the main cart silently in the background (no toast)
+        $this->addToCart($productId, true);
+
+        // 2. Create an isolated cart session just for this direct purchase
+        session()->put('buy_now_cart', [
+            $productId => $this->quantity
+        ]);
+        
+        return redirect()->route('checkout.summary');
     }
 
         // Handles the "Add to Wishlist" button
@@ -90,6 +110,33 @@ class Product extends Component
         
         session()->put('wishlist', $wishlist);
         $this->dispatch('wishlist-updated');
+    }
+
+    public function submitReview()
+    {
+        if (!auth('customer')->check()) {
+            $this->dispatch('open-login-modal');
+            return;
+        }
+
+        $this->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        \App\Models\Review::create([
+            'customer_id' => auth('customer')->id(),
+            'product_id' => $this->product->id,
+            'rating' => $this->rating,
+            'comment' => $this->comment,
+        ]);
+
+        $this->rating = 5;
+        $this->comment = '';
+        
+        $this->product->load('reviews.customer');
+
+        $this->dispatch('toast', msg: 'Thank you for your review!', type: 'success');
     }
 
     public function render()
