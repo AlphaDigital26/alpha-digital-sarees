@@ -29,7 +29,7 @@
                         <a href="{{ route('profile.orders') }}" class="flex items-center justify-between px-6 py-4 text-sm font-medium transition-colors border-l-2 {{ request()->routeIs('profile.orders') ? 'border-primary text-primary bg-surface' : 'border-transparent text-tertiary hover:bg-surface_low hover:text-primary' }}">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="package" class="w-4 h-4"></i>
-                                Order History
+                                Orders
                             </div>
                             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
                         </a>
