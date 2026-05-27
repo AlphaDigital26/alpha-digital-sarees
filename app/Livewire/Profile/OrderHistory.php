@@ -10,7 +10,8 @@ class OrderHistory extends Component
 {
     public function render()
     {
-        $orders = Order::where('customer_id', auth('customer')->id())
+        $orders = Order::with('items.product')
+            ->where('customer_id', auth('customer')->id())
             ->where(function($query) {
                 $query->whereNotIn('payment_status', ['pending', 'failed'])
                       ->orWhereNull('payment_status');

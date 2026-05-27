@@ -21,17 +21,17 @@ class BookingAnalyticsWidget extends BaseWidget
         $cancelledSum = Order::where('status', 'cancelled')->sum('total_amount') ?? 0;
 
         return [
-            Stat::make('TOTAL BOOKINGS', Order::count())
+            Stat::make('TOTAL ORDERS', Order::count())
                 ->description('₹' . number_format($totalSum))
                 ->descriptionColor('primary')
                 ->extraAttributes(['class' => 'custom-stat-card border-t-blue']),
                 
-            Stat::make('ACTIVE BOOKINGS', Order::whereNotIn('status', ['cancelled', 'refunded'])->count())
+            Stat::make('ACTIVE ORDERS', Order::whereNotIn('status', ['cancelled', 'refunded'])->count())
                 ->description('₹' . number_format($activeSum))
                 ->descriptionColor('success')
                 ->extraAttributes(['class' => 'custom-stat-card border-t-green']),
                 
-            Stat::make('CANCELLED BOOKINGS', Order::where('status', 'cancelled')->count())
+            Stat::make('CANCELLED ORDERS', Order::where('status', 'cancelled')->count())
                 ->description('₹' . number_format($cancelledSum))
                 ->descriptionColor('danger')
                 ->extraAttributes(['class' => 'custom-stat-card border-t-red']),

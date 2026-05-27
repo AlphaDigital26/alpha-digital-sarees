@@ -19,12 +19,12 @@ class TopStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('New Bookings', Order::where('status', 'new')->count() ?? 0)
+            Stat::make('New Orders', Order::where('status', 'new')->count() ?? 0)
                 ->url(\App\Filament\Resources\OrderResource::getUrl('index'))
                 ->icon('heroicon-o-arrow-trending-up')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-red value-text-red']),
                 
-            Stat::make('Refund Bookings', Order::where('status', 'refunded')->count() ?? 0)
+            Stat::make('Refund Orders', Order::where('status', 'refunded')->count() ?? 0)
                 ->url(\App\Filament\Resources\OrderResource::getUrl('index'))
                 ->icon('heroicon-o-receipt-percent')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-blue']),

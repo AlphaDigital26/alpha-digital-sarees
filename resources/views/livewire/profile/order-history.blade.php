@@ -1,31 +1,89 @@
 <div class="bg-transparent font-sans">
     <div class="mb-8">
-        <h1 class="text-2xl font-bold text-secondary m-0 font-serif">Order History</h1>
+        <h1 class="text-2xl font-bold text-[#1b1c1a] m-0 font-sans tracking-tight">Your Orders</h1>
     </div>
 
     @if($orders->count() > 0)
-        <div class="space-y-6">
+        <div class="space-y-8">
             @foreach($orders as $order)
-                <div class="bg-white border border-[#E5E0DA] rounded-sm p-6 shadow-sm">
-                    <div class="flex flex-col md:flex-row md:items-center justify-between mb-4 pb-4 border-b border-[#E5E0DA]">
-                        <div>
-                            <a href="{{ route('profile.orders.details', $order->id) }}" wire:navigate class="text-sm text-[#800020] hover:text-[#570013] font-bold uppercase tracking-wider mb-1 block transition-colors" style="font-family: 'Manrope', sans-serif;">Order {{ $order->order_number }}</a>
-                            <p class="text-xs text-gray-400" style="font-family: 'Manrope', sans-serif;">Placed on {{ $order->created_at->format('M d, Y') }}</p>
+                <div class="bg-white border border-[#F2F0ED] rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
+                    {{-- Card Header --}}
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 border-b border-[#F2F0ED] bg-[#FAFAFA] text-[13px]">
+                        <div class="text-center border-r border-[#E5E0DA]">
+                            <p class="text-gray-400 mb-1">Order Number</p>
+                            <a href="{{ route('profile.orders.details', $order->id) }}" wire:navigate class="font-bold text-[#1b1c1a] hover:text-[#800020] transition-colors">#{{ $order->order_number }}</a>
                         </div>
-                        <div class="mt-4 md:mt-0 text-left md:text-right">
-                            <p class="text-lg font-bold text-[#800020] font-serif">Rs. {{ number_format($order->total_amount) }}</p>
-                            <p class="text-xs font-bold uppercase tracking-wider mt-1 {{ $order->status === 'delivered' ? 'text-green-600' : 'text-[#A68A64]' }}" style="font-family: 'Manrope', sans-serif;">
-                                Status: {{ ucfirst($order->status) }}
-                            </p>
+                        <div class="text-center md:border-r border-[#E5E0DA]">
+                            <p class="text-gray-400 mb-1">Order Date</p>
+                            <p class="font-bold text-[#1b1c1a]">{{ $order->created_at->format('M d, Y') }}</p>
+                        </div>
+                        <div class="text-center border-r border-[#E5E0DA]">
+                            <p class="text-gray-400 mb-1">Delivery Date</p>
+                            <p class="font-bold text-[#1b1c1a]">{{ $order->created_at->addDays(7)->format('M d, Y') }}</p>
+                        </div>
+                        <div class="text-center">
+                            <p class="text-gray-400 mb-1">Ship To</p>
+                            <p class="font-bold text-[#1b1c1a]">{{ auth('customer')->user()->name ?? 'Customer' }}</p>
                         </div>
                     </div>
-                    
-                    <div class="flex items-center justify-between pt-2">
-                        <div class="text-sm text-gray-600" style="font-family: 'Manrope', sans-serif;">
-                            Payment Status: <span class="font-semibold text-gray-800 uppercase text-xs">{{ $order->payment_status ?? 'Paid' }}</span>
-                        </div>
-                        <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-xs font-bold uppercase tracking-wider text-[#800020] hover:text-[#570013] transition border-b border-[#800020] pb-0.5" style="font-family: 'Manrope', sans-serif;">
-                            Track Order
+
+                    {{-- Card Body (Items) --}}
+                    <div class="p-6">
+                        @if($order->items && $order->items->count() > 0)
+                            <div class="space-y-6">
+                                @foreach($order->items as $item)
+                                    @php 
+                                        $product = $item->product; 
+                                        $img = $product && is_array($product->images) && count($product->images) > 0 
+                                            ? asset('storage/' . $product->images[0]) 
+                                            : 'https://images.unsplash.com/photo-1610030469613-22878897539f?auto=format&fit=crop&q=80';
+                                    @endphp
+                                    <div class="flex flex-col sm:flex-row gap-5 pb-6 {{ !$loop->last ? 'border-b border-[#F2F0ED]' : '' }}">
+                                        {{-- Image --}}
+                                        <div class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 bg-[#F4F0EB] rounded-md overflow-hidden">
+                                            <img src="{{ $img }}" alt="{{ $product ? $product->name : 'Product' }}" class="w-full h-full object-cover object-top">
+                                        </div>
+                                        
+                                        {{-- Details --}}
+                                        <div class="flex-1 flex flex-col justify-between">
+                                            <div class="flex justify-between items-start gap-4">
+                                                <h3 class="text-[15px] font-medium text-[#1b1c1a]">
+                                                    {{ $product ? $product->name : 'Unknown Product' }}
+                                                </h3>
+                                                <p class="font-bold text-[#1b1c1a] whitespace-nowrap">Rs. {{ number_format($item->price) }}</p>
+                                            </div>
+                                            
+                                            <div class="mt-2 space-y-1">
+                                                <p class="text-[13px] text-gray-500">Qty : <span class="font-medium text-[#1b1c1a]">{{ $item->quantity }}</span></p>
+                                            </div>
+                                            
+                                            <div class="mt-4 flex gap-4">
+                                                <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-1">
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                                                    Rate Now
+                                                </a>
+                                                <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1">
+                                                    Track Order
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                        @else
+                            <p class="text-gray-500 text-sm italic py-2">Item details are not available for this legacy order.</p>
+                            <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1 mt-3">
+                                Track Order
+                            </a>
+                        @endif
+                    </div>
+
+                    {{-- Card Footer --}}
+                    <div class="p-5 border-t border-[#F2F0ED] flex flex-wrap justify-between items-center gap-4">
+                        <p class="text-[14px] text-gray-500">Total Amount : <span class="font-bold text-[#1b1c1a] text-base ml-1">Rs. {{ number_format($order->total_amount) }}</span></p>
+                        <a href="{{ route('profile.orders.details', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Download Invoice
                         </a>
                     </div>
                 </div>
