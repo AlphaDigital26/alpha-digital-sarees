@@ -20,12 +20,12 @@ class TopStatsWidget extends BaseWidget
     {
         return [
             Stat::make('New Orders', Order::where('status', 'new')->count() ?? 0)
-                ->url(\App\Filament\Resources\OrderResource::getUrl('index'))
+                ->url(\App\Filament\Resources\OrderResource::getUrl('index', ['activeTab' => 'new']))
                 ->icon('heroicon-o-arrow-trending-up')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-red value-text-red']),
                 
             Stat::make('Refund Orders', Order::where('status', 'refunded')->count() ?? 0)
-                ->url(\App\Filament\Resources\OrderResource::getUrl('index'))
+                ->url(\App\Filament\Resources\OrderResource::getUrl('index', ['activeTab' => 'refunded']))
                 ->icon('heroicon-o-receipt-percent')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-blue']),
                 
@@ -39,8 +39,8 @@ class TopStatsWidget extends BaseWidget
                 ->icon('heroicon-o-shopping-cart')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-purple']),
                 
-            Stat::make('Rating & Reviews', '0') // No review model yet
-                ->url('#')
+            Stat::make('Rating & Reviews', \App\Models\Review::count() ?? 0)
+                ->url(\App\Filament\Resources\ReviewResource::getUrl('index'))
                 ->icon('heroicon-o-chat-bubble-left-ellipsis')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-yellow']),
         ];

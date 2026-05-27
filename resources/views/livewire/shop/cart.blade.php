@@ -42,9 +42,7 @@
                                     </h3>
                                 </a>
                                 
-                                <p class="text-sm text-gray-500 mb-6 font-medium" style="font-family: 'Manrope', sans-serif;">
-                                    Handwoven | {{ $product->fabric->name ?? 'Silk' }}
-                                </p>
+
                                 
                                 <div class="flex flex-wrap items-center gap-6 mt-auto">
                                     {{-- Quantity Selector --}}

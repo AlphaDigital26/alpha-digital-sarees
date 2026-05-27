@@ -85,10 +85,13 @@
             <h2 class="text-lg font-bold mb-4">Delivery to {{ auth('customer')->user()->name }}</h2>
             
             @if(count($addresses) > 0)
-                <div class="space-y-4">
+                <div x-data="{ selectedId: @entangle('selectedAddressId') }" class="space-y-4">
                     @foreach($addresses as $address)
-                        <label class="flex items-start p-4 border {{ $selectedAddressId == $address->id ? 'border-[#800020] bg-[#F4F0EB]' : 'border-gray-200' }} rounded cursor-pointer transition-colors">
-                            <input type="radio" wire:model="selectedAddressId" value="{{ $address->id }}" class="mt-1 mr-3 accent-[#800020]">
+                        <label 
+                            :class="selectedId == {{ $address->id }} ? 'border-[#800020] bg-[#F4F0EB]' : 'border-gray-200'"
+                            class="flex items-start p-4 border rounded cursor-pointer transition-colors"
+                        >
+                            <input type="radio" x-model="selectedId" value="{{ $address->id }}" class="mt-1 mr-3 accent-[#800020]">
                             <div>
                                 <p class="font-bold text-[#2A211F]">{{ $address->first_name }} {{ $address->last_name }}</p>
                                 <div class="text-sm text-gray-600 mt-1 leading-relaxed">
