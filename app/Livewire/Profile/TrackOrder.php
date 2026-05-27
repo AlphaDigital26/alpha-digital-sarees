@@ -14,6 +14,11 @@ class TrackOrder extends Component
         $this->order = Order::where('id', $id)
             ->where('customer_id', auth('customer')->id())
             ->firstOrFail();
+
+        if (strtolower($this->order->status) === 'canceled') {
+            session()->flash('error', 'Canceled orders cannot be tracked.');
+            return redirect()->route('profile.orders');
+        }
     }
 
     public function render()

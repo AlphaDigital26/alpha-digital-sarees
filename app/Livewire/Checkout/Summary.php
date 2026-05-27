@@ -101,8 +101,15 @@ class Summary extends Component
                 'razorpay_signature' => $razorpaySignature
             ]);
 
-            $order = Order::where('razorpay_order_id', $razorpayOrderId)->first();
-            $order->update(['status' => 'processing', 'payment_status' => 'paid', 'razorpay_payment_id' => $razorpayPaymentId]);
+            $order = Order::with('items.product')->where('razorpay_order_id', $razorpayOrderId)->first();
+            $order->update(['status' => 'new', 'payment_status' => 'paid', 'razorpay_payment_id' => $razorpayPaymentId]);
+
+            // Deduct stock for each ordered item
+            foreach ($order->items as $item) {
+                if ($item->product) {
+                    $item->product->decrement('stock', $item->quantity);
+                }
+            }
 
             // Clear carts if applicable
             if (session()->has('buy_now_cart')) {

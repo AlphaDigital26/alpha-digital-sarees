@@ -22,11 +22,15 @@
                     <div class="editorial-card">
                         <a href="{{ route('shop.product', $product->id) }}" class="editorial-card-link">
                             @php
-                                $img = is_array($product->images) && count($product->images) > 0 
+                                $mainImg = is_array($product->images) && count($product->images) > 0 
                                     ? asset('storage/' . $product->images[0]) 
                                     : 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80';
+                                $hoverImg = is_array($product->images) && count($product->images) > 1 
+                                    ? asset('storage/' . $product->images[1]) 
+                                    : $mainImg;
                             @endphp
-                            <img src="{{ $img }}" alt="{{ $product->name }}" class="editorial-card-img">
+                            <img src="{{ $mainImg }}" alt="{{ $product->name }}" class="editorial-card-img main-img">
+                            <img src="{{ $hoverImg }}" alt="{{ $product->name }} (Hover)" class="editorial-card-img hover-img">
                             
                             <button 
                                 wire:click.prevent="toggleWishlist({{ $product->id }})" 

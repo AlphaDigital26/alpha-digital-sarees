@@ -52,11 +52,15 @@
                 <a href="{{ route('shop.product', $product->id) }}" wire:navigate style="text-decoration: none; color: inherit; display: block; position: relative;">
                     <div class="img-box" style="position: relative;">
                         @php
-                            $img = is_array($product->images) && count($product->images) > 0 
+                            $mainImg = is_array($product->images) && count($product->images) > 0 
                                 ? asset('storage/' . $product->images[0]) 
                                 : 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80';
+                            $hoverImg = is_array($product->images) && count($product->images) > 1 
+                                ? asset('storage/' . $product->images[1]) 
+                                : $mainImg;
                         @endphp
-                        <img src="{{ $img }}" alt="{{ $product->name }}">
+                        <img src="{{ $mainImg }}" alt="{{ $product->name }}" class="main-img">
+                        <img src="{{ $hoverImg }}" alt="{{ $product->name }} (Hover)" class="hover-img">
                         <span class="tag">NEW</span>
 
                         {{-- WISHLIST HEART ICON --}}

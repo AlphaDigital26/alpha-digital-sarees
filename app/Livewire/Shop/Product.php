@@ -11,6 +11,9 @@ class Product extends Component
     public $activeImage;
     public $quantity = 1;
 
+    public int $rating = 5;
+    public string $comment = '';
+
     public function mount($id)
     {
         // Fetch the product and its attributes
@@ -107,6 +110,33 @@ class Product extends Component
         
         session()->put('wishlist', $wishlist);
         $this->dispatch('wishlist-updated');
+    }
+
+    public function submitReview()
+    {
+        if (!auth('customer')->check()) {
+            $this->dispatch('open-login-modal');
+            return;
+        }
+
+        $this->validate([
+            'rating' => 'required|integer|min:1|max:5',
+            'comment' => 'nullable|string|max:1000',
+        ]);
+
+        \App\Models\Review::create([
+            'customer_id' => auth('customer')->id(),
+            'product_id' => $this->product->id,
+            'rating' => $this->rating,
+            'comment' => $this->comment,
+        ]);
+
+        $this->rating = 5;
+        $this->comment = '';
+        
+        $this->product->load('reviews.customer');
+
+        $this->dispatch('toast', msg: 'Thank you for your review!', type: 'success');
     }
 
     public function render()

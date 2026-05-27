@@ -29,4 +29,8 @@ class Product extends Model
     public function pattern() {
         return $this->belongsTo(Pattern::class);
     }
+
+    public function reviews() {
+        return $this->hasMany(Review::class);
+    }
 }

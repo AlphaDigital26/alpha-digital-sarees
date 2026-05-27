@@ -46,27 +46,33 @@ class OrderResource extends Resource
     public static function form(Form $form): Form
     {
         return $form->schema([
-            // Form structure will go here later
+            Forms\Components\Section::make('Order Status')
+                ->schema([
+                    Forms\Components\Select::make('status')
+                        ->options([
+                            'new' => 'New Order (Placed)',
+                            'processing' => 'Processing',
+                            'shipped' => 'Shipped',
+                            'delivered' => 'Delivered',
+                            'refunded' => 'Refunded',
+                            'canceled' => 'Canceled',
+                        ])
+                        ->required()
+                        ->helperText('Updating the status here will automatically update the Order History timeline on both the Admin Dashboard and the Customer Tracking page.'),
+                ])->columns(1),
         ]);
     }
 
     public static function table(Table $table): Table
     {
         return $table
+            ->contentGrid([
+                'md' => 2,
+                'xl' => 3,
+            ])
             ->defaultSort('created_at', 'desc')
             ->columns([
-                Tables\Columns\TextColumn::make('order_number')->searchable()->weight('bold'),
-                Tables\Columns\TextColumn::make('customer.name')->label('Customer')->searchable(),
-                Tables\Columns\TextColumn::make('total_amount')->money('INR')->sortable(),
-                Tables\Columns\TextColumn::make('status')
-                    ->badge()
-                    ->color(fn (string $state): string => match ($state) {
-                        'new' => 'info',
-                        'refunded' => 'danger',
-                        'delivered' => 'success',
-                        default => 'gray',
-                    }),
-                Tables\Columns\TextColumn::make('created_at')->dateTime('M d, Y')->sortable(),
+                Tables\Columns\Layout\View::make('filament.tables.columns.order-card'),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -74,14 +80,15 @@ class OrderResource extends Resource
                     ->options([
                         'new' => 'New Orders',
                         'refunded' => 'Refund Orders',
+                        'canceled' => 'Canceled Orders',
                         'processing' => 'Processing',
                         'shipped' => 'Shipped',
                         'delivered' => 'Delivered',
                     ]),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()->extraAttributes(['style' => 'display: none !important;']),
+                Tables\Actions\EditAction::make()->extraAttributes(['style' => 'display: none !important;']),
             ]);
     }
 
@@ -90,16 +97,28 @@ class OrderResource extends Resource
         return [
             'index' => Pages\ListOrders::route('/'),
             'create' => Pages\CreateOrder::route('/create'),
+            'view' => Pages\ViewOrder::route('/{record}'),
             'edit' => Pages\EditOrder::route('/{record}/edit'),
         ];
     }
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->where(function (Builder $query) {
-                $query->whereNotIn('payment_status', ['pending', 'failed'])
-                      ->orWhereNull('payment_status');
+        $query = parent::getEloquentQuery()
+            ->with(['customer', 'items.product'])
+            ->where(function (Builder $q) {
+                $q->whereNotIn('payment_status', ['pending', 'failed'])
+                  ->orWhereNull('payment_status');
             });
+
+        $activeTab = request()->query('activeTab');
+        
+        if ($activeTab === 'new') {
+            $query->where('status', 'new');
+        } elseif ($activeTab === 'refunded') {
+            $query->whereIn('status', ['canceled', 'refunded']);
+        }
+
+        return $query;
     }
 }

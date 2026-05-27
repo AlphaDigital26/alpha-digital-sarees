@@ -303,9 +303,12 @@
                 {{-- Loop up to 4 products --}}
                 @foreach($similarProducts->take(4) as $simProduct)
                     @php
-                        $simImg = is_array($simProduct->images) && count($simProduct->images) > 0
+                        $mainImg = is_array($simProduct->images) && count($simProduct->images) > 0
                             ? asset('storage/' . $simProduct->images[0])
                             : 'https://images.unsplash.com/photo-1610030469668-93510ec67d9e?auto=format&fit=crop&w=500';
+                        $hoverImg = is_array($simProduct->images) && count($simProduct->images) > 1
+                            ? asset('storage/' . $simProduct->images[1])
+                            : $mainImg;
                     @endphp
                     
                     <div class="product-card group relative">
@@ -320,7 +323,8 @@
                                     </svg>
                                 </div>
                                 
-                                <img src="{{ $simImg }}" alt="{{ $simProduct->name }}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105">
+                                <img src="{{ $mainImg }}" alt="{{ $simProduct->name }}" class="main-img">
+                                <img src="{{ $hoverImg }}" alt="{{ $simProduct->name }} (Hover)" class="hover-img">
                             </div>
                             
                             {{-- Text Info --}}
@@ -341,25 +345,82 @@
     @endif
 
     {{-- REVIEWS SECTION (NEW) --}}
-    <div class="w-full mt-24 pt-16 border-t border-[#E5E0DA]">
+    <div id="reviews" class="w-full mt-24 pt-16 border-t border-[#E5E0DA]">
         <div class="text-center mb-12">
             <h2 class="font-serif text-3xl md:text-4xl text-[#2A211F]">Customer Reviews</h2>
         </div>
         
         <div class="max-w-4xl mx-auto">
+            
+            {{-- Review Form --}}
+            @auth('customer')
+                <div class="bg-white p-6 md:p-8 rounded-sm border border-[#E5E0DA] mb-12">
+                    <h3 class="font-serif text-xl text-[#2A211F] mb-4">Write a Review</h3>
+                    <form wire:submit.prevent="submitReview" class="space-y-4">
+                        <div>
+                            <label class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Rating</label>
+                            <div class="flex gap-1" x-data="{ rating: @entangle('rating').live, hoverRating: 0 }">
+                                <template x-for="i in 5" :key="i">
+                                    <button type="button" 
+                                            @click="rating = i" 
+                                            @mouseenter="hoverRating = i" 
+                                            @mouseleave="hoverRating = 0"
+                                            class="focus:outline-none transition-colors duration-150">
+                                        <svg xmlns="http://www.w3.org/2000/svg" 
+                                             class="w-8 h-8" 
+                                             :class="(hoverRating >= i || (!hoverRating && rating >= i)) ? 'text-yellow-500 fill-current' : 'text-gray-300 fill-current'" 
+                                             viewBox="0 0 24 24" stroke="none">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    </button>
+                                </template>
+                            </div>
+                            @error('rating') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        
+                        <div>
+                            <label for="comment" class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Your Review (Optional)</label>
+                            <textarea wire:model="comment" id="comment" rows="4" class="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E0DA] rounded-sm focus:outline-none focus:border-[#800020] transition-colors resize-none text-[14px]" placeholder="Tell us what you think about this product..."></textarea>
+                            @error('comment') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                        </div>
+                        
+                        <div class="pt-2">
+                            <button type="submit" class="bg-[#800020] text-white font-bold py-3 px-8 rounded-sm hover:bg-[#5D4037] transition-colors shadow-sm uppercase tracking-widest text-xs">
+                                Submit Review
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            @else
+                <div class="bg-[#FAFAFA] p-6 text-center border border-[#E5E0DA] rounded-sm mb-12">
+                    <p class="text-gray-600 mb-4">Please log in to leave a review.</p>
+                    <button wire:click="$dispatch('open-login-modal')" class="bg-[#800020] text-white font-bold py-2.5 px-6 rounded-sm hover:bg-[#5D4037] transition-colors uppercase tracking-widest text-xs">
+                        Log In
+                    </button>
+                </div>
+            @endauth
+
+            {{-- Existing Reviews --}}
             @if($product->reviews && $product->reviews->count() > 0)
                 <div class="space-y-8">
-                    @foreach($product->reviews as $review)
+                    @foreach($product->reviews()->latest()->get() as $review)
                         <div class="border-b border-[#E5E0DA] pb-6">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-[#1b1c1a]">{{ $review->user_name }}</span>
-                                <div class="text-yellow-500 text-sm">
-                                    {{ str_repeat('★', $review->rating) }}{{ str_repeat('☆', 5 - $review->rating) }}
+                                <span class="font-bold text-[#1b1c1a]">{{ $review->customer->name ?? 'Guest User' }}</span>
+                                <div class="text-yellow-500 text-sm flex gap-0.5">
+                                    @for($i = 1; $i <= 5; $i++)
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-500 fill-current' : 'text-gray-300 fill-current' }}" viewBox="0 0 24 24" stroke="none">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    @endfor
                                 </div>
                             </div>
-                            <p class="text-gray-600 text-sm leading-relaxed" style="font-family: 'Manrope', sans-serif;">
-                                {{ $review->comment }}
-                            </p>
+                            <span class="text-xs text-gray-400 block mb-3">{{ $review->created_at->format('M d, Y') }}</span>
+                            @if($review->comment)
+                                <p class="text-gray-600 text-sm leading-relaxed" style="font-family: 'Manrope', sans-serif;">
+                                    {{ $review->comment }}
+                                </p>
+                            @endif
                         </div>
                     @endforeach
                 </div>

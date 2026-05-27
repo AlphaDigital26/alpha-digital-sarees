@@ -11,7 +11,7 @@
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 border-b border-[#F2F0ED] bg-[#FAFAFA] text-[13px]">
                         <div class="text-center border-r border-[#E5E0DA]">
                             <p class="text-gray-400 mb-1">Order Number</p>
-                            <a href="{{ route('profile.orders.details', $order->id) }}" wire:navigate class="font-bold text-[#1b1c1a] hover:text-[#800020] transition-colors">#{{ $order->order_number }}</a>
+                            <p class="font-bold text-[#1b1c1a]">#{{ $order->order_number }}</p>
                         </div>
                         <div class="text-center md:border-r border-[#E5E0DA]">
                             <p class="text-gray-400 mb-1">Order Date</p>
@@ -69,9 +69,11 @@
                                                         Rate Now
                                                     </span>
                                                 @endif
-                                                <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1">
-                                                    Track Order
-                                                </a>
+                                                @if(strtolower($order->status) !== 'canceled')
+                                                    <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1">
+                                                        Track Order
+                                                    </a>
+                                                @endif
                                             </div>
                                         </div>
                                     </div>
@@ -79,19 +81,38 @@
                             </div>
                         @else
                             <p class="text-gray-500 text-sm italic py-2">Item details are not available for this legacy order.</p>
-                            <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1 mt-3">
-                                Track Order
-                            </a>
+                            @if(strtolower($order->status) !== 'canceled')
+                                <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1 mt-3">
+                                    Track Order
+                                </a>
+                            @endif
                         @endif
                     </div>
 
                     {{-- Card Footer --}}
                     <div class="p-5 border-t border-[#F2F0ED] flex flex-wrap justify-between items-center gap-4">
-                        <p class="text-[14px] text-gray-500">Total Amount : <span class="font-bold text-[#1b1c1a] text-base ml-1">Rs. {{ number_format($order->total_amount) }}</span></p>
-                        <a href="{{ route('profile.orders.invoice', $order->id) }}" class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-2" style="text-decoration: none;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                            Download Invoice
-                        </a>
+                        <div class="flex items-center gap-4">
+                            <p class="text-[14px] text-gray-500">Total Amount : <span class="font-bold text-[#1b1c1a] text-base ml-1">Rs. {{ number_format($order->total_amount) }}</span></p>
+                            <span class="text-[13px] font-bold px-2 py-1 rounded {{ strtolower($order->status) === 'canceled' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700' }}">
+                                {{ ucfirst($order->status ?? 'New') }}
+                            </span>
+                        </div>
+                        <div class="flex items-center gap-4">
+                            @if(now()->diffInHours($order->created_at) <= 24 && !in_array(strtolower($order->status), ['shipped', 'delivered', 'refunded', 'canceled']))
+                                <button 
+                                    wire:click="cancelOrder({{ $order->id }})" 
+                                    wire:confirm="Are you sure you want to cancel this order? This action cannot be undone."
+                                    class="text-[13px] font-bold text-red-600 hover:text-red-800 transition flex items-center gap-1 bg-transparent border-none cursor-pointer"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                    Cancel Order
+                                </button>
+                            @endif
+                            <a href="{{ route('profile.orders.invoice', $order->id) }}" class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-2" style="text-decoration: none;">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Download Invoice
+                            </a>
+                        </div>
                     </div>
                 </div>
             @endforeach

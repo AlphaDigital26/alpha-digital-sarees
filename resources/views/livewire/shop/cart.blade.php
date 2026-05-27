@@ -80,9 +80,23 @@
                         <span>Rs. {{ number_format($this->cartData['subtotal']) }}</span>
                     </div>
                     
-                    <div class="flex justify-between mb-4 text-[#706663] text-sm font-medium" style="font-family: 'Manrope', sans-serif;">
-                        <span class="flex items-center gap-1">Shipping 
-                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    <div class="flex justify-between mb-4 text-[#706663] text-sm font-medium relative" style="font-family: 'Manrope', sans-serif;" x-data="{ tooltipOpen: false }">
+                        <span class="flex items-center gap-1 cursor-pointer group" 
+                              @mouseenter="tooltipOpen = true" 
+                              @mouseleave="tooltipOpen = false"
+                              @click="tooltipOpen = !tooltipOpen">
+                            Shipping 
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-400 hover:text-[#800020] transition-colors"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                            
+                            <!-- Tooltip -->
+                            <div x-show="tooltipOpen" x-cloak 
+                                 x-transition.opacity.duration.200ms
+                                 class="absolute left-0 bottom-full mb-2 w-64 p-3 bg-white border border-[#E5E0DA] shadow-lg rounded-sm text-xs text-[#706663] z-50">
+                                <p class="font-bold text-[#1b1c1a] mb-1">Shipping Policy</p>
+                                <p>We offer complimentary shipping on all orders above Rs. 10,000. For orders below this amount, a standard shipping fee of Rs. 150 applies.</p>
+                                <!-- Arrow -->
+                                <div class="absolute top-full left-16 -mt-[1px] w-3 h-3 bg-white border-b border-r border-[#E5E0DA] transform rotate-45"></div>
+                            </div>
                         </span>
                         <span>{{ $this->cartData['shipping'] == 0 ? 'Complimentary' : 'Rs. ' . number_format($this->cartData['shipping']) }}</span>
                     </div>

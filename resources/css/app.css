@@ -46,11 +46,23 @@
   }
 
   .product-card img {
-    @apply w-full h-full object-cover object-center transition-transform duration-700;
+    @apply w-full h-full object-cover object-center transition-all duration-700;
   }
   
-  .product-card:hover img {
-    @apply scale-105;
+  .product-card img.main-img {
+    @apply opacity-100 scale-100;
+  }
+  
+  .product-card img.hover-img {
+    @apply absolute top-0 left-0 opacity-0 scale-105;
+  }
+  
+  .product-card:hover img.main-img {
+    @apply opacity-0 scale-95;
+  }
+  
+  .product-card:hover img.hover-img {
+    @apply opacity-100 scale-100;
   }
 
   .product-card h3 {
@@ -476,11 +488,23 @@
   }
   
   .arrival-card .img-box img {
-    @apply w-full h-full object-cover transition-transform duration-700;
+    @apply w-full h-full object-cover transition-all duration-700;
   }
   
-  .arrival-card:hover img {
-    @apply scale-[1.08];
+  .arrival-card .img-box img.main-img {
+    @apply opacity-100 scale-100;
+  }
+  
+  .arrival-card .img-box img.hover-img {
+    @apply absolute top-0 left-0 opacity-0 scale-[1.08];
+  }
+  
+  .arrival-card:hover img.main-img {
+    @apply opacity-0 scale-95;
+  }
+  
+  .arrival-card:hover img.hover-img {
+    @apply opacity-100 scale-100;
   }
   
   .arrival-card .tag {
@@ -634,11 +658,23 @@
   }
   
   .editorial-card-img {
-    @apply w-full h-full object-cover object-center transition-transform duration-[1.5s];
+    @apply w-full h-full object-cover object-center transition-all duration-[1.5s];
   }
   
-  .editorial-card-link:hover .editorial-card-img {
-    @apply scale-[1.03];
+  .editorial-card-img.main-img {
+    @apply opacity-100 scale-100;
+  }
+  
+  .editorial-card-img.hover-img {
+    @apply absolute top-0 left-0 opacity-0 scale-[1.03];
+  }
+  
+  .editorial-card-link:hover .editorial-card-img.main-img {
+    @apply opacity-0 scale-[0.97];
+  }
+  
+  .editorial-card-link:hover .editorial-card-img.hover-img {
+    @apply opacity-100 scale-100;
   }
   
   .editorial-wishlist-btn {

@@ -112,11 +112,15 @@
                     <a href="{{ route('shop.product', $product->id) }}" class="block">
                         <div class="img-wrapper">
                             @php
-                                $imageUrl = is_array($product->images) && count($product->images) > 0 
+                                $mainImageUrl = is_array($product->images) && count($product->images) > 0 
                                     ? asset('storage/' . $product->images[0]) 
                                     : 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80';
+                                $hoverImageUrl = is_array($product->images) && count($product->images) > 1 
+                                    ? asset('storage/' . $product->images[1]) 
+                                    : $mainImageUrl;
                             @endphp
-                            <img src="{{ $imageUrl }}" alt="{{ $product->name }}">
+                            <img src="{{ $mainImageUrl }}" alt="{{ $product->name }}" class="main-img">
+                            <img src="{{ $hoverImageUrl }}" alt="{{ $product->name }} (Hover)" class="hover-img">
                             
                             <button 
     wire:click.prevent="toggleWishlist({{ $product->id }})" 

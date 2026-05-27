@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Customer extends Authenticatable
 {
@@ -27,9 +28,14 @@ class Customer extends Authenticatable
         'password',
     ];
 
-    public function addresses()
+    public function addresses(): HasMany
     {
         return $this->hasMany(Address::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 
     protected $casts = [
