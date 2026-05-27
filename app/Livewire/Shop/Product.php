@@ -48,7 +48,6 @@ class Product extends Component
         }
     }
 
-    // Handles the "Add to Cart" button
     public function addToCart($productId, $isBuyNow = false)
     {
         // 1. Get current cart from session
@@ -56,9 +55,23 @@ class Product extends Component
 
         // 2. Add or increment quantity using the selected quantity
         if (isset($cart[$productId])) {
-            $cart[$productId] += $this->quantity;
+            $newQuantity = $cart[$productId] + $this->quantity;
+            if ($newQuantity > $this->product->stock) {
+                $cart[$productId] = $this->product->stock;
+                if (!$isBuyNow) {
+                    $this->dispatch('toast', msg: 'Maximum available stock added to cart', type: 'error');
+                }
+            } else {
+                $cart[$productId] = $newQuantity;
+                if (!$isBuyNow) {
+                    $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
+                }
+            }
         } else {
             $cart[$productId] = $this->quantity;
+            if (!$isBuyNow) {
+                $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
+            }
         }
 
         // 3. Save back to session
@@ -66,10 +79,6 @@ class Product extends Component
 
         // 5. Update cart counter (if navbar is listening)
         $this->dispatch('cart-updated');
-        
-        if (!$isBuyNow) {
-            $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
-        }
     }
 
     // Handles the "Buy It Now" button

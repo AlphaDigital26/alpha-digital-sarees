@@ -48,8 +48,13 @@ class Cart extends Component
     {
         $cart = session()->get('cart', []);
         if (isset($cart[$productId])) {
-            $cart[$productId]++;
-            session()->put('cart', $cart);
+            $product = Product::find($productId);
+            if ($product && $cart[$productId] < $product->stock) {
+                $cart[$productId]++;
+                session()->put('cart', $cart);
+            } elseif ($product) {
+                $this->dispatch('toast', msg: 'Maximum available stock reached', type: 'error');
+            }
         }
     }
 
