@@ -20,6 +20,8 @@ class Cart extends Component
         $sessionCart = session()->get('cart', []);
         $items = [];
         $subtotal = 0;
+        $totalOriginalPrice = 0;
+        $totalItems = 0;
 
         if (!empty($sessionCart)) {
             $products = Product::with('fabric')->whereIn('id', array_keys($sessionCart))->get();
@@ -31,14 +33,20 @@ class Cart extends Component
                     'qty' => $qty,
                 ];
                 $subtotal += ($product->current_price * $qty); 
+                $totalOriginalPrice += (($product->original_price ?? $product->current_price) * $qty);
+                $totalItems += $qty;
             }
         }
 
-        $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150;
+        $totalDiscount = $totalOriginalPrice - $subtotal;
+        $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150; 
 
         return [
             'items' => $items,
             'subtotal' => $subtotal,
+            'totalItems' => $totalItems,
+            'totalOriginalPrice' => $totalOriginalPrice,
+            'totalDiscount' => $totalDiscount,
             'shipping' => $shipping,
             'total' => $subtotal + $shipping,
         ];

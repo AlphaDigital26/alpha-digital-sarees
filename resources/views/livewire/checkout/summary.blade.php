@@ -52,7 +52,7 @@
 
         {{-- Right side payment --}}
         <div class="md:col-span-5">
-            <div class="bg-white p-8 rounded shadow-sm border border-[#E5E0DA] sticky top-32">
+            <div class="bg-white p-8 rounded shadow-sm border border-[#E5E0DA]">
                 <h3 class="font-bold text-xl border-b border-[#E5E0DA] pb-4 mb-6 text-[#2A211F]" style="font-family: 'Noto Serif', serif;">Payment Summary</h3>
                 
                 <div class="space-y-4 mb-6">
