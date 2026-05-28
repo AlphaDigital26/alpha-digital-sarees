@@ -27,62 +27,80 @@
                                 : 'https://images.unsplash.com/photo-1610030469613-22878897539f?auto=format&fit=crop&q=80';
                         @endphp
                         
-                        <div class="flex flex-col sm:flex-row gap-6 py-8 border-b border-[#E5E0DA] relative group" wire:key="item-{{ $id }}">
+                        <div class="flex flex-col sm:flex-row gap-6 py-6 border-b border-[#E5E0DA] relative group items-stretch" wire:key="item-{{ $id }}">
                             
                             {{-- Product Image --}}
-                            <a href="{{ route('shop.product', $product->id) }}" wire:navigate class="w-24 h-32 sm:w-28 sm:h-36 flex-shrink-0 bg-[#F4F0EB] overflow-hidden shadow-sm block">
-                                <img src="{{ $img }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
+                            <a href="{{ route('shop.product', $product->id) }}" wire:navigate class="w-24 sm:w-28 flex-shrink-0 bg-[#F4F0EB] overflow-hidden shadow-sm block mt-1 relative">
+                                <img src="{{ $img }}" alt="{{ $product->name }}" class="absolute inset-0 w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500">
                             </a>
                             
                             {{-- Product Details --}}
-                            <div class="flex flex-1 flex-col justify-center mt-2 sm:mt-0 pr-10 sm:pr-12">
-                                <a href="{{ route('shop.product', $product->id) }}" wire:navigate>
-                                    <h3 class="text-xl font-bold mb-1 text-[#1b1c1a] hover:text-[#800020] transition-colors" style="font-family: 'Noto Serif', serif;">
-                                        {{ $product->name }}
-                                    </h3>
-                                </a>
-                                
-                                <p class="text-sm text-gray-500 mb-6 font-medium" style="font-family: 'Manrope', sans-serif;">
-                                    Size: Free Size
-                                </p>
-                                
-
-                                
-                                <div class="flex flex-wrap items-center gap-6 mt-auto">
-                                    {{-- Quantity Selector --}}
-                                    <div class="flex items-center border border-[#E5E0DA] bg-white h-10 shadow-sm rounded-sm">
-                                        <button wire:click="decrementQty({{ $id }})" class="w-10 h-full flex items-center justify-center text-gray-600 hover:bg-[#F4F0EB] transition">-</button>
-                                        <span class="w-10 text-center font-bold text-sm border-x border-[#E5E0DA]" style="font-family: 'Manrope', sans-serif;">{{ $item['qty'] }}</span>
-                                        <button wire:click="incrementQty({{ $id }})" class="w-10 h-full flex items-center justify-center text-gray-600 hover:bg-[#F4F0EB] transition">+</button>
-                                    </div>
+                            <div class="flex flex-1 flex-col pr-8 justify-between">
+                                <div>
+                                    <a href="{{ route('shop.product', $product->id) }}" wire:navigate>
+                                        <h3 class="text-lg sm:text-xl font-bold mb-1.5 text-[#1b1c1a] hover:text-[#800020] transition-colors leading-snug" style="font-family: 'Noto Serif', serif;">
+                                            {{ $product->name }}
+                                        </h3>
+                                    </a>
+                                    
+                                    <p class="text-[13px] text-[#706663] mb-3 font-medium" style="font-family: 'Manrope', sans-serif;">
+                                        Size: Free Size
+                                    </p>
                                     
                                     {{-- Price --}}
-                                    <span class="text-lg font-bold text-[#800020]">
-                                        Rs. {{ number_format($product->current_price * $item['qty']) }}
-                                    </span>
+                                    <div class="flex items-center gap-2.5 mb-4 font-bold" style="font-family: 'Manrope', sans-serif;">
+                                        @if($product->original_price && $product->original_price > $product->current_price)
+                                            <span class="text-green-600 text-[13px] flex items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="mr-0.5"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+                                                {{ round((($product->original_price - $product->current_price) / $product->original_price) * 100) }}%
+                                            </span>
+                                            <span class="text-gray-400 line-through text-sm">
+                                                ₹{{ number_format($product->original_price * $item['qty']) }}
+                                            </span>
+                                        @endif
+                                        <span class="text-base sm:text-lg text-[#1b1c1a]">
+                                            ₹{{ number_format($product->current_price * $item['qty']) }}
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="mt-auto">
+                                    {{-- Quantity Selector --}}
+                                    <div class="inline-flex items-center border border-[#E5E0DA] bg-white h-9 shadow-sm rounded-sm">
+                                        <button wire:click="decrementQty({{ $id }})" class="w-9 h-full flex items-center justify-center text-gray-500 hover:bg-[#F4F0EB] transition">-</button>
+                                        <span class="w-10 text-center font-bold text-[13px] border-x border-[#E5E0DA]" style="font-family: 'Manrope', sans-serif;">{{ $item['qty'] }}</span>
+                                        <button wire:click="incrementQty({{ $id }})" class="w-9 h-full flex items-center justify-center text-gray-500 hover:bg-[#F4F0EB] transition">+</button>
+                                    </div>
                                 </div>
                             </div>
 
                             {{-- Remove Button --}}
-                            <button class="absolute top-8 right-2 sm:right-0 text-gray-400 hover:text-red-700 transition-colors p-2" wire:click="removeItem({{ $id }})" title="Remove item">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                            <button class="absolute top-6 right-0 text-gray-400 hover:text-red-700 transition-colors p-1" wire:click="removeItem({{ $id }})" title="Remove item">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
                             </button>
                         </div>
                     @endforeach
                 </div>
 
                 {{-- Right Column: Order Summary --}}
-                <aside class="lg:col-span-4 bg-white p-8 border border-[#E5E0DA] shadow-sm sticky top-32 rounded-sm h-fit">
+                <aside class="lg:col-span-4 bg-white p-8 border border-[#E5E0DA] shadow-sm rounded-sm h-fit">
                     <h2 class="text-2xl font-bold mb-6 pb-4 border-b border-[#E5E0DA] text-[#1b1c1a]" style="font-family: 'Noto Serif', serif;">
                         Order Summary
                     </h2>
                     
-                    <div class="flex justify-between mb-4 text-[#706663] text-sm font-medium" style="font-family: 'Manrope', sans-serif;">
-                        <span>Subtotal</span>
-                        <span>Rs. {{ number_format($this->cartData['subtotal']) }}</span>
+                    <div class="flex justify-between mb-3 text-[#706663] text-sm" style="font-family: 'Manrope', sans-serif;">
+                        <span>Price ({{ $this->cartData['totalItems'] }} item{{ $this->cartData['totalItems'] > 1 ? 's' : '' }})</span>
+                        <span>₹{{ number_format($this->cartData['totalOriginalPrice']) }}</span>
                     </div>
                     
-                    <div class="flex justify-between mb-4 text-[#706663] text-sm font-medium relative" style="font-family: 'Manrope', sans-serif;" x-data="{ tooltipOpen: false }">
+                    @if($this->cartData['totalDiscount'] > 0)
+                    <div class="flex justify-between mb-3 text-sm" style="font-family: 'Manrope', sans-serif;">
+                        <span class="text-[#706663]">Discount</span>
+                        <span class="text-green-600 font-medium">- ₹{{ number_format($this->cartData['totalDiscount']) }}</span>
+                    </div>
+                    @endif
+
+                    <div class="flex justify-between mb-4 text-[#706663] text-sm relative" style="font-family: 'Manrope', sans-serif;" x-data="{ tooltipOpen: false }">
                         <span class="flex items-center gap-1 cursor-pointer group" 
                               @mouseenter="tooltipOpen = true" 
                               @mouseleave="tooltipOpen = false"
@@ -100,13 +118,24 @@
                                 <div class="absolute top-full left-16 -mt-[1px] w-3 h-3 bg-white border-b border-r border-[#E5E0DA] transform rotate-45"></div>
                             </div>
                         </span>
-                        <span>{{ $this->cartData['shipping'] == 0 ? 'Complimentary' : 'Rs. ' . number_format($this->cartData['shipping']) }}</span>
+                        <span>{{ $this->cartData['shipping'] == 0 ? 'Complimentary' : '₹' . number_format($this->cartData['shipping']) }}</span>
                     </div>
+
+                    <div class="border-t border-dashed border-[#E5E0DA] my-4"></div>
                     
-                    <div class="flex justify-between mt-6 pt-6 border-t border-[#E5E0DA] text-xl font-bold text-[#800020] mb-8" style="font-family: 'Noto Serif', serif;">
-                        <span>Total</span>
-                        <span>Rs. {{ number_format($this->cartData['total']) }}</span>
+                    <div class="flex justify-between text-base font-bold text-[#1b1c1a] mb-4" style="font-family: 'Noto Serif', serif;">
+                        <span>Total Amount</span>
+                        <span>₹{{ number_format($this->cartData['total']) }}</span>
                     </div>
+
+                    @if($this->cartData['totalDiscount'] > 0)
+                    <div class="bg-green-50 text-green-700 text-sm font-medium py-3 px-4 rounded mb-8 flex items-center justify-center gap-2" style="font-family: 'Manrope', sans-serif;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.41l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.41zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7zM11 13.5l-2-2 1.41-1.41L11 10.67l3.09-3.09L15.5 9l-4.5 4.5z"/></svg>
+                        You'll save ₹{{ number_format($this->cartData['totalDiscount']) }} on this order!
+                    </div>
+                    @else
+                    <div class="mb-8"></div>
+                    @endif
                     
                     <button wire:click="checkout" wire:loading.attr="disabled" class="w-full bg-[#800020] text-white py-4 font-bold uppercase tracking-[0.15em] text-xs hover:bg-[#570013] transition-colors shadow-md rounded-sm mb-4 disabled:opacity-75 disabled:cursor-wait flex justify-center items-center gap-2">
                         <span wire:loading.remove wire:target="checkout">Proceed to Checkout</span>
