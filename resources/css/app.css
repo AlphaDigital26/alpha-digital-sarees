@@ -92,11 +92,11 @@
 
   /* Hero Section */
   .hero {
-    @apply h-[80vh] relative flex items-center px-[10%] overflow-hidden mt-20;
+    @apply h-[80vh] relative flex items-center px-[10%] overflow-hidden mt-[76px];
   }
   
   .content-section:first-of-type {
-    @apply mt-20;
+    @apply mt-[76px];
   }
 
   .hero-slides {
@@ -359,7 +359,7 @@
 
   /* Shop Page Specific Styles */
   .shop-container {
-    @apply flex flex-col md:flex-row py-12 px-[5%] gap-8 md:gap-16 bg-neutral min-h-screen mt-20;
+    @apply flex flex-col md:flex-row py-12 px-[5%] gap-8 md:gap-16 bg-neutral min-h-screen mt-[76px];
   }
   
   .sidebar {
@@ -456,7 +456,7 @@
 
   /* New Arrivals */
   .arrival-container {
-    @apply mt-20 py-24 px-[8%] max-w-[1400px] mx-auto;
+    @apply mt-[76px] py-24 px-[8%] max-w-[1400px] mx-auto;
   }
   
   .arrival-header {
@@ -533,7 +533,7 @@
 
   /* Occasions */
   .occasion-container {
-    @apply mt-20 py-20 px-[5%] max-w-[1400px] mx-auto;
+    @apply mt-[76px] py-20 px-[5%] max-w-[1400px] mx-auto;
   }
   
   .page-header {
@@ -699,7 +699,7 @@
 
   /* About Story */
   .about-hero {
-    @apply h-[90vh] mt-20 bg-cover bg-center flex items-center justify-center text-center;
+    @apply h-[90vh] mt-[76px] bg-cover bg-center flex items-center justify-center text-center;
     background-image: linear-gradient(to bottom, rgba(253,251,247,0) 60%, rgba(253,251,247,1) 100%), url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80');
   }
   

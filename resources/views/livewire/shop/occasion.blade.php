@@ -23,9 +23,12 @@
         @endphp
 
         @if($occProducts->count() > 0)
+            @php
+                $occasionImage = $occasion->image ? asset('storage/' . $occasion->image) : $featureImages[$index % count($featureImages)];
+            @endphp
             <x-editorial-slider 
                 :title="$occasion->name" 
-                :image="$featureImages[$index % count($featureImages)]" 
+                :image="$occasionImage" 
                 :products="$occProducts" 
                 :shopLink="route('shop.index', ['occasion' => $occasion->name])"
             />

@@ -136,7 +136,16 @@
                         </div>
                         <h3 class="mt-3 hover:text-indigo-600 transition-colors">{{ $product->name }}</h3>
                     </a>
-                    <p>₹{{ number_format($product->current_price, 2) }}</p>
+                    <div class="flex items-baseline justify-center gap-2 mt-1 mb-2">
+                        <p class="font-bold text-[#800020] m-0 text-sm">₹{{ number_format($product->current_price, 2) }}</p>
+                        @if($product->original_price > $product->current_price)
+                            <p class="text-gray-400 line-through text-xs m-0 font-normal" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                            @php
+                                $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
+                            @endphp
+                            <span class="text-green-600 text-[10px] font-bold">({{ $discountPercent }}% OFF)</span>
+                        @endif
+                    </div>
                 </div>
             @empty
                 <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 0;">
