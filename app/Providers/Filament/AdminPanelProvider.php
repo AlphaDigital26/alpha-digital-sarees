@@ -45,6 +45,7 @@ class AdminPanelProvider extends PanelProvider
             ->darkMode(false)
             ->brandName('ALPHA DIGITAL')
             ->font('Manrope') // Matches frontend sans font
+            ->favicon(fn () => \App\Models\Setting::getSiteSettings()->favicon_image ? asset('storage/' . \App\Models\Setting::getSiteSettings()->favicon_image) . '?v=' . time() : null)
 
             ->discoverResources(
                 in: app_path('Filament/Resources'),

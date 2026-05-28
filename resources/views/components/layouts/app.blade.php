@@ -11,6 +11,14 @@
     @livewireStyles
     
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    @php
+        $settings = \App\Models\Setting::getSiteSettings();
+    @endphp
+    @if($settings && $settings->favicon_image)
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings->favicon_image) }}?v={{ time() }}">
+        <link rel="shortcut icon" href="{{ asset('storage/' . $settings->favicon_image) }}?v={{ time() }}">
+    @endif
 </head>
 <body>
 
