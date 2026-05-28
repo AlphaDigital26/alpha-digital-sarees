@@ -54,6 +54,10 @@ class ManageSettings extends Page implements HasForms
                                 Forms\Components\Tabs\Tab::make('Brand & Logo')
                                     ->icon('heroicon-o-sparkles')
                                     ->schema([
+                                        Forms\Components\FileUpload::make('favicon_image')
+                                            ->label('Favicon Image')
+                                            ->image()
+                                            ->directory('settings'),
                                         Forms\Components\Radio::make('logo_type')
                                             ->options(['text' => 'Plain Text', 'image' => 'Image Logo'])
                                             ->inline()->live(),

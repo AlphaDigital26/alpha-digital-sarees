@@ -31,11 +31,11 @@
     </nav>
 
     <div class="flex items-center gap-6 shrink-0">
-        <form action="{{ route('shop.index') }}" method="GET" class="hidden lg:flex items-center bg-white/50 hover:bg-white transition-colors py-2 px-5 rounded-full border border-[#E5E0DA] focus-within:border-[#800020] focus-within:bg-white focus-within:shadow-sm">
-            <button type="submit" class="bg-transparent border-none p-0 cursor-pointer outline-none flex items-center justify-center text-[#706663] hover:text-[#800020] transition-colors">
+        <form action="{{ route('shop.index') }}" method="GET" class="hidden lg:flex items-center h-[42px] m-0 bg-white/50 hover:bg-white transition-colors px-5 rounded-full border border-[#E5E0DA] focus-within:border-[#800020] focus-within:bg-white focus-within:shadow-sm">
+            <button type="submit" class="bg-transparent border-none p-0 m-0 cursor-pointer outline-none flex items-center justify-center text-[#706663] hover:text-[#800020] transition-colors">
                 <i data-lucide="search" class="w-4 h-4"></i>
             </button>
-            <input type="text" name="search" placeholder="Search Alpha Digital" value="{{ request('search') }}" class="border-none bg-transparent outline-none pl-3 font-sans text-xs text-[#2A211F] placeholder-[#706663] w-[180px] transition-all focus:w-[220px]">
+            <input type="text" name="search" placeholder="Search Alpha Digital" value="{{ request('search') }}" class="border-none bg-transparent outline-none m-0 p-0 pl-3 h-full font-sans text-[13px] text-[#2A211F] placeholder-[#706663] w-[180px] transition-all focus:w-[220px]">
         </form>
 
         <div class="flex items-center gap-5 nav-icons">
