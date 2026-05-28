@@ -51,10 +51,21 @@
                                 {{ $product->fabric->name ?? 'Premium Fabric' }}
                             </p>
                             
-                            <div class="mt-auto flex items-center justify-between">
-                                <span class="text-lg font-bold text-[#800020]">
-                                    Rs. {{ number_format($product->current_price) }}
-                                </span>
+                            <div class="mt-auto flex flex-col justify-end">
+                                <div class="flex items-baseline gap-2">
+                                    <span class="text-xl font-bold text-[#800020] leading-none">
+                                        Rs. {{ number_format($product->current_price) }}
+                                    </span>
+                                    @if($product->original_price > $product->current_price)
+                                        <span class="text-gray-400 line-through text-sm font-normal">
+                                            Rs. {{ number_format($product->original_price) }}
+                                        </span>
+                                        @php
+                                            $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
+                                        @endphp
+                                        <span class="text-green-600 text-xs font-bold tracking-wide">({{ $discountPercent }}% OFF)</span>
+                                    @endif
+                                </div>
                             </div>
 
                             <button wire:click="moveToCart({{ $product->id }})" class="w-full mt-5 bg-white border-2 border-[#800020] text-[#800020] hover:bg-[#800020] hover:text-white transition-colors py-3 text-xs font-bold uppercase tracking-[0.15em] rounded-sm">

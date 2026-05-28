@@ -23,6 +23,8 @@ class OccasionTable extends Component implements HasForms, HasTable
             ->query(Occasion::query())
             ->heading('Occasions')
             ->columns([
+                Tables\Columns\ImageColumn::make('image')
+                    ->circular(),
                 Tables\Columns\TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
@@ -35,6 +37,10 @@ class OccasionTable extends Component implements HasForms, HasTable
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
+                        Forms\Components\FileUpload::make('image')
+                            ->image()
+                            ->directory('occasions')
+                            ->nullable(),
                     ]),
             ])
             ->actions([
@@ -44,6 +50,10 @@ class OccasionTable extends Component implements HasForms, HasTable
                             ->required()
                             ->unique(ignoreRecord: true)
                             ->maxLength(255),
+                        Forms\Components\FileUpload::make('image')
+                            ->image()
+                            ->directory('occasions')
+                            ->nullable(),
                     ]),
                 Tables\Actions\DeleteAction::make(),
             ]);
