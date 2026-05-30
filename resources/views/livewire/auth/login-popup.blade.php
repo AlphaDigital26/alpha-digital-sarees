@@ -230,6 +230,40 @@
                         Close
                     </button>
                 </div>
+
+            @elseif($step == 7)
+                <h2 class="text-lg font-bold text-black text-center mb-1 mt-0">Verify Your Email</h2>
+                <p class="text-[13px] text-gray-500 text-center mb-2 mt-0">
+                    We've sent a 6-digit code to <span class="font-bold text-black">{{ $email }}</span>
+                </p>
+                
+                @if (session()->has('otp_message'))
+                    <div class="mb-4 text-center text-[12px] font-medium text-green-600 bg-green-50 p-2 rounded">
+                        {{ session('otp_message') }}
+                    </div>
+                @endif
+
+                <form wire:submit.prevent="verifyOtp" class="space-y-6 m-0 mt-6">
+                    <div>
+                        <label class="block text-[13px] font-bold text-black mb-2">6-Digit Code</label>
+                        <input type="text" wire:model="otp_code" maxlength="6" placeholder="Enter code" class="w-full border border-gray-300 rounded-md h-[46px] px-3 text-[14px] focus:border-black outline-none transition-colors text-center tracking-[0.5em] font-mono font-bold">
+                        @error('otp_code') <span class="text-red-500 text-[11px] font-bold mt-1 block">{{ $message }}</span> @enderror
+                    </div>
+
+                    <button type="submit" class="w-full bg-black border-none text-white h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors mt-2 text-[15px] cursor-pointer" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="verifyOtp">Verify</span>
+                        <span wire:loading wire:target="verifyOtp">Verifying...</span>
+                    </button>
+
+                    <div class="text-center mt-6">
+                        <p class="text-[12px] text-gray-500 m-0">
+                            Didn't receive the code? 
+                            <button type="button" wire:click="resendOtp" class="text-black hover:text-[#800020] font-bold bg-transparent border-none cursor-pointer p-0 underline ml-1">
+                                Resend
+                            </button>
+                        </p>
+                    </div>
+                </form>
             @endif
 
         </div>

@@ -8,6 +8,7 @@
             @foreach($orders as $order)
                 <div class="bg-white border border-[#F2F0ED] rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
                     {{-- Card Header --}}
+                    @if(strtolower($order->status) !== 'failed')
                     <div class="grid grid-cols-2 md:grid-cols-4 gap-4 p-5 border-b border-[#F2F0ED] bg-[#FAFAFA] text-[13px]">
                         <div class="text-center border-r border-[#E5E0DA]">
                             <p class="text-gray-400 mb-1">Order Number</p>
@@ -26,6 +27,7 @@
                             <p class="font-bold text-[#1b1c1a]">{{ auth('customer')->user()->name ?? 'Customer' }}</p>
                         </div>
                     </div>
+                    @endif
 
                     {{-- Card Body (Items) --}}
                     <div class="p-6">
@@ -38,14 +40,14 @@
                                             ? asset('storage/' . $product->images[0]) 
                                             : 'https://images.unsplash.com/photo-1610030469613-22878897539f?auto=format&fit=crop&q=80';
                                     @endphp
-                                    <div class="flex flex-col sm:flex-row gap-5 pb-6 {{ !$loop->last ? 'border-b border-[#F2F0ED]' : '' }}">
+                                    <div class="flex flex-col sm:flex-row gap-5 {{ !$loop->last ? 'pb-6 border-b border-[#F2F0ED]' : '' }}">
                                         {{-- Image --}}
                                         <div class="w-24 h-24 sm:w-28 sm:h-28 flex-shrink-0 bg-[#F4F0EB] rounded-md overflow-hidden">
                                             <img src="{{ $img }}" alt="{{ $product ? $product->name : 'Product' }}" class="w-full h-full object-cover object-top">
                                         </div>
                                         
                                         {{-- Details --}}
-                                        <div class="flex-1 flex flex-col justify-between">
+                                        <div class="flex-1 flex flex-col justify-center">
                                             <div class="flex justify-between items-start gap-4">
                                                 <h3 class="text-[15px] font-medium text-[#1b1c1a]">
                                                     {{ $product ? $product->name : 'Unknown Product' }}
@@ -53,35 +55,44 @@
                                                 <p class="font-bold text-[#1b1c1a] whitespace-nowrap">Rs. {{ number_format($item->price) }}</p>
                                             </div>
                                             
-                                            <div class="mt-2 space-y-1">
-                                                <p class="text-[13px] text-gray-500">Qty : <span class="font-medium text-[#1b1c1a]">{{ $item->quantity }}</span></p>
+                                            <div class="mt-3 flex flex-wrap items-center gap-3 text-[13px] text-gray-500">
+                                                <span class="flex items-center gap-1.5">Color: <span class="font-semibold text-[#1b1c1a]">{{ $product && $product->color ? ucfirst($product->color->name) : 'Standard' }}</span></span>
+                                                <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                                <span class="flex items-center gap-1.5">Size: <span class="font-semibold text-[#1b1c1a]">Free Size</span></span>
+                                                <span class="w-1 h-1 rounded-full bg-gray-300"></span>
+                                                <span class="flex items-center gap-1.5">Qty: <span class="font-semibold text-[#1b1c1a]">{{ $item->quantity }}</span></span>
                                             </div>
                                             
+                                            @php
+                                                $hasActions = strtolower($order->status) === 'delivered' || !in_array(strtolower($order->status), ['canceled', 'failed']);
+                                            @endphp
+                                            @if($hasActions)
                                             <div class="mt-4 flex gap-4">
                                                 @if(strtolower($order->status) === 'delivered')
                                                     <a href="{{ route('shop.product', $product->id) }}#reviews" class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-1">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                                                         Rate Now
                                                     </a>
-                                                @else
+                                                @elseif(strtolower($order->status) !== 'failed')
                                                     <span class="text-[13px] font-bold text-gray-400 flex items-center gap-1 cursor-not-allowed" title="Available after delivery">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
                                                         Rate Now
                                                     </span>
                                                 @endif
-                                                @if(strtolower($order->status) !== 'canceled')
+                                                @if(!in_array(strtolower($order->status), ['canceled', 'failed']))
                                                     <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1">
                                                         Track Order
                                                     </a>
                                                 @endif
                                             </div>
+                                            @endif
                                         </div>
                                     </div>
                                 @endforeach
                             </div>
                         @else
                             <p class="text-gray-500 text-sm italic py-2">Item details are not available for this legacy order.</p>
-                            @if(strtolower($order->status) !== 'canceled')
+                            @if(!in_array(strtolower($order->status), ['canceled', 'failed']))
                                 <a href="{{ route('profile.orders.track', $order->id) }}" wire:navigate class="text-[13px] font-bold text-[#800020] hover:text-[#570013] transition flex items-center gap-1 mt-3">
                                     Track Order
                                 </a>
@@ -90,29 +101,41 @@
                     </div>
 
                     {{-- Card Footer --}}
-                    <div class="p-5 border-t border-[#F2F0ED] flex flex-wrap justify-between items-center gap-4">
-                        <div class="flex items-center gap-4">
-                            <p class="text-[14px] text-gray-500">Total Amount : <span class="font-bold text-[#1b1c1a] text-base ml-1">Rs. {{ number_format($order->total_amount) }}</span></p>
-                            <span class="text-[13px] font-bold px-2 py-1 rounded {{ strtolower($order->status) === 'canceled' ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700' }}">
-                                {{ ucfirst($order->status ?? 'New') }}
-                            </span>
+                    <div class="p-5 border-t border-[#F2F0ED]">
+                        <div class="flex flex-wrap justify-between items-center gap-4">
+                            <div class="flex items-center gap-4">
+                                <p class="text-[14px] text-gray-500">Total Amount : <span class="font-bold text-[#1b1c1a] text-base ml-1">Rs. {{ number_format($order->total_amount) }}</span></p>
+                                <span class="text-[13px] font-bold px-2 py-1 rounded {{ in_array(strtolower($order->status), ['canceled', 'failed']) ? 'bg-red-100 text-red-700' : 'bg-blue-100 text-blue-700' }}">
+                                    {{ ucfirst($order->status ?? 'New') }}
+                                </span>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                @if(now()->diffInHours($order->created_at) <= 24 && !in_array(strtolower($order->status), ['shipped', 'delivered', 'refunded', 'canceled', 'failed']))
+                                    <button 
+                                        wire:click="cancelOrder({{ $order->id }})" 
+                                        wire:confirm="Are you sure you want to cancel this order? This action cannot be undone."
+                                        class="text-[13px] font-bold text-red-600 hover:text-red-800 transition flex items-center gap-1 bg-transparent border-none cursor-pointer"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                                        Cancel Order
+                                    </button>
+                                @endif
+                                
+                                @if(strtolower($order->status) !== 'failed')
+                                <a href="{{ route('profile.orders.invoice', $order->id) }}" class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-2" style="text-decoration: none;">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                    Download Invoice
+                                </a>
+                                @endif
+                            </div>
                         </div>
-                        <div class="flex items-center gap-4">
-                            @if(now()->diffInHours($order->created_at) <= 24 && !in_array(strtolower($order->status), ['shipped', 'delivered', 'refunded', 'canceled']))
-                                <button 
-                                    wire:click="cancelOrder({{ $order->id }})" 
-                                    wire:confirm="Are you sure you want to cancel this order? This action cannot be undone."
-                                    class="text-[13px] font-bold text-red-600 hover:text-red-800 transition flex items-center gap-1 bg-transparent border-none cursor-pointer"
-                                >
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
-                                    Cancel Order
-                                </button>
-                            @endif
-                            <a href="{{ route('profile.orders.invoice', $order->id) }}" class="text-[13px] font-bold text-[#6366f1] hover:text-indigo-700 transition flex items-center gap-2" style="text-decoration: none;">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                Download Invoice
-                            </a>
-                        </div>
+
+                        @if(strtolower($order->status) === 'failed')
+                            <div class="mt-4 p-3 bg-red-50 border border-red-100 rounded text-[13px] text-red-800 flex items-start gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                <span>If you have been charged, a refund will be processed and will be available to you in the next 3–5 business days.</span>
+                            </div>
+                        @endif
                     </div>
                 </div>
             @endforeach

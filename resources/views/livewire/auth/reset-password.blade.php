@@ -1,4 +1,4 @@
-<div class="min-h-[70vh] flex items-center justify-center bg-surface_lowest py-12 px-4 sm:px-6 lg:px-8 font-sans">
+<div class="min-h-[70vh] flex items-center justify-center bg-surface_lowest py-12 px-4 sm:px-6 lg:px-8 font-sans mt-24">
     <div class="max-w-md w-full bg-white border border-outline_variant/50 rounded-sm p-8 shadow-sm">
         <div class="text-center mb-8">
             <h1 class="text-2xl font-bold tracking-[0.2em] text-primary uppercase m-0 font-serif">

@@ -14,6 +14,7 @@ class Summary extends Component
     public $address;
     public $cartDetails;
     public $showFailureModal = false;
+    public $currentOrderId;
 
     public function mount()
     {
@@ -35,6 +36,8 @@ class Summary extends Component
             
         $items = [];
         $subtotal = 0;
+        $originalPriceTotal = 0;
+        $totalItems = 0;
 
         if (!empty($sessionCart)) {
             $products = Product::whereIn('id', array_keys($sessionCart))->get();
@@ -42,11 +45,25 @@ class Summary extends Component
                 $qty = $sessionCart[$product->id] ?? 1;
                 $items[] = ['product' => $product, 'qty' => $qty];
                 $subtotal += ($product->current_price * $qty); 
+                // Fallback to current_price if original_price is null or 0
+                $origPrice = $product->original_price > 0 ? $product->original_price : $product->current_price;
+                $originalPriceTotal += ($origPrice * $qty);
+                $totalItems += $qty;
             }
         }
 
         $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150;
-        return ['items' => $items, 'subtotal' => $subtotal, 'shipping' => $shipping, 'total' => $subtotal + $shipping];
+        $discount = $originalPriceTotal - $subtotal;
+
+        return [
+            'items' => $items, 
+            'subtotal' => $subtotal, 
+            'original_price_total' => $originalPriceTotal,
+            'discount' => $discount,
+            'total_items' => $totalItems,
+            'shipping' => $shipping, 
+            'total' => $subtotal + $shipping
+        ];
     }
 
     public function payWithRazorpay()
@@ -68,6 +85,8 @@ class Summary extends Component
             'razorpay_order_id' => $razorpayOrder['id'],
             'payment_status' => 'pending',
         ]);
+
+        $this->currentOrderId = $order->id;
 
         foreach ($this->cartDetails['items'] as $item) {
             \App\Models\OrderItem::create([
@@ -104,11 +123,28 @@ class Summary extends Component
             $order = Order::with('items.product')->where('razorpay_order_id', $razorpayOrderId)->first();
             $order->update(['status' => 'new', 'payment_status' => 'paid', 'razorpay_payment_id' => $razorpayPaymentId]);
 
+            // Dispatch Emails
+            $adminEmail = \App\Models\Setting::first()->contact_email ?? config('mail.from.address');
+            
             // Deduct stock for each ordered item
             foreach ($order->items as $item) {
                 if ($item->product) {
                     $item->product->decrement('stock', $item->quantity);
+                    
+                    // Low stock alert if stock drops to 5 or below
+                    if ($item->product->stock <= 5 && $adminEmail) {
+                        \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminLowStockMail($item->product));
+                    }
                 }
+            }
+
+            // Customer Emails
+            \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderConfirmedMail($order));
+            \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\PaymentSuccessMail($order));
+            
+            // Admin Email
+            if ($adminEmail) {
+                \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminNewOrderMail($order));
             }
 
             // Clear carts if applicable
@@ -129,6 +165,13 @@ class Summary extends Component
     // Handles user closing the modal or payment failure
     public function paymentFailed()
     {
+        if ($this->currentOrderId) {
+            $order = Order::find($this->currentOrderId);
+            if ($order && $order->status === 'pending') {
+                $order->update(['status' => 'failed', 'payment_status' => 'failed']);
+                \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderFailedMail($order));
+            }
+        }
         $this->showFailureModal = true;
     }
 

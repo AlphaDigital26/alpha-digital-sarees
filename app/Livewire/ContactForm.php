@@ -31,13 +31,18 @@ class ContactForm extends Component
         $this->validate();
 
         // Save to the database
-        UserQuery::create([
+        $query = UserQuery::create([
             'name' => $this->name,
             'email' => $this->email,
             'phone' => $this->phone,
             'reason' => $this->reason,
             'message' => $this->message,
         ]);
+
+        $adminEmail = \App\Models\Setting::first()->contact_email ?? config('mail.from.address');
+        if ($adminEmail) {
+            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminContactInquiryMail($query));
+        }
 
         // Clear the form fields
         $this->reset(['name', 'email', 'phone', 'reason', 'message']);

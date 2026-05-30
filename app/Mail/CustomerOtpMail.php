@@ -1,0 +1,57 @@
+<?php
+
+namespace App\Mail;
+
+use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Content;
+use Illuminate\Mail\Mailables\Envelope;
+use Illuminate\Queue\SerializesModels;
+
+class CustomerOtpMail extends Mailable implements ShouldQueue
+{
+    use Queueable, SerializesModels;
+
+    public $otp;
+    public $customerName;
+
+    /**
+     * Create a new message instance.
+     */
+    public function __construct($otp, $customerName)
+    {
+        $this->otp = $otp;
+        $this->customerName = $customerName;
+    }
+
+    /**
+     * Get the message envelope.
+     */
+    public function envelope(): Envelope
+    {
+        return new Envelope(
+            subject: 'Your Alpha Digital Verification Code',
+        );
+    }
+
+    /**
+     * Get the message content definition.
+     */
+    public function content(): Content
+    {
+        return new Content(
+            markdown: 'emails.customer_otp',
+        );
+    }
+
+    /**
+     * Get the attachments for the message.
+     *
+     * @return array<int, \Illuminate\Mail\Mailables\Attachment>
+     */
+    public function attachments(): array
+    {
+        return [];
+    }
+}
