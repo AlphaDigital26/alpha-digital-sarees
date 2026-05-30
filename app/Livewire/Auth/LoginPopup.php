@@ -23,6 +23,8 @@ class LoginPopup extends Component
     public $subscribe = false;
     public $agree_tos = false;
 
+    public $otp_code = '';
+
     public function checkEmail()
     {
         $this->validate([
@@ -44,7 +46,16 @@ class LoginPopup extends Component
             'password' => 'required',
         ]);
 
-        if (Auth::guard('customer')->attempt(['email' => $this->email, 'password' => $this->password], $this->remember)) {
+        $customer = Customer::where('email', $this->email)->first();
+
+        if ($customer && \Illuminate\Support\Facades\Hash::check($this->password, $customer->password)) {
+            if (is_null($customer->email_verified_at)) {
+                $this->sendOtp($customer);
+                $this->step = 7; // Go to OTP verification step
+                return;
+            }
+
+            Auth::guard('customer')->login($customer, $this->remember);
             $this->redirectUrl = session()->pull('url.intended', request()->header('Referer') ?? '/');
             session()->regenerate();
             $this->processPendingWishlist();
@@ -92,6 +103,63 @@ class LoginPopup extends Component
             'gender' => $this->gender,
             'is_subscribed' => $this->subscribe ? true : false,
             'agreed_to_tos' => true,
+        ]);
+
+        $this->sendOtp($customer);
+        $this->step = 7; // Go to OTP verification step
+    }
+
+    public function sendOtp(Customer $customer)
+    {
+        $otp = (string) rand(100000, 999999);
+        $customer->update([
+            'otp' => $otp,
+            'otp_expires_at' => now()->addMinutes(10),
+        ]);
+
+        try {
+            \Illuminate\Support\Facades\Mail::to($customer->email)->send(new \App\Mail\CustomerOtpMail($otp, $customer->name));
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Failed to send OTP: ' . $e->getMessage());
+        }
+    }
+
+    public function resendOtp()
+    {
+        $customer = Customer::where('email', $this->email)->first();
+        if ($customer) {
+            $this->sendOtp($customer);
+            session()->flash('otp_message', 'A new OTP has been sent to your email.');
+        }
+    }
+
+    public function verifyOtp()
+    {
+        $this->validate([
+            'otp_code' => 'required|string|size:6',
+        ]);
+
+        $customer = Customer::where('email', $this->email)->first();
+
+        if (!$customer) {
+            $this->addError('otp_code', 'Customer not found.');
+            return;
+        }
+
+        if ($customer->otp !== $this->otp_code) {
+            $this->addError('otp_code', 'Invalid verification code.');
+            return;
+        }
+
+        if ($customer->otp_expires_at && $customer->otp_expires_at->isPast()) {
+            $this->addError('otp_code', 'This verification code has expired. Please request a new one.');
+            return;
+        }
+
+        $customer->update([
+            'email_verified_at' => now(),
+            'otp' => null,
+            'otp_expires_at' => null,
         ]);
 
         Auth::guard('customer')->login($customer, $this->remember);

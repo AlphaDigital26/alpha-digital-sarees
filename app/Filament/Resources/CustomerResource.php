@@ -100,6 +100,12 @@ class CustomerResource extends Resource
                     ->label('Newsletter')
                     ->boolean(),
                     
+                Tables\Columns\TextColumn::make('is_verified')
+                    ->label('Verification')
+                    ->badge()
+                    ->state(fn (Customer $record): string => $record->email_verified_at ? 'Verified' : 'Not Verified')
+                    ->color(fn (string $state): string => $state === 'Verified' ? 'success' : 'danger'),
+                    
                 Tables\Columns\TextColumn::make('created_at')
                     ->label('Registered On')
                     ->dateTime('M d, Y h:i A')
@@ -114,6 +120,11 @@ class CustomerResource extends Resource
                     ->falseColor('danger'),
             ])
             ->filters([
+                Tables\Filters\TernaryFilter::make('email_verified_at')
+                    ->label('Verification Status')
+                    ->nullable()
+                    ->trueLabel('Verified Customers')
+                    ->falseLabel('Unverified Customers'),
                 // Filter to quickly find users subscribed to your newsletter
                 Tables\Filters\TernaryFilter::make('is_subscribed')
                     ->label('Newsletter Subscription')

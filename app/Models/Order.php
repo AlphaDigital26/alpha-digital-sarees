@@ -21,4 +21,13 @@ class Order extends Model
     {
         return $this->hasMany(OrderItem::class);
     }
+
+    protected static function booted(): void
+    {
+        static::updated(function (Order $order) {
+            if ($order->isDirty('status') && strtolower($order->status) === 'delivered') {
+                \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderDeliveredMail($order));
+            }
+        });
+    }
 }
