@@ -25,7 +25,7 @@
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-[#6366f1]"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
                 <p class="text-sm font-bold text-[#1b1c1a] m-0">Estimated Delivery by {{ now()->addDays(7)->format('l, jS M') }}</p>
             </div>
-            <a href="{{ route('profile.orders.track', $order->id) }}" class="text-[#800020] text-xs font-bold uppercase tracking-wider flex items-center gap-1 hover:text-[#5D4037] transition" style="text-decoration: none;">
+            <a href="{{ route('profile.orders.details', $order->id) }}" class="text-[#800020] text-xs font-bold uppercase tracking-wider flex items-center gap-1 hover:text-[#5D4037] transition" style="text-decoration: none;">
                 Track Order <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </a>
         </div>

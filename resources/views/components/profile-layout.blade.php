@@ -5,7 +5,7 @@
             
             {{-- Sidebar --}}
             <div class="w-full md:w-1/4 shrink-0">
-                <div class="bg-surface_lowest border border-outline_variant/50 rounded-sm sticky top-[120px]">
+                <div class="bg-surface_lowest border border-outline_variant/50 rounded-sm">
                     {{-- User Info Header --}}
                     <div class="p-6 border-b border-outline_variant/50">
                         <h2 class="text-lg font-bold text-secondary m-0 uppercase tracking-wide font-serif">
@@ -26,7 +26,7 @@
                             <i data-lucide="chevron-right" class="w-4 h-4 text-gray-400"></i>
                         </a>
 
-                        <a href="{{ route('profile.orders') }}" class="flex items-center justify-between px-6 py-4 text-sm font-medium transition-colors border-l-2 {{ request()->routeIs('profile.orders') ? 'border-primary text-primary bg-surface' : 'border-transparent text-tertiary hover:bg-surface_low hover:text-primary' }}">
+                        <a href="{{ route('profile.orders') }}" class="flex items-center justify-between px-6 py-4 text-sm font-medium transition-colors border-l-2 {{ request()->routeIs('profile.orders*') ? 'border-primary text-primary bg-surface' : 'border-transparent text-tertiary hover:bg-surface_low hover:text-primary' }}">
                             <div class="flex items-center gap-3">
                                 <i data-lucide="package" class="w-4 h-4"></i>
                                 Orders

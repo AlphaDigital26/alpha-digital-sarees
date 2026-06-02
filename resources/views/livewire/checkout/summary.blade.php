@@ -1,7 +1,3 @@
-<!-- <div>
-    {{-- The Master doesn't talk, he acts. --}}
-</div> -->
-
 <div class="max-w-5xl mx-auto px-5 pt-[80px] pb-12 min-h-screen font-sans">
     
     <x-checkout-progress step="3" />
@@ -47,6 +43,12 @@
                         </div>
                     @endforeach
                 </div>
+            </div>
+
+            {{-- Special Instructions Input --}}
+            <div class="bg-white p-8 rounded shadow-sm border border-[#E5E0DA]">
+                <h3 class="font-bold text-xl border-b border-[#E5E0DA] pb-4 mb-6 text-[#2A211F]" style="font-family: 'Noto Serif', serif;">Special Instructions <span class="text-gray-400 text-sm font-normal font-sans">(Optional)</span></h3>
+                <textarea wire:model="customer_note" rows="3" placeholder="Examples:&#10;• Please gift wrap this saree.&#10;• Do not include invoice in the parcel.&#10;• Call before delivery." class="w-full border border-gray-300 rounded px-4 py-3 text-sm focus:border-[#800020] focus:ring-[#800020] focus:outline-none transition-colors" style="font-family: 'Manrope', sans-serif; resize: vertical;"></textarea>
             </div>
         </div>
 
