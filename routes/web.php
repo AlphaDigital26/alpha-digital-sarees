@@ -53,7 +53,11 @@ Route::middleware('auth:customer')->group(function () {
     Route::get('/profile', App\Livewire\Profile\AccountDetails::class)->name('profile.account');
     Route::get('/profile/orders', App\Livewire\Profile\OrderHistory::class)->name('profile.orders');
     Route::get('/profile/orders/{order}/invoice', [App\Http\Controllers\InvoiceController::class, 'download'])->name('profile.orders.invoice');
-    Route::get('/profile/orders/{id}/track', App\Livewire\Profile\TrackOrder::class)->name('profile.orders.track');
+    Route::get('/profile/orders/{id}', App\Livewire\Profile\OrderDetails::class)->name('profile.orders.details');
+    // Backward compatibility for old track URLs
+    Route::get('/profile/orders/{id}/track', function ($id) {
+        return redirect()->route('profile.orders.details', ['id' => $id]);
+    })->name('profile.orders.track');
     Route::get('/profile/addresses', App\Livewire\Profile\Addresses::class)->name('profile.addresses');
 });
 

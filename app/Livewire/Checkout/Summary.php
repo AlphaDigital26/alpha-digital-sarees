@@ -15,6 +15,9 @@ class Summary extends Component
     public $cartDetails;
     public $showFailureModal = false;
     public $currentOrderId;
+    
+    // ADDED: Property to hold the customer's special instructions
+    public $customer_note = '';
 
     public function mount()
     {
@@ -84,6 +87,7 @@ class Summary extends Component
             'status' => 'pending',
             'razorpay_order_id' => $razorpayOrder['id'],
             'payment_status' => 'pending',
+            'customer_note' => $this->customer_note, // ADDED: Saving the note to DB
         ]);
 
         $this->currentOrderId = $order->id;
@@ -162,7 +166,6 @@ class Summary extends Component
         }
     }
 
-    // Handles user closing the modal or payment failure
     public function paymentFailed()
     {
         if ($this->currentOrderId) {

@@ -7,9 +7,14 @@
     $statusStyle = match (strtolower($record->status)) {
         'new' => 'color: #800020; background-color: rgba(128,0,32,0.1); border-color: rgba(128,0,32,0.2);',
         'processing' => 'color: #A68A64; background-color: rgba(166,138,100,0.1); border-color: rgba(166,138,100,0.2);',
+        'packed' => 'color: #5D4037; background-color: rgba(93,64,55,0.1); border-color: rgba(93,64,55,0.2);',
         'shipped' => 'color: #4338ca; background-color: #eef2ff; border-color: rgba(79,70,229,0.2);',
         'delivered' => 'color: #15803d; background-color: #f0fdf4; border-color: rgba(22,163,74,0.2);',
-        'refunded' => 'color: #b91c1c; background-color: #fef2f2; border-color: rgba(220,38,38,0.2);',
+        'cancelled', 'canceled' => 'color: #7f1d1d; background-color: #fef2f2; border-color: rgba(127,29,29,0.2);',
+        'refund_requested' => 'color: #d97706; background-color: #fffbeb; border-color: rgba(217,119,6,0.2);', // Yellow
+        'refund_approved' => 'color: #2563eb; background-color: #eff6ff; border-color: rgba(37,99,235,0.2);', // Blue
+        'refund_rejected' => 'color: #dc2626; background-color: #fef2f2; border-color: rgba(220,38,38,0.2);', // Red
+        'refunded' => 'color: #16a34a; background-color: #f0fdf4; border-color: rgba(22,163,74,0.2);', // Green
         default => 'color: #4b5563; background-color: #f9fafb; border-color: rgba(107,114,128,0.1);',
     };
 
@@ -81,7 +86,7 @@
         </div>
         <div class="oc-status-container">
             <span class="oc-status-badge" style="{{ $statusStyle }}">
-                {{ ucfirst($record->status) }}
+                {{ ucwords(str_replace('_', ' ', $record->status)) }}
             </span>
             <span class="oc-payment-status" style="{{ $paymentStatusStyle }}">
                 {{ strtolower($record->payment_status) }}

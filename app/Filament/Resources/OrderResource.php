@@ -22,23 +22,56 @@ class OrderResource extends Resource
         return [
             NavigationItem::make('New Orders')
                 ->url(fn (): string => static::getUrl('index', ['activeTab' => 'new']))
-                // Removed the icon line here
                 ->group('Orders')
                 ->sort(1) 
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'new'),
 
-            NavigationItem::make('Refund Orders')
-                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'refunded']))
-                // Removed the icon line here
+            NavigationItem::make('Processing Orders')
+                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'processing']))
                 ->group('Orders')
                 ->sort(2) 
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'processing'),
+
+            NavigationItem::make('Packed Orders')
+                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'packed']))
+                ->group('Orders')
+                ->sort(3) 
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'packed'),
+
+            NavigationItem::make('Shipped Orders')
+                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'shipped']))
+                ->group('Orders')
+                ->sort(4) 
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'shipped'),
+
+            NavigationItem::make('Delivered Orders')
+                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'delivered']))
+                ->group('Orders')
+                ->sort(5) 
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'delivered'),
+
+            NavigationItem::make('Cancelled Orders')
+                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'cancelled']))
+                ->group('Orders')
+                ->sort(6) 
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'cancelled'),
+
+            NavigationItem::make('Refund Requests')
+                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'refund_requested']))
+                ->group('Orders')
+                ->sort(7) 
+                ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'refund_requested'),
+
+            NavigationItem::make('Refunded Orders')
+                ->url(fn (): string => static::getUrl('index', ['activeTab' => 'refunded']))
+                ->group('Orders')
+                ->sort(8) 
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && request()->query('activeTab') === 'refunded'),
 
             NavigationItem::make('All Orders')
                 ->url(fn (): string => static::getUrl('index', ['activeTab' => 'all']))
-                // Removed the icon line here
                 ->group('Orders')
-                ->sort(3) 
+                ->sort(9) 
                 ->isActiveWhen(fn () => request()->routeIs(static::getRouteBaseName() . '.index') && (request()->query('activeTab') === 'all' || blank(request()->query('activeTab')))),
         ];
     }
@@ -52,10 +85,12 @@ class OrderResource extends Resource
                         ->options([
                             'new' => 'New Order (Placed)',
                             'processing' => 'Processing',
+                            'packed' => 'Packed',
                             'shipped' => 'Shipped',
                             'delivered' => 'Delivered',
+                            'cancelled' => 'Cancelled',
+                            'refund_requested' => 'Refund Requested',
                             'refunded' => 'Refunded',
-                            'canceled' => 'Canceled',
                         ])
                         ->required()
                         ->helperText('Updating the status here will automatically update the Order History timeline on both the Admin Dashboard and the Customer Tracking page.'),
@@ -79,11 +114,13 @@ class OrderResource extends Resource
                     ->label('Filter by Status')
                     ->options([
                         'new' => 'New Orders',
-                        'refunded' => 'Refund Orders',
-                        'canceled' => 'Canceled Orders',
                         'processing' => 'Processing',
+                        'packed' => 'Packed',
                         'shipped' => 'Shipped',
                         'delivered' => 'Delivered',
+                        'cancelled' => 'Cancelled Orders',
+                        'refund_requested' => 'Refund Requests',
+                        'refunded' => 'Refund Orders',
                     ]),
             ])
             ->actions([
@@ -113,10 +150,19 @@ class OrderResource extends Resource
 
         $activeTab = request()->query('activeTab');
         
-        if ($activeTab === 'new') {
-            $query->where('status', 'new');
-        } elseif ($activeTab === 'refunded') {
-            $query->whereIn('status', ['canceled', 'refunded']);
+        $validTabs = ['new', 'processing', 'packed', 'shipped', 'delivered', 'cancelled', 'refund_requested', 'refunded'];
+        
+        if (in_array($activeTab, $validTabs)) {
+            if ($activeTab === 'refund_requested') {
+                $query->whereIn('status', ['refund_requested', 'refund_approved', 'refund_rejected']);
+            } else {
+                $query->where('status', $activeTab);
+            }
+            
+            // Backward compatibility for any historical data with single 'L'
+            if ($activeTab === 'cancelled') {
+                $query->orWhere('status', 'canceled');
+            }
         }
 
         return $query;
