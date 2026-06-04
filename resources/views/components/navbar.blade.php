@@ -64,8 +64,8 @@
             
             @auth('customer')
                 <div class="relative" x-data="{ open: false }">
-                    <button @click="open = !open" @click.outside="open = false" title="My Account" class="bg-transparent border-none cursor-pointer p-0 m-0 outline-none text-[#2A211F] hover:text-[#800020] transition-colors group">
-                        <i data-lucide="user-check" stroke-width="1.5" class="w-5 h-5 group-hover:scale-110 transition-transform {{ request()->routeIs('profile.*') ? 'text-[#800020]' : '' }}"></i>
+                    <button @click="open = !open" @click.outside="open = false" title="My Account" class="bg-transparent border-none cursor-pointer p-0 m-0 outline-none text-[#800020] transition-colors group">
+                        <i data-lucide="user-check" stroke-width="1.5" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
                     </button>
 
                     <div x-show="open" 

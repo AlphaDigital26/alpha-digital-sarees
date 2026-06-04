@@ -56,8 +56,9 @@
             <div class="footer-links">
                 <h4>USER POLICY</h4>
                 <a href="{{ route('policy.privacy') }}">Privacy Policy</a>
-                <a href="{{ route('policy.terms') }}">Terms of Service</a>
-                <a href="{{ route('policy.shipping') }}">Shipping & Returns</a>
+                <a href="{{ route('policy.terms') }}">Terms and Conditions</a>
+                <a href="{{ route('policy.shipping') }}">Shipping Policy</a>
+                <a href="{{ route('policy.shipping') }}">Refund Policy</a>
                 <a href="{{ route('policy.faqs') }}">FAQs</a>
             </div>
 
