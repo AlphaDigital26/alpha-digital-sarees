@@ -9,12 +9,20 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            // These checks make the migration idempotent (safe to run multiple times)
+            if (!Schema::hasColumn('orders', 'cancelled_at')) {
+                $table->timestamp('cancelled_at')->nullable();
+            }
+            if (!Schema::hasColumn('orders', 'cancelled_by')) {
+                $table->unsignedBigInteger('cancelled_by')->nullable();
+            }
+            if (!Schema::hasColumn('orders', 'cancellation_reason')) {
+                $table->text('cancellation_reason')->nullable();
+            }
             if (!Schema::hasColumn('orders', 'cancelled_by_role')) {
-                $table->string('cancelled_by_role')->nullable()->after('cancelled_by'); // 'admin' or 'customer'
+                $table->string('cancelled_by_role')->nullable(); // 'admin' or 'customer'
             }
             if (!Schema::hasColumn('orders', 'refund_required')) {
-                $table->boolean('refund_required')->default(false)->after('payment_status');
+                $table->boolean('refund_required')->default(false);
             }
         });
     }
@@ -23,6 +31,9 @@ return new class extends Migration
     {
         Schema::table('orders', function (Blueprint $table) {
             $columns = [];
+            if (Schema::hasColumn('orders', 'cancelled_at')) $columns[] = 'cancelled_at';
+            if (Schema::hasColumn('orders', 'cancelled_by')) $columns[] = 'cancelled_by';
+            if (Schema::hasColumn('orders', 'cancellation_reason')) $columns[] = 'cancellation_reason';
             if (Schema::hasColumn('orders', 'cancelled_by_role')) $columns[] = 'cancelled_by_role';
             if (Schema::hasColumn('orders', 'refund_required')) $columns[] = 'refund_required';
             

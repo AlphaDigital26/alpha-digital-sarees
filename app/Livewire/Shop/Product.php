@@ -84,10 +84,17 @@ class Product extends Component
     // Handles the "Buy It Now" button
     public function buyNow($productId)
     {
-        // 1. Add to the main cart silently in the background (no toast)
+        // 1. If they are a guest, stop them and open the Login Popup!
+        if (!auth('customer')->check()) {
+            session()->put('url.intended', route('checkout.summary'));
+            $this->dispatch('open-login-modal');
+            return; 
+        }
+
+        // 2. Add to the main cart silently in the background (no toast)
         $this->addToCart($productId, true);
 
-        // 2. Create an isolated cart session just for this direct purchase
+        // 3. Create an isolated cart session just for this direct purchase
         session()->put('buy_now_cart', [
             $productId => $this->quantity
         ]);

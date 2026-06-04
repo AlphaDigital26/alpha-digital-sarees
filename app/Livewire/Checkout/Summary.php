@@ -22,6 +22,17 @@ class Summary extends Component
     public function mount()
     {
         $addressId = session()->get('checkout_address_id');
+        
+        // Auto-select default address if not in session
+        if (!$addressId && auth('customer')->check()) {
+            $defaultAddress = auth('customer')->user()->addresses()->where('is_default', true)->first() 
+                           ?? auth('customer')->user()->addresses()->first();
+            if ($defaultAddress) {
+                $addressId = $defaultAddress->id;
+                session()->put('checkout_address_id', $addressId);
+            }
+        }
+
         if (!$addressId) return redirect()->route('checkout.address');
         
         $this->address = Address::find($addressId);
@@ -153,7 +164,15 @@ class Summary extends Component
 
             // Clear carts if applicable
             if (session()->has('buy_now_cart')) {
+                $buyNowCart = session()->get('buy_now_cart');
                 session()->forget('buy_now_cart');
+                
+                // Remove the purchased item(s) from the main cart so it empties out
+                $mainCart = session()->get('cart', []);
+                foreach ($buyNowCart as $id => $qty) {
+                    unset($mainCart[$id]);
+                }
+                session()->put('cart', $mainCart);
             } else {
                 session()->forget('cart');
             }

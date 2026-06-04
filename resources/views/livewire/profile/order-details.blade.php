@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto px-5 pb-16 font-sans text-[#1b1c1a]">
+<div class="bg-transparent font-sans pb-16 text-[#1b1c1a]">
     
     {{-- Header with Back Navigation --}}
     <h2 class="text-lg font-bold text-secondary m-0 uppercase tracking-wide font-serif mb-6 border-b border-outline_variant/50 pb-4 flex items-center gap-3">
@@ -117,6 +117,10 @@
 
                         @if($isCancelled)
                             @php
+                                $histories = \App\Models\OrderStatusHistory::where('order_id', $order->id)->get()->keyBy('new_status');
+                                $processingDate = $histories->has('processing') ? $histories['processing']->created_at : null;
+                                $shippedDate = $order->shipping_date ? \Carbon\Carbon::parse($order->shipping_date) : ($histories->has('shipped') ? $histories['shipped']->created_at : null);
+
                                 $totalSteps = 2; // Confirmed + Cancelled
                                 if ($prevStatus === 'processing') $totalSteps = 3;
                                 if ($prevStatus === 'shipped') $totalSteps = 4;
@@ -135,6 +139,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold text-[#1b1c1a] mt-2 mb-0">Confirmed</p>
+                                    <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ $order->created_at->format('d M, h:i A') }}</p>
                                 </div>
 
                                 {{-- Step 2: Processing (if applicable) --}}
@@ -144,6 +149,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold text-[#1b1c1a] mt-2 mb-0">Processing</p>
+                                    @if($processingDate)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ $processingDate->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
                                 @endif
 
@@ -154,6 +162,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7h-3v7h3.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-2.1a1 1 0 00-.29-.71l-3-3A1 1 0 0016 7z" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold text-[#1b1c1a] mt-2 mb-0">Shipped</p>
+                                    @if($shippedDate)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ $shippedDate->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
                                 @endif
 
@@ -163,18 +174,22 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold text-[#C62828] mt-2 mb-0">Cancelled</p>
+                                    @if($order->cancelled_at)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($order->cancelled_at)->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
                             </div>
                         @elseif(in_array($status, ['refund_requested', 'refund_approved', 'refund_rejected', 'refunded']))
                             {{-- REFUND TIMELINE --}}
-                            <div class="absolute top-4 left-[12.5%] right-[12.5%] h-[2px] bg-[#E5E0DA] z-0"></div>
-                            
                             @php
                                 $progressWidth = '0%';
-                                if (in_array($status, ['refund_approved', 'refund_rejected'])) $progressWidth = '50%';
+                                if (in_array($status, ['refund_approved', 'refund_rejected'])) $progressWidth = '66.66%';
                                 if ($status === 'refunded') $progressWidth = '100%';
+                                if ($status === 'refund_requested') $progressWidth = '33.33%';
                             @endphp
-                            <div class="absolute top-4 left-[12.5%] h-[2px] bg-[#2E7D32] z-0 transition-all duration-500" style="width: {{ $progressWidth }}; {{ $status === 'refund_rejected' ? 'background-color: #C62828;' : '' }}"></div>
+                            <div class="absolute top-4 left-[12.5%] right-[12.5%] h-[2px] bg-[#E5E0DA] z-0">
+                                <div class="absolute top-0 left-0 h-full bg-[#2E7D32] transition-all duration-500" style="width: {{ $progressWidth }}; {{ $status === 'refund_rejected' ? 'background-color: #C62828;' : '' }}"></div>
+                            </div>
 
                             <div class="flex justify-between relative z-10">
                                 {{-- Step 1: Delivered --}}
@@ -183,6 +198,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold text-[#1b1c1a] mt-2 mb-0">Delivered</p>
+                                    @if($order->delivered_at)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($order->delivered_at)->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
 
                                 {{-- Step 2: Refund Requested --}}
@@ -191,6 +209,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold text-[#1b1c1a] mt-2 mb-0">Requested</p>
+                                    @if($order->refund_requested_at)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($order->refund_requested_at)->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
 
                                 {{-- Step 3: Approved/Rejected --}}
@@ -218,6 +239,9 @@
                                         {!! $decisionIcon !!}
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold {{ $decisionTextColor }} mt-2 mb-0">{{ $decisionText }}</p>
+                                    @if($isDecisionMade && ($order->refund_approved_at || $order->refund_rejected_at))
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($order->refund_approved_at ?? $order->refund_rejected_at)->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
 
                                 {{-- Step 4: Refunded --}}
@@ -232,22 +256,29 @@
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                                         </div>
                                         <p class="text-[10px] sm:text-xs font-bold {{ $refundedTextColor }} mt-2 mb-0">Refunded</p>
+                                        @if($isRefunded && $order->refund_processed_at)
+                                            <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ \Carbon\Carbon::parse($order->refund_processed_at)->format('d M, h:i A') }}</p>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
 
                         @else
-                            {{-- Background Line --}}
-                            <div class="absolute top-4 left-[12.5%] right-[12.5%] h-[2px] bg-[#E5E0DA] z-0"></div>
-                            
-                            {{-- Active Line --}}
+                            {{-- Standard Timeline --}}
                             @php
+                                $histories = \App\Models\OrderStatusHistory::where('order_id', $order->id)->get()->keyBy('new_status');
+                                $processingDate = $histories->has('processing') ? $histories['processing']->created_at : null;
+                                $shippedDate = $order->shipping_date ? \Carbon\Carbon::parse($order->shipping_date) : ($histories->has('shipped') ? $histories['shipped']->created_at : null);
+                                $deliveredDate = $order->delivered_at ? \Carbon\Carbon::parse($order->delivered_at) : ($histories->has('delivered') ? $histories['delivered']->created_at : null);
+                                
                                 $progressWidth = '0%';
                                 if (in_array($status, ['processing'])) $progressWidth = '33.33%';
                                 if (in_array($status, ['shipped'])) $progressWidth = '66.66%';
                                 if ($isDelivered) $progressWidth = '100%';
                             @endphp
-                            <div class="absolute top-4 left-[12.5%] h-[2px] bg-[#2E7D32] z-0 transition-all duration-500" style="width: {{ $progressWidth }}"></div>
+                            <div class="absolute top-4 left-[12.5%] right-[12.5%] h-[2px] bg-[#E5E0DA] z-0">
+                                <div class="absolute top-0 left-0 h-full bg-[#2E7D32] transition-all duration-500" style="width: {{ $progressWidth }}"></div>
+                            </div>
 
                             <div class="flex justify-between relative z-10">
                                 {{-- Step 1: Confirmed --}}
@@ -256,6 +287,7 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold text-[#1b1c1a] mt-2 mb-0">Confirmed</p>
+                                    <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ $order->created_at->format('d M, h:i A') }}</p>
                                 </div>
 
                                 {{-- Step 2: Processing --}}
@@ -269,6 +301,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold {{ $procTextColor }} mt-2 mb-0">Processing</p>
+                                    @if($isProcessingOrMore && $processingDate)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ $processingDate->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
 
                                 {{-- Step 3: Shipped --}}
@@ -282,6 +317,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path d="M8 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0zM15 16.5a1.5 1.5 0 11-3 0 1.5 1.5 0 013 0z" /><path d="M3 4a1 1 0 00-1 1v10a1 1 0 001 1h1.05a2.5 2.5 0 014.9 0H10a1 1 0 001-1V5a1 1 0 00-1-1H3zM14 7h-3v7h3.05a2.5 2.5 0 014.9 0H19a1 1 0 001-1v-2.1a1 1 0 00-.29-.71l-3-3A1 1 0 0016 7z" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold {{ $shippedTextColor }} mt-2 mb-0">Shipped</p>
+                                    @if($isShippedOrMore && $shippedDate)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ $shippedDate->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
 
                                 {{-- Step 4: Delivered --}}
@@ -294,6 +332,9 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
                                     </div>
                                     <p class="text-[10px] sm:text-xs font-bold {{ $deliveredTextColor }} mt-2 mb-0">Delivered</p>
+                                    @if($isDelivered && $deliveredDate)
+                                        <p class="text-[9px] sm:text-[10px] text-gray-500 mt-0.5">{{ $deliveredDate->format('d M, h:i A') }}</p>
+                                    @endif
                                 </div>
                             </div>
                         @endif
@@ -478,47 +519,82 @@
         {{-- ORDER PRICE SUMMARY --}}
         <div class="bg-white border border-[#E5E0DA] rounded-lg shadow-[0_2px_10px_rgba(0,0,0,0.02)] overflow-hidden">
             <div class="px-6 py-4 flex justify-between items-center cursor-pointer border-b border-[#E5E0DA]">
-                <h3 class="font-bold text-base text-[#1b1c1a] m-0 flex gap-2 items-center">
+                <h3 class="font-bold text-base text-[#1b1c1a] m-0">
                     Order Price
-                    <span class="text-xs font-bold text-[#2E7D32] bg-[#E8F5E9] px-2 py-0.5 rounded">You saved ₹0</span>
                 </h3>
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </div>
             
             @php
-                $subtotalCalc = $order->items->sum(function($i){ return $i->price * $i->quantity; });
+                $totalItems = $order->items->sum('quantity');
+                $originalPriceTotal = 0;
+                $subtotalCalc = 0;
+                
+                foreach($order->items as $item) {
+                    $subtotalCalc += ($item->price * $item->quantity);
+                    $prodOrig = $item->product ? $item->product->original_price : 0;
+                    $origPrice = $prodOrig > 0 ? $prodOrig : $item->price;
+                    $originalPriceTotal += ($origPrice * $item->quantity);
+                }
+                
                 $shippingCalc = $order->total_amount - $subtotalCalc;
                 $shippingCalc = $shippingCalc > 0 ? $shippingCalc : 0;
+                $discount = $originalPriceTotal - $subtotalCalc;
             @endphp
 
             <div class="p-6">
-                <div class="space-y-4 text-sm text-gray-600 pb-4 border-b border-dashed border-[#E5E0DA]">
+                <div class="space-y-4 text-[15px] text-gray-600 pb-5 border-b border-dashed border-[#E5E0DA]">
                     <div class="flex justify-between">
-                        <span>Total MRP</span>
-                        <span>₹{{ number_format($subtotalCalc, 2) }}</span>
+                        <span>Price ({{ $totalItems }} item{{ $totalItems > 1 ? 's' : '' }})</span>
+                        <span>₹{{ number_format($originalPriceTotal, 0) }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span>Shipping Charges</span>
-                        <span class="{{ $shippingCalc == 0 ? 'text-[#2E7D32]' : '' }}">{{ $shippingCalc == 0 ? 'Free' : '₹'.number_format($shippingCalc, 2) }}</span>
+                        <span>Discount</span>
+                        <span class="text-[#2E7D32]">- ₹{{ number_format($discount, 0) }}</span>
                     </div>
                     <div class="flex justify-between">
-                        <span>Additional Discount</span>
-                        <span class="text-[#2E7D32]">-₹0</span>
+                        <span class="flex items-center gap-1" x-data="{ showTooltip: false }">
+                            Shipping 
+                            <div class="relative flex items-center justify-center">
+                                <svg @mouseenter="showTooltip = true" @mouseleave="showTooltip = false" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400 cursor-pointer hover:text-[#800020] transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                                
+                                {{-- Tooltip --}}
+                                <div x-show="showTooltip" 
+                                     x-transition.opacity.duration.200ms
+                                     class="absolute bottom-full left-[-12px] mb-2 w-64 bg-white border border-[#E5E0DA] shadow-lg rounded p-4 z-50 text-left"
+                                     style="display: none; cursor: default;">
+                                    <h4 class="font-bold text-[#1b1c1a] m-0 mb-2 text-sm">Shipping Policy</h4>
+                                    <p class="text-xs text-gray-500 m-0 leading-relaxed">
+                                        We offer complimentary shipping on all orders above Rs. 10,000. For orders below this amount, a standard shipping fee of Rs. 150 applies.
+                                    </p>
+                                    {{-- Tooltip Arrow --}}
+                                    <div class="absolute top-full left-[12px] -mt-[1px] border-8 border-transparent border-t-white"></div>
+                                    <div class="absolute top-full left-[12px] mt-[1px] border-8 border-transparent border-t-[#E5E0DA] -z-10"></div>
+                                </div>
+                            </div>
+                        </span>
+                        <span>{{ $shippingCalc == 0 ? 'Free' : '₹'.number_format($shippingCalc, 0) }}</span>
                     </div>
                 </div>
 
-                <div class="flex justify-between items-center py-4 border-b border-dashed border-[#E5E0DA]">
-                    <span class="font-bold text-base text-[#1b1c1a]">Order Total</span>
-                    <span class="font-bold text-base text-[#1b1c1a]">₹{{ number_format($order->total_amount, 2) }}</span>
+                <div class="flex justify-between items-center py-5">
+                    <span class="font-bold text-[18px] text-[#1b1c1a]">Total Amount</span>
+                    <span class="font-bold text-[18px] text-[#1b1c1a]">₹{{ number_format($order->total_amount, 0) }}</span>
                 </div>
                 
-                <div class="flex justify-between text-sm py-4">
+                @if($discount > 0)
+                <div class="bg-[#F0FDF4] text-[#16A34A] text-[15px] font-medium p-3 rounded-md flex items-center gap-2 mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 fill-current" viewBox="0 0 24 24"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.42l9 9c.36.36.86.58 1.41.58.55 0 1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41 0-.55-.23-1.06-.59-1.42zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7z"/></svg>
+                    You'll save ₹{{ number_format($discount, 0) }} on this order!
+                </div>
+                @endif
+                
+                <div class="flex justify-between text-sm pt-4 border-t border-[#E5E0DA]">
                     <span class="text-gray-500">Payment mode</span>
                     <span class="font-bold text-[#1b1c1a] uppercase">{{ $order->payment_status === 'paid' ? 'Online (Razorpay)' : 'COD' }}</span>
                 </div>
             </div>
 
-            <div class="px-6 py-4 border-t border-[#E5E0DA] bg-[#FAFAFA] flex justify-between items-center text-sm">
+            <div class="px-6 py-4 border-t border-[#E5E0DA] bg-[#FAFAFA] flex justify-between items-center text-sm rounded-b-lg">
                 <span class="text-gray-600">Get invoice for this shipment</span>
                 <a href="{{ route('profile.orders.invoice', $order->id) }}" class="text-[#800020] font-bold no-underline hover:underline">Download invoice</a>
             </div>
