@@ -19,6 +19,17 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationBuilder;
+use App\Filament\Resources\OrderResource;
+use App\Filament\Resources\ProductResource;
+use App\Filament\Resources\CustomerResource;
+use App\Filament\Resources\UserQueryResource;
+use App\Filament\Resources\ReviewResource;
+use App\Filament\Resources\CarouselResource;
+use App\Filament\Pages\ManageAttributes;
+use App\Filament\Pages\ManageStory;
+use App\Filament\Pages\ManagePolicies;
+use App\Filament\Pages\ManageSettings;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -32,10 +43,31 @@ class AdminPanelProvider extends PanelProvider
             ->sidebarWidth('18rem')
             ->collapsedSidebarWidth('4rem')
             ->sidebarCollapsibleOnDesktop()
-            ->navigationGroups([
-                NavigationGroup::make('Orders')
-                    ->icon('heroicon-o-shopping-bag'), // No sort() method needed here!
-            ])
+            ->navigation(function (NavigationBuilder $builder): NavigationBuilder {
+                return $builder->groups([
+                    NavigationGroup::make()
+                        ->items([
+                            ...Pages\Dashboard::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make('Orders')
+                        ->icon('heroicon-o-shopping-bag')
+                        ->items([
+                            ...OrderResource::getNavigationItems(),
+                        ]),
+                    NavigationGroup::make()
+                        ->items([
+                            ...ProductResource::getNavigationItems(),
+                            ...ManageAttributes::getNavigationItems(),
+                            ...CustomerResource::getNavigationItems(),
+                            ...UserQueryResource::getNavigationItems(),
+                            ...ReviewResource::getNavigationItems(),
+                            ...CarouselResource::getNavigationItems(),
+                            ...ManageStory::getNavigationItems(),
+                            ...ManagePolicies::getNavigationItems(),
+                            ...ManageSettings::getNavigationItems(),
+                        ]),
+                ]);
+            })
             // Brand Color
             ->colors([
                 'primary' => '#800020', // Matches frontend primary
@@ -117,6 +149,21 @@ class AdminPanelProvider extends PanelProvider
                     .fi-sidebar-header {
                         background-color: var(--dark-charcoal) !important;
                         border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+                    }
+
+                    /* Custom Sidebar Scrollbar */
+                    .fi-sidebar-nav::-webkit-scrollbar {
+                        width: 5px;
+                    }
+                    .fi-sidebar-nav::-webkit-scrollbar-track {
+                        background: transparent;
+                    }
+                    .fi-sidebar-nav::-webkit-scrollbar-thumb {
+                        background: rgba(255, 255, 255, 0.15);
+                        border-radius: 10px;
+                    }
+                    .fi-sidebar-nav::-webkit-scrollbar-thumb:hover {
+                        background: rgba(255, 255, 255, 0.25);
                     }
 
                     /* Sidebar Text & Icons */

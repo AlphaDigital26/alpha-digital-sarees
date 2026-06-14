@@ -84,10 +84,12 @@ class Order extends Model
                     'previous_status' => $order->getOriginal('status'),
                     'new_status' => $order->status,
                 ]);
-            }
-            
-            if ($order->isDirty('status') && strtolower($order->status) === 'delivered') {
-                \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderDeliveredMail($order));
+
+                if (strtolower($order->status) === 'delivered') {
+                    \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderDeliveredMail($order));
+                } elseif (strtolower($order->status) === 'shipped') {
+                    \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderShippedMail($order));
+                }
             }
         });
     }

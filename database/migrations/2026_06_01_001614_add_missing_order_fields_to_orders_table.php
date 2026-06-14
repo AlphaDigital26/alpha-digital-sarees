@@ -12,8 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('orders', function (Blueprint $table) {
-            $table->string('cancelled_by_role')->nullable();
-            $table->boolean('refund_required')->default(false);
+            if (!Schema::hasColumn('orders', 'cancelled_by_role')) {
+                $table->string('cancelled_by_role')->nullable();
+            }
+            if (!Schema::hasColumn('orders', 'refund_required')) {
+                $table->boolean('refund_required')->default(false);
+            }
         });
     }
 

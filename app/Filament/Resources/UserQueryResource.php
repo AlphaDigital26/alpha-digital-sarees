@@ -13,7 +13,7 @@ use Illuminate\Database\Eloquent\Collection;
 
 class UserQueryResource extends Resource
 {
-    protected static ?int $navigationSort = 5; // ADD THIS LINE
+    protected static ?int $navigationSort = 6;
     protected static ?string $model = UserQuery::class;
     protected static ?string $navigationIcon = 'heroicon-o-envelope';
     protected static ?string $navigationLabel = 'User Queries';

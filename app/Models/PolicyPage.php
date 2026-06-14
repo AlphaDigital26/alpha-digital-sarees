@@ -8,8 +8,9 @@ class PolicyPage extends Model
 {
     protected $fillable = [
         'privacy_policy',
-        'terms_of_service',
-        'shipping_returns',
+        'terms_and_conditions',
+        'shipping_policy',
+        'refund_policy',
         'faqs',
     ];
 

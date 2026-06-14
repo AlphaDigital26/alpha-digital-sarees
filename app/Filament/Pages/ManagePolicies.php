@@ -17,6 +17,7 @@ class ManagePolicies extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Manage Policies';
+    protected static ?int $navigationSort = 10;
     // protected static ?string $navigationGroup = 'Site Management';
     protected static string $view = 'filament.pages.manage-story'; // We can reuse the view since it just renders the form
 
@@ -34,11 +35,14 @@ class ManagePolicies extends Page implements HasForms
                 Forms\Components\Tabs\Tab::make('Privacy Policy')->schema([
                     Forms\Components\RichEditor::make('privacy_policy')->label('')->columnSpanFull(),
                 ]),
-                Forms\Components\Tabs\Tab::make('Terms of Service')->schema([
-                    Forms\Components\RichEditor::make('terms_of_service')->label('')->columnSpanFull(),
+                Forms\Components\Tabs\Tab::make('Terms and Conditions')->schema([
+                    Forms\Components\RichEditor::make('terms_and_conditions')->label('')->columnSpanFull(),
                 ]),
-                Forms\Components\Tabs\Tab::make('Shipping & Returns')->schema([
-                    Forms\Components\RichEditor::make('shipping_returns')->label('')->columnSpanFull(),
+                Forms\Components\Tabs\Tab::make('Shipping Policy')->schema([
+                    Forms\Components\RichEditor::make('shipping_policy')->label('')->columnSpanFull(),
+                ]),
+                Forms\Components\Tabs\Tab::make('Refund Policy')->schema([
+                    Forms\Components\RichEditor::make('refund_policy')->label('')->columnSpanFull(),
                 ]),
                 Forms\Components\Tabs\Tab::make('FAQs')->schema([
                     Forms\Components\Repeater::make('faqs')->label('Frequently Asked Questions')->schema([

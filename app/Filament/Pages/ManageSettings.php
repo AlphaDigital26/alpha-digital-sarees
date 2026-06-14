@@ -15,7 +15,7 @@ class ManageSettings extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 11;
     protected static ?string $navigationIcon = 'heroicon-o-cog-6-tooth';
     protected static ?string $navigationLabel = 'Site Settings';
     protected static ?string $title = 'Global Website Settings';
