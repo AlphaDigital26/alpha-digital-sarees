@@ -14,7 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 5;
     // Sets the icon and places it on your sidebar
     protected static ?string $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'Customers';
