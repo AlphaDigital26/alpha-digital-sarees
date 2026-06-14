@@ -74,13 +74,17 @@ Route::get('/privacy-policy', function () {
     return view('pages.privacy', ['policy' => \App\Models\PolicyPage::firstOrCreate(['id' => 1])]);
 })->name('policy.privacy');
 
-Route::get('/terms-of-service', function () {
+Route::get('/terms-and-conditions', function () {
     return view('pages.terms', ['policy' => \App\Models\PolicyPage::firstOrCreate(['id' => 1])]);
 })->name('policy.terms');
 
-Route::get('/shipping-returns', function () {
+Route::get('/shipping-policy', function () {
     return view('pages.shipping', ['policy' => \App\Models\PolicyPage::firstOrCreate(['id' => 1])]);
 })->name('policy.shipping');
+
+Route::get('/refund-policy', function () {
+    return view('pages.refund', ['policy' => \App\Models\PolicyPage::firstOrCreate(['id' => 1])]);
+})->name('policy.refund');
 
 Route::get('/faqs', function () {
     return view('pages.faqs', ['policy' => \App\Models\PolicyPage::firstOrCreate(['id' => 1])]);

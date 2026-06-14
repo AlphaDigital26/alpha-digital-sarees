@@ -58,7 +58,7 @@
                 <a href="{{ route('policy.privacy') }}">Privacy Policy</a>
                 <a href="{{ route('policy.terms') }}">Terms and Conditions</a>
                 <a href="{{ route('policy.shipping') }}">Shipping Policy</a>
-                <a href="{{ route('policy.shipping') }}">Refund Policy</a>
+                <a href="{{ route('policy.refund') }}">Refund Policy</a>
                 <a href="{{ route('policy.faqs') }}">FAQs</a>
             </div>
 

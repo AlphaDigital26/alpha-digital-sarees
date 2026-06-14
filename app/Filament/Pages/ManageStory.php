@@ -17,6 +17,7 @@ class ManageStory extends Page implements HasForms
 
     protected static ?string $navigationIcon = 'heroicon-o-document-text';
     protected static ?string $navigationLabel = 'Edit Story Page';
+    protected static ?int $navigationSort = 9;
     protected static string $view = 'filament.pages.manage-story';
 
     public ?array $data = [];
@@ -45,7 +46,6 @@ class ManageStory extends Page implements HasForms
                 Forms\Components\Section::make('Journey & Content')->schema([
                     Forms\Components\TextInput::make('heading_3'),
                     Forms\Components\RichEditor::make('text_3'),
-                    Forms\Components\FileUpload::make('control_image_3')->directory('stories'),
                     Forms\Components\Grid::make(4)->schema([
                         Forms\Components\FileUpload::make('journey_img_1'),
                         Forms\Components\FileUpload::make('journey_img_2'),

@@ -1,6 +1,15 @@
 
-<main class="shop-container">
-    <aside class="sidebar">
+<main class="shop-container" x-data="{ mobileFiltersOpen: false }">
+    <!-- Mobile Filter Toggle Button -->
+    <div class="md:hidden w-full mb-4">
+        <button @click="mobileFiltersOpen = !mobileFiltersOpen" class="w-full flex items-center justify-between bg-white border border-[#E5E0DA] py-3 px-4 font-sans font-bold text-[#2A211F] text-[0.8rem] tracking-[1px] shadow-sm">
+            <span>FILTER COLLECTION</span>
+            <svg x-show="!mobileFiltersOpen" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4" /></svg>
+            <svg x-show="mobileFiltersOpen" style="display: none;" xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+        </button>
+    </div>
+
+    <aside class="sidebar" :class="mobileFiltersOpen ? 'block mb-8' : 'hidden md:block'">
         <h2 class="filter-title">
             FILTERS 
             <span wire:loading class="text-xs ml-2 text-gray-400">Updating...</span>
@@ -66,11 +75,11 @@
                 <label><input type="radio" wire:model.live="priceRange" value="10k_20k"> 10k - 20k</label>
                 <label><input type="radio" wire:model.live="priceRange" value="above_20k"> Above 20k</label>
                 
-                <div class="price-range mt-3">
-                    <p>Range &rarr; ₹</p>
-                    <input type="number" wire:model.live.debounce.500ms="minPrice" placeholder="Min">
+                <div class="price-range mt-3 flex items-center gap-2">
+                    <p class="text-[0.8rem] m-0">Range &rarr; ₹</p>
+                    <input type="number" wire:model.live.debounce.500ms="minPrice" placeholder="Min" class="w-[70px] p-1 text-[0.8rem]">
                     <span>-</span>
-                    <input type="number" wire:model.live.debounce.500ms="maxPrice" placeholder="Max">
+                    <input type="number" wire:model.live.debounce.500ms="maxPrice" placeholder="Max" class="w-[70px] p-1 text-[0.8rem]">
                 </div>
             </div>
         </div>
@@ -91,10 +100,10 @@
             </div>
         </div>
         
-        </aside>
+    </aside>
 
     <section class="listing-area">
-        <div class="listing-header">
+        <div class="listing-header flex flex-col sm:flex-row gap-4 items-start sm:items-center">
             <p class="item-count">Showing {{ $products->total() }} items</p>
             <div class="sort-dropdown">
                 <span>Sort by:</span>

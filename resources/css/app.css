@@ -5,6 +5,9 @@
 @tailwind utilities;
 
 @layer base {
+  html, body {
+    @apply overflow-x-hidden;
+  }
   body {
     @apply font-sans bg-neutral text-[#2A211F] leading-relaxed m-0 p-0 box-border;
   }
@@ -75,7 +78,7 @@
 
   /* Sections */
   .content-section {
-    @apply py-8 px-[5%];
+    @apply py-8 px-4 md:px-[5%];
   }
   
   .section-header {
@@ -112,7 +115,7 @@
   }
   
   .hero-content h1 {
-    @apply text-5xl md:text-6xl font-normal my-4 leading-tight drop-shadow-md;
+    @apply text-4xl md:text-5xl lg:text-6xl font-normal my-4 leading-tight drop-shadow-md;
   }
 
   .hero::after {
@@ -704,7 +707,7 @@
   }
   
   .about-hero .hero-content h1 {
-    @apply font-serif text-[3.5rem] lg:text-[5rem] text-[#2A211F] leading-tight;
+    @apply font-serif text-4xl md:text-[3.5rem] lg:text-[5rem] text-[#2A211F] leading-tight;
   }
   
   .about-hero .label {
@@ -724,7 +727,7 @@
   }
   
   .drop-cap {
-    @apply float-left font-serif text-[6.5rem] leading-[0.7] text-primary mt-2.5 mr-5 mb-0 ml-0;
+    @apply float-left font-serif text-[4.5rem] md:text-[6.5rem] leading-[0.7] text-primary mt-2 mr-3 md:mt-2.5 md:mr-5 mb-0 ml-0;
   }
   
   .craft-grid {
@@ -744,7 +747,7 @@
   }
   
   .craft-text h2 {
-    @apply font-serif text-[3.5rem] mb-10 text-secondary;
+    @apply font-serif text-3xl md:text-[3.5rem] mb-6 md:mb-10 text-secondary;
   }
   
   .craft-text p {
@@ -760,7 +763,7 @@
   }
 
   .journey-header h2 {
-    @apply font-serif text-[3rem] mb-4 text-secondary;
+    @apply font-serif text-3xl md:text-[3rem] mb-4 text-secondary;
   }
 
   .journey-description-text {
@@ -882,11 +885,11 @@
   
   /* Update your Product Details CSS to allow Flexbox alignment */
 .product-container {
-    @apply flex flex-wrap items-stretch gap-16 mb-20;
+    @apply flex flex-col md:flex-row items-stretch gap-8 md:gap-16 mb-20;
 }
 
 .product-gallery {
-    @apply flex flex-col md:flex-row gap-6 w-full md:w-1/2;
+    @apply flex flex-col-reverse md:flex-row gap-4 md:gap-6 w-full md:w-1/2;
 }
 
 .product-info {
@@ -899,11 +902,11 @@
 }
   
   .thumbnails {
-    @apply flex flex-row md:flex-col gap-4;
+    @apply flex flex-row md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide;
   }
   
   .thumb {
-    @apply w-20 aspect-[3/4] object-cover cursor-pointer opacity-60 transition-opacity duration-300 border border-transparent hover:opacity-100 hover:border-primary;
+    @apply w-16 md:w-20 shrink-0 aspect-[3/4] object-cover cursor-pointer opacity-60 transition-opacity duration-300 border border-transparent hover:opacity-100 hover:border-primary;
   }
   
   .thumb.active {
@@ -911,7 +914,7 @@
   }
   
   .main-display {
-    @apply flex-1 overflow-hidden;
+    @apply flex-1 overflow-hidden w-full;
   }
   
   .main-display img {

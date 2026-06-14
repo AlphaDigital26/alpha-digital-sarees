@@ -14,7 +14,7 @@ class CarouselResource extends Resource
 {
     protected static ?string $model = Carousel::class;
     protected static ?string $navigationIcon = 'heroicon-o-photo';
-    protected static ?int $navigationSort = 6; // ADD THIS LINE TO POSITION IT BEFORE SETTINGS
+    protected static ?int $navigationSort = 8;
     public static function form(Form $form): Form
     {
         return $form
