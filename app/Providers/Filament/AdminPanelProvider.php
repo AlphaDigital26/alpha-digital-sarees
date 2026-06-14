@@ -74,7 +74,6 @@ class AdminPanelProvider extends PanelProvider
             ])
 
             // Theme Settings
-            ->darkMode(false)
             ->brandName('ALPHA DIGITAL')
             ->font('Manrope') // Matches frontend sans font
             ->favicon(fn () => \App\Models\Setting::getSiteSettings()->favicon_image ? asset('storage/' . \App\Models\Setting::getSiteSettings()->favicon_image) . '?v=' . time() : null)
@@ -137,7 +136,7 @@ class AdminPanelProvider extends PanelProvider
                     }
 
                     /* Main Background to match frontend neutral */
-                    .fi-main {
+                    html:not(.dark) .fi-main {
                         background-color: var(--surface-neutral) !important;
                     }
 
@@ -204,7 +203,7 @@ class AdminPanelProvider extends PanelProvider
                     }
 
                     /* Topbar adjustments */
-                    .fi-topbar {
+                    html:not(.dark) .fi-topbar {
                         background-color: var(--surface-neutral) !important;
                         border-bottom: 1px solid rgba(0,0,0,0.05) !important;
                     }
@@ -222,8 +221,10 @@ class AdminPanelProvider extends PanelProvider
                     .fi-input-wrapper {
                         border-radius: 8px !important;
                         box-shadow: none !important;
-                        border: 1px solid rgba(0,0,0,0.1) !important;
                         transition: all 0.2s ease;
+                    }
+                    html:not(.dark) .fi-input-wrapper {
+                        border: 1px solid rgba(0,0,0,0.1) !important;
                     }
                     .fi-input-wrapper:focus-within {
                         border-color: var(--primary-red) !important;
@@ -232,9 +233,11 @@ class AdminPanelProvider extends PanelProvider
 
                     /* Page Headings */
                     .fi-header-heading {
-                        color: var(--primary-red) !important;
                         font-family: "Noto Serif", serif !important;
                         letter-spacing: 0.5px !important;
+                    }
+                    html:not(.dark) .fi-header-heading {
+                        color: var(--primary-red) !important;
                     }
 
                     /* Custom Dashboard Widget Styling */
@@ -243,22 +246,35 @@ class AdminPanelProvider extends PanelProvider
                         border-top-style: solid !important;
                         border-radius: 12px !important;
                         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06) !important;
-                        background-color: #ffffff !important;
                         transition: transform 0.2s ease, box-shadow 0.2s ease;
+                    }
+                    html:not(.dark) .custom-stat-card {
+                        background-color: #ffffff !important;
                     }
                     .custom-stat-card:hover {
                         transform: translateY(-2px);
                         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05) !important;
                     }
-                    .border-t-green { border-top-color: #22c55e !important; background-color: #f0fdf4 !important; }
-                    .border-t-yellow { border-top-color: #eab308 !important; background-color: #fefce8 !important; }
-                    .border-t-blue { border-top-color: #3b82f6 !important; background-color: #eff6ff !important; }
-                    .border-t-red { border-top-color: #ef4444 !important; background-color: #fef2f2 !important; }
-                    .border-t-cyan { border-top-color: #06b6d4 !important; background-color: #ecfeff !important; }
+                    html:not(.dark) .border-t-green { border-top-color: #22c55e !important; background-color: #f0fdf4 !important; }
+                    html:not(.dark) .border-t-yellow { border-top-color: #eab308 !important; background-color: #fefce8 !important; }
+                    html:not(.dark) .border-t-blue { border-top-color: #3b82f6 !important; background-color: #eff6ff !important; }
+                    html:not(.dark) .border-t-red { border-top-color: #ef4444 !important; background-color: #fef2f2 !important; }
+                    html:not(.dark) .border-t-cyan { border-top-color: #06b6d4 !important; background-color: #ecfeff !important; }
+                    
+                    .dark .border-t-green { border-top: 4px solid #22c55e !important; background-color: rgba(34,197,94,0.05) !important; }
+                    .dark .border-t-yellow { border-top: 4px solid #eab308 !important; background-color: rgba(234,179,8,0.05) !important; }
+                    .dark .border-t-blue { border-top: 4px solid #3b82f6 !important; background-color: rgba(59,130,246,0.05) !important; }
+                    .dark .border-t-red { border-top: 4px solid #ef4444 !important; background-color: rgba(239,68,68,0.05) !important; }
+                    .dark .border-t-cyan { border-top: 4px solid #06b6d4 !important; background-color: rgba(6,182,212,0.05) !important; }
 
                     /* Light Top Row Cards to match image */
-                    .top-row-card {
+                    html:not(.dark) .top-row-card {
                         background-color: #ffffff !important;
+                    }
+                    .dark .top-row-card {
+                        background-color: #1f2937 !important;
+                    }
+                    .top-row-card {
                         border: none !important;
                         border-radius: 20px !important;
                         box-shadow: 0 4px 15px -3px rgba(0, 0, 0, 0.05), 0 10px 20px -5px rgba(0, 0, 0, 0.02) !important;
@@ -268,8 +284,11 @@ class AdminPanelProvider extends PanelProvider
                         transform: translateY(-3px);
                         box-shadow: 0 15px 25px -5px rgba(0, 0, 0, 0.08) !important;
                     }
-                    .top-row-card * {
+                    html:not(.dark) .top-row-card * {
                         color: #1f2937 !important; /* Dark text */
+                    }
+                    .dark .top-row-card * {
+                        color: #e5e7eb !important; /* Light text */
                     }
                     
                     /* Custom Circular Icons for Top Row */
@@ -296,11 +315,18 @@ class AdminPanelProvider extends PanelProvider
                     .card-icon-yellow .fi-wi-stats-overview-stat-icon { background-color: #fb923c !important; } /* Orange */
                     
                     /* Soft Background Glow mimicking the image */
-                    .card-icon-red { background: radial-gradient(circle at top, rgba(255,107,107,0.08) 0%, #ffffff 40%) !important; }
-                    .card-icon-blue { background: radial-gradient(circle at top, rgba(59,130,246,0.08) 0%, #ffffff 40%) !important; }
-                    .card-icon-green { background: radial-gradient(circle at top, rgba(16,185,129,0.08) 0%, #ffffff 40%) !important; }
-                    .card-icon-purple { background: radial-gradient(circle at top, rgba(79,70,229,0.08) 0%, #ffffff 40%) !important; }
-                    .card-icon-yellow { background: radial-gradient(circle at top, rgba(251,146,60,0.08) 0%, #ffffff 40%) !important; }
+                    html:not(.dark) .card-icon-red { background: radial-gradient(circle at top, rgba(255,107,107,0.08) 0%, #ffffff 40%) !important; }
+                    html:not(.dark) .card-icon-blue { background: radial-gradient(circle at top, rgba(59,130,246,0.08) 0%, #ffffff 40%) !important; }
+                    html:not(.dark) .card-icon-green { background: radial-gradient(circle at top, rgba(16,185,129,0.08) 0%, #ffffff 40%) !important; }
+                    html:not(.dark) .card-icon-purple { background: radial-gradient(circle at top, rgba(79,70,229,0.08) 0%, #ffffff 40%) !important; }
+                    html:not(.dark) .card-icon-yellow { background: radial-gradient(circle at top, rgba(251,146,60,0.08) 0%, #ffffff 40%) !important; }
+                    
+                    /* Dark Mode Glow */
+                    .dark .card-icon-red { background: radial-gradient(circle at top, rgba(255,107,107,0.15) 0%, #1f2937 40%) !important; }
+                    .dark .card-icon-blue { background: radial-gradient(circle at top, rgba(59,130,246,0.15) 0%, #1f2937 40%) !important; }
+                    .dark .card-icon-green { background: radial-gradient(circle at top, rgba(16,185,129,0.15) 0%, #1f2937 40%) !important; }
+                    .dark .card-icon-purple { background: radial-gradient(circle at top, rgba(79,70,229,0.15) 0%, #1f2937 40%) !important; }
+                    .dark .card-icon-yellow { background: radial-gradient(circle at top, rgba(251,146,60,0.15) 0%, #1f2937 40%) !important; }
 
                     /* Force center text and stack vertically on specific widgets */
                     .top-row-card > div {
@@ -327,12 +353,21 @@ class AdminPanelProvider extends PanelProvider
                     
                     /* Flex Reordering */
                     .top-row-card .fi-wi-stats-overview-stat-icon { order: 1 !important; margin-bottom: 0.75rem !important; }
-                    .top-row-card .fi-wi-stats-overview-stat-label { order: 2 !important; font-size: 0.9rem !important; font-weight: 600 !important; color: #374151 !important; margin-bottom: 0.25rem !important; }
-                    .top-row-card .fi-wi-stats-overview-stat-description { order: 3 !important; font-size: 0.7rem !important; color: #9ca3af !important; margin-bottom: 0.75rem !important; }
-                    .top-row-card .fi-wi-stats-overview-stat-value { order: 4 !important; font-size: 1.6rem !important; font-weight: 800 !important; color: #1f2937 !important; }
+                    .top-row-card .fi-wi-stats-overview-stat-label { order: 2 !important; font-size: 0.9rem !important; font-weight: 600 !important; margin-bottom: 0.25rem !important; }
+                    html:not(.dark) .top-row-card .fi-wi-stats-overview-stat-label { color: #374151 !important; }
+                    .dark .top-row-card .fi-wi-stats-overview-stat-label { color: #d1d5db !important; }
+                    
+                    .top-row-card .fi-wi-stats-overview-stat-description { order: 3 !important; font-size: 0.7rem !important; margin-bottom: 0.75rem !important; }
+                    html:not(.dark) .top-row-card .fi-wi-stats-overview-stat-description { color: #9ca3af !important; }
+                    .dark .top-row-card .fi-wi-stats-overview-stat-description { color: #6b7280 !important; }
+                    
+                    .top-row-card .fi-wi-stats-overview-stat-value { order: 4 !important; font-size: 1.6rem !important; font-weight: 800 !important; }
+                    html:not(.dark) .top-row-card .fi-wi-stats-overview-stat-value { color: #1f2937 !important; }
+                    .dark .top-row-card .fi-wi-stats-overview-stat-value { color: #f3f4f6 !important; }
                     
                     /* First card has colored value text */
-                    .value-text-red .fi-wi-stats-overview-stat-value { color: #ff6b6b !important; }
+                    html:not(.dark) .value-text-red .fi-wi-stats-overview-stat-value { color: #ff6b6b !important; }
+                    .dark .value-text-red .fi-wi-stats-overview-stat-value { color: #fca5a5 !important; }
                     
                     /* Text Alignment Fix */
                     .top-row-card .fi-wi-stats-overview-stat-label,
