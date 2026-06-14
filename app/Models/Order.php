@@ -77,19 +77,37 @@ class Order extends Model
 
     protected static function booted(): void
     {
-        static::updated(function (Order $order) {
+        static::updating(function (Order $order) {
             if ($order->isDirty('status')) {
+                $status = strtolower($order->status);
+                if ($status === 'refund_requested' && !$order->refund_requested_at) {
+                    $order->refund_requested_at = now();
+                } elseif ($status === 'refund_approved' && !$order->refund_approved_at) {
+                    $order->refund_approved_at = now();
+                } elseif ($status === 'refund_rejected' && !$order->refund_rejected_at) {
+                    $order->refund_rejected_at = now();
+                } elseif ($status === 'refunded' && !$order->refund_processed_at) {
+                    $order->refund_processed_at = now();
+                    $order->payment_status = 'refunded';
+                } elseif (in_array($status, ['cancelled', 'canceled']) && !$order->cancelled_at) {
+                    $order->cancelled_at = now();
+                } elseif ($status === 'delivered' && !$order->delivered_at) {
+                    $order->delivered_at = now();
+                }
+            }
+        });
+
+        static::updated(function (Order $order) {
+            if ($order->wasChanged('status')) {
                 \App\Models\OrderStatusHistory::create([
                     'order_id' => $order->id,
                     'previous_status' => $order->getOriginal('status'),
                     'new_status' => $order->status,
                 ]);
-
-                if (strtolower($order->status) === 'delivered') {
-                    \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderDeliveredMail($order));
-                } elseif (strtolower($order->status) === 'shipped') {
-                    \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderShippedMail($order));
-                }
+            }
+            
+            if ($order->wasChanged('status') && strtolower($order->status) === 'delivered') {
+                \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderDeliveredMail($order));
             }
         });
     }

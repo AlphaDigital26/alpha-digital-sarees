@@ -81,6 +81,8 @@ class OrderResource extends Resource
                             'delivered' => 'Delivered',
                             'cancelled' => 'Cancelled',
                             'refund_requested' => 'Refund Requested',
+                            'refund_approved' => 'Refund Approved',
+                            'refund_rejected' => 'Refund Rejected',
                             'refunded' => 'Refunded',
                         ])
                         ->required()
@@ -111,6 +113,8 @@ class OrderResource extends Resource
                         'delivered' => 'Delivered',
                         'cancelled' => 'Cancelled Orders',
                         'refund_requested' => 'Refund Requests',
+                        'refund_approved' => 'Refund Approved',
+                        'refund_rejected' => 'Refund Rejected',
                         'refunded' => 'Refund Orders',
                     ]),
             ])

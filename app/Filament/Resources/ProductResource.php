@@ -106,6 +106,7 @@ class ProductResource extends Resource
                             ->appendFiles()
                             ->panelLayout('grid')
                             ->directory('products')
+                            ->disk('public')
                             ->columnSpanFull(),
                             
                         Forms\Components\Toggle::make('is_new')
