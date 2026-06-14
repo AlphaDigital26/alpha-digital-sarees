@@ -8,37 +8,97 @@ use Carbon\Carbon;
 
 class BookingsChartWidget extends ChartWidget
 {
-    protected static ?string $heading = 'Bookings Over Last 7 Days';
-    protected static ?int $sort = 3; // Between Top Stats and Analytics
-    
-    // We want it full width or half width? Let's make it full width
+    protected static ?int $sort = 3;
     protected int | string | array $columnSpan = 'full';
-    
-    // Reduce height
     protected static ?string $maxHeight = '280px';
+
+    public ?string $filter = '7_days';
+    
+    public function getHeading(): string
+    {
+        return 'Orders Analytics';
+    }
+
+    protected function getFilters(): ?array
+    {
+        return [
+            '7_days' => 'Last 7 Days',
+            'last_month' => 'Last 30 Days',
+            'this_year' => 'This Year',
+        ];
+    }
 
     protected function getData(): array
     {
+        $activeFilter = $this->filter;
+        
         $data = [];
         $labels = [];
 
-        // Generate data for the last 7 days
-        for ($i = 6; $i >= 0; $i--) {
-            $date = Carbon::now()->subDays($i);
-            $labels[] = $date->format('M d');
-            $data[] = Order::whereDate('created_at', $date->toDateString())->count();
+        if ($activeFilter === 'this_year') {
+            for ($i = 11; $i >= 0; $i--) {
+                $date = Carbon::now()->startOfMonth()->subMonths($i);
+                $labels[] = $date->format('M Y');
+                $data[] = Order::whereYear('created_at', $date->year)->whereMonth('created_at', $date->month)->count();
+            }
+        } elseif ($activeFilter === 'last_month') {
+            for ($i = 29; $i >= 0; $i--) {
+                $date = Carbon::now()->subDays($i);
+                $labels[] = $date->format('M d');
+                $data[] = Order::whereDate('created_at', $date->toDateString())->count();
+            }
+        } else {
+            // default to 7 days
+            for ($i = 6; $i >= 0; $i--) {
+                $date = Carbon::now()->subDays($i);
+                $labels[] = $date->format('M d');
+                $data[] = Order::whereDate('created_at', $date->toDateString())->count();
+            }
         }
 
         return [
             'datasets' => [
                 [
-                    'label' => 'Bookings',
+                    'label' => 'Orders',
                     'data' => $data,
-                    'backgroundColor' => '#800020', // primary burgundy
-                    'borderColor' => '#800020',
+                    'borderColor' => '#800020', // primary burgundy
+                    'backgroundColor' => 'rgba(128, 0, 32, 0.1)', // Subtle red fill
+                    'borderWidth' => 2,
+                    'pointBackgroundColor' => '#ffffff',
+                    'pointBorderColor' => '#800020',
+                    'pointBorderWidth' => 2,
+                    'pointRadius' => 4,
+                    'pointHoverRadius' => 6,
+                    'tension' => 0.4, // Smooth curve
+                    'fill' => true,
                 ],
             ],
             'labels' => $labels,
+        ];
+    }
+
+    protected function getOptions(): array
+    {
+        return [
+            'plugins' => [
+                'legend' => [
+                    'display' => false,
+                ],
+            ],
+            'scales' => [
+                'y' => [
+                    'beginAtZero' => true,
+                    'grid' => [
+                        'color' => 'rgba(128, 128, 128, 0.1)', // Very faint grid line
+                        'drawBorder' => false,
+                    ],
+                ],
+                'x' => [
+                    'grid' => [
+                        'display' => false, // Remove vertical grid lines
+                    ],
+                ],
+            ],
         ];
     }
 
