@@ -56,6 +56,11 @@ class LoginPopup extends Component
             }
 
             Auth::guard('customer')->login($customer, $this->remember);
+            
+            // Merge guest cart and wishlist
+            \App\Services\CartService::mergeGuestCartToCustomer();
+            \App\Services\WishlistService::mergeGuestWishlistToCustomer();
+            
             $this->redirectUrl = session()->pull('url.intended', request()->header('Referer') ?? '/');
             session()->regenerate();
             $this->processPendingWishlist();
@@ -163,6 +168,11 @@ class LoginPopup extends Component
         ]);
 
         Auth::guard('customer')->login($customer, $this->remember);
+        
+        // Merge guest cart and wishlist
+        \App\Services\CartService::mergeGuestCartToCustomer();
+        \App\Services\WishlistService::mergeGuestWishlistToCustomer();
+            
         $this->redirectUrl = session()->pull('url.intended', request()->header('Referer') ?? '/');
         session()->regenerate();
         $this->processPendingWishlist();
@@ -174,13 +184,9 @@ class LoginPopup extends Component
     {
         if (session()->has('pending_wishlist_item')) {
             $productId = session()->pull('pending_wishlist_item');
-            $wishlist = session()->get('wishlist', []);
             
-            if (!in_array($productId, $wishlist)) {
-                $wishlist[] = $productId;
-                session()->put('wishlist', $wishlist);
-                session()->flash('success', 'Added to Wishlist!');
-            }
+            \App\Services\WishlistService::add($productId);
+            session()->flash('success', 'Added to Wishlist!');
         }
     }
 

@@ -4,7 +4,7 @@ namespace App\Livewire\Shop;
 
 use Livewire\Component;
 use Livewire\Attributes\Computed;
-use App\Models\Product;
+use App\Services\CartService;
 
 class Cart extends Component
 {
@@ -17,77 +17,31 @@ class Cart extends Component
     #[Computed]
     public function cartData()
     {
-        $sessionCart = session()->get('cart', []);
-        $items = [];
-        $subtotal = 0;
-        $totalOriginalPrice = 0;
-        $totalItems = 0;
-
-        if (!empty($sessionCart)) {
-            $products = Product::with('fabric')->whereIn('id', array_keys($sessionCart))->get();
-
-            foreach ($products as $product) {
-                $qty = $sessionCart[$product->id] ?? 1;
-                $items[$product->id] = [
-                    'product' => $product,
-                    'qty' => $qty,
-                ];
-                $subtotal += ($product->current_price * $qty); 
-                $totalOriginalPrice += (($product->original_price ?? $product->current_price) * $qty);
-                $totalItems += $qty;
-            }
-        }
-
-        $totalDiscount = $totalOriginalPrice - $subtotal;
-        $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150; 
-
-        return [
-            'items' => $items,
-            'subtotal' => $subtotal,
-            'totalItems' => $totalItems,
-            'totalOriginalPrice' => $totalOriginalPrice,
-            'totalDiscount' => $totalDiscount,
-            'shipping' => $shipping,
-            'total' => $subtotal + $shipping,
-        ];
+        return CartService::getCart();
     }
 
     public function incrementQty($productId)
     {
-        $cart = session()->get('cart', []);
-        if (isset($cart[$productId])) {
-            $product = Product::find($productId);
-            if ($product && $cart[$productId] < $product->stock) {
-                $cart[$productId]++;
-                session()->put('cart', $cart);
-            } elseif ($product) {
-                $this->dispatch('toast', msg: 'Maximum available stock reached', type: 'error');
-            }
+        if (!CartService::incrementQty($productId)) {
+            $this->dispatch('toast', msg: 'Maximum available stock reached', type: 'error');
+        } else {
+            $this->dispatch('cart-updated');
         }
     }
 
     public function decrementQty($productId)
     {
-        $cart = session()->get('cart', []);
-        if (isset($cart[$productId])) {
-            if ($cart[$productId] > 1) {
-                $cart[$productId]--;
-            } else {
-                unset($cart[$productId]);
-                $this->dispatch('toast', msg: 'Item removed from cart', type: 'success');
-            }
-            session()->put('cart', $cart);
+        if (CartService::decrementQty($productId)) {
+            $this->dispatch('toast', msg: 'Cart updated', type: 'success');
+            $this->dispatch('cart-updated');
         }
     }
 
     public function removeItem($productId)
     {
-        $cart = session()->get('cart', []);
-        if (isset($cart[$productId])) {
-            unset($cart[$productId]);
-            session()->put('cart', $cart);
-            $this->dispatch('toast', msg: 'Item removed from cart', type: 'success');
-        }
+        CartService::remove($productId);
+        $this->dispatch('toast', msg: 'Item removed from cart', type: 'success');
+        $this->dispatch('cart-updated');
     }
 
     public function checkout()

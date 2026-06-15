@@ -21,11 +21,161 @@ class OrderDetails extends Component
     public $refund_custom_reason = '';
     public $refund_evidence = [];
 
+    // Review Modal State
+    public $reviewModalOpen = false;
+    public $isEditingReview = false;
+    public $reviewProductId = null;
+    public $reviewRating = 5;
+    public $reviewComment = '';
+    public $reviewPhotos = [];
+    public $newPhotos = [];
+    public $existingPhotos = [];
+    public $uploadIteration = 0; // To clear the file input
+
+    // View Review Modal State
+    public $viewReviewModalOpen = false;
+    public $viewingReview = null;
+
     public function mount($id)
     {
         $this->order = Order::where('id', $id)
             ->where('customer_id', auth('customer')->id())
             ->firstOrFail();
+    }
+
+    public function updatedNewPhotos()
+    {
+        $this->validate([
+            'newPhotos.*' => 'image|max:5120',
+        ]);
+
+        foreach ($this->newPhotos as $photo) {
+            $this->reviewPhotos[] = $photo;
+        }
+
+        // Reset so they can upload more without replacing
+        $this->newPhotos = [];
+        $this->uploadIteration++;
+    }
+
+    public function openViewReviewModal($productId)
+    {
+        $this->viewingReview = \App\Models\Review::where('customer_id', auth('customer')->id())
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($this->viewingReview) {
+            $this->viewReviewModalOpen = true;
+        }
+    }
+
+    public function openReviewModal($productId)
+    {
+        $this->reviewProductId = $productId;
+        $this->reviewRating = 5;
+        $this->reviewComment = '';
+        $this->reviewPhotos = [];
+        $this->newPhotos = [];
+        $this->existingPhotos = [];
+        $this->uploadIteration++;
+        $this->isEditingReview = false;
+        $this->reviewModalOpen = true;
+    }
+
+    public function editReview($productId)
+    {
+        $review = \App\Models\Review::where('customer_id', auth('customer')->id())
+            ->where('product_id', $productId)
+            ->first();
+
+        if ($review) {
+            $this->reviewProductId = $productId;
+            $this->reviewRating = $review->rating;
+            $this->reviewComment = $review->comment;
+            $this->reviewPhotos = [];
+            $this->newPhotos = [];
+            $this->existingPhotos = is_array($review->photos) ? $review->photos : [];
+            $this->uploadIteration++;
+            $this->isEditingReview = true;
+            
+            $this->viewReviewModalOpen = false;
+            $this->reviewModalOpen = true;
+        }
+    }
+
+    public function goBackToViewReview()
+    {
+        $this->reviewModalOpen = false;
+        if ($this->reviewProductId) {
+            $this->openViewReviewModal($this->reviewProductId);
+        }
+    }
+
+    public function removeExistingPhoto($index)
+    {
+        if (isset($this->existingPhotos[$index])) {
+            unset($this->existingPhotos[$index]);
+            $this->existingPhotos = array_values($this->existingPhotos);
+        }
+    }
+
+    public function removeNewPhoto($index)
+    {
+        if (isset($this->reviewPhotos[$index])) {
+            unset($this->reviewPhotos[$index]);
+            $this->reviewPhotos = array_values($this->reviewPhotos);
+        }
+    }
+
+    public function submitReview()
+    {
+        $this->validate([
+            'reviewRating' => 'required|integer|min:1|max:5',
+            'reviewComment' => 'nullable|string|max:1000',
+            'reviewProductId' => 'required|exists:products,id',
+            'reviewPhotos.*' => 'nullable|image|max:5120', // 5MB max per image
+        ]);
+
+        $photoPaths = [];
+        if (!empty($this->reviewPhotos)) {
+            foreach ($this->reviewPhotos as $photo) {
+                $photoPaths[] = $photo->store('reviews', 'public');
+            }
+        }
+
+        $existing = \App\Models\Review::where('customer_id', auth('customer')->id())
+            ->where('product_id', $this->reviewProductId)
+            ->first();
+
+        if ($existing) {
+            $allPhotos = array_merge($this->existingPhotos, $photoPaths);
+
+            $existing->update([
+                'rating' => $this->reviewRating,
+                'comment' => $this->reviewComment,
+                'is_read' => false,
+                'photos' => $allPhotos,
+            ]);
+            $this->dispatch('toast', msg: 'Review updated successfully!', type: 'success');
+        } else {
+            \App\Models\Review::create([
+                'customer_id' => auth('customer')->id(),
+                'product_id' => $this->reviewProductId,
+                'rating' => $this->reviewRating,
+                'comment' => $this->reviewComment,
+                'is_read' => false,
+                'photos' => empty($photoPaths) ? null : $photoPaths,
+            ]);
+            $this->dispatch('toast', msg: 'Thank you for your review!', type: 'success');
+        }
+
+        $this->reviewModalOpen = false;
+        $this->reviewPhotos = [];
+        
+        // Refresh the viewing review if it was open
+        if ($this->viewingReview && $this->viewingReview->product_id == $this->reviewProductId) {
+            $this->viewingReview->refresh();
+        }
     }
 
     public function render()

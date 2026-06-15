@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Review extends Model
 {
-    protected $fillable = ['customer_id', 'product_id', 'rating', 'comment', 'is_read'];
+    protected $fillable = ['customer_id', 'product_id', 'rating', 'comment', 'is_read', 'admin_reply', 'photos'];
+
+    protected $casts = [
+        'photos' => 'array',
+    ];
 
     public function customer(): BelongsTo
     {

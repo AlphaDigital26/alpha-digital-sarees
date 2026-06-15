@@ -43,40 +43,57 @@ class Summary extends Component
 
     private function getCartData()
     {
-        // Use buy_now_cart if it exists, otherwise use normal cart
-        $sessionCart = session()->has('buy_now_cart') 
-            ? session()->get('buy_now_cart') 
-            : session()->get('cart', []);
-            
-        $items = [];
-        $subtotal = 0;
-        $originalPriceTotal = 0;
-        $totalItems = 0;
+        // Use buy_now_cart if it exists
+        if (session()->has('buy_now_cart')) {
+            $sessionCart = session()->get('buy_now_cart');
+            $items = [];
+            $subtotal = 0;
+            $originalPriceTotal = 0;
+            $totalItems = 0;
 
-        if (!empty($sessionCart)) {
-            $products = Product::whereIn('id', array_keys($sessionCart))->get();
-            foreach ($products as $product) {
-                $qty = $sessionCart[$product->id] ?? 1;
-                $items[] = ['product' => $product, 'qty' => $qty];
-                $subtotal += ($product->current_price * $qty); 
-                // Fallback to current_price if original_price is null or 0
-                $origPrice = $product->original_price > 0 ? $product->original_price : $product->current_price;
-                $originalPriceTotal += ($origPrice * $qty);
-                $totalItems += $qty;
+            if (!empty($sessionCart)) {
+                $products = Product::whereIn('id', array_keys($sessionCart))->get();
+                foreach ($products as $product) {
+                    $qty = $sessionCart[$product->id] ?? 1;
+                    $items[] = ['product' => $product, 'qty' => $qty];
+                    $subtotal += ($product->current_price * $qty); 
+                    $origPrice = $product->original_price > 0 ? $product->original_price : $product->current_price;
+                    $originalPriceTotal += ($origPrice * $qty);
+                    $totalItems += $qty;
+                }
             }
+
+            $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150;
+            $discount = $originalPriceTotal - $subtotal;
+
+            return [
+                'items' => $items, 
+                'subtotal' => $subtotal, 
+                'original_price_total' => $originalPriceTotal,
+                'discount' => $discount,
+                'total_items' => $totalItems,
+                'shipping' => $shipping, 
+                'total' => $subtotal + $shipping
+            ];
         }
 
-        $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150;
-        $discount = $originalPriceTotal - $subtotal;
+        // Use CartService for normal cart
+        $cart = \App\Services\CartService::getCart();
+        
+        // Reformat items array to match existing structure
+        $items = [];
+        foreach ($cart['items'] as $item) {
+            $items[] = ['product' => $item['product'], 'qty' => $item['qty']];
+        }
 
         return [
-            'items' => $items, 
-            'subtotal' => $subtotal, 
-            'original_price_total' => $originalPriceTotal,
-            'discount' => $discount,
-            'total_items' => $totalItems,
-            'shipping' => $shipping, 
-            'total' => $subtotal + $shipping
+            'items' => $items,
+            'subtotal' => $cart['subtotal'],
+            'original_price_total' => $cart['totalOriginalPrice'],
+            'discount' => $cart['totalDiscount'],
+            'total_items' => $cart['totalItems'],
+            'shipping' => $cart['shipping'],
+            'total' => $cart['total']
         ];
     }
 
@@ -168,13 +185,12 @@ class Summary extends Component
                 session()->forget('buy_now_cart');
                 
                 // Remove the purchased item(s) from the main cart so it empties out
-                $mainCart = session()->get('cart', []);
                 foreach ($buyNowCart as $id => $qty) {
-                    unset($mainCart[$id]);
+                    \App\Services\CartService::remove($id);
                 }
-                session()->put('cart', $mainCart);
             } else {
-                session()->forget('cart');
+                // Clear the whole DB cart for this user
+                \App\Models\Cart::where('customer_id', auth('customer')->id())->delete();
             }
             
             session()->forget('checkout_address_id');

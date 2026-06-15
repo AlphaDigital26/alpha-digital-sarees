@@ -19,18 +19,15 @@ class Occasion extends Component
             return; 
         }
 
-        // 2. If they are logged in, run your normal wishlist logic
-        $wishlist = session()->get('wishlist', []);
+        // 2. Toggle in DB
+        $added = \App\Services\WishlistService::toggle($productId);
         
-        if (in_array($productId, $wishlist)) {
-            $wishlist = array_filter($wishlist, fn($id) => $id != $productId);
-            session()->flash('success', 'Removed from Wishlist');
-        } else {
-            $wishlist[] = $productId;
+        if ($added) {
             session()->flash('success', 'Added to Wishlist!');
+        } else {
+            session()->flash('success', 'Removed from Wishlist');
         }
         
-        session()->put('wishlist', $wishlist);
         $this->dispatch('wishlist-updated');
     }
 

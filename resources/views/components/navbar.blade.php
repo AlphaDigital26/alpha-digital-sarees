@@ -52,73 +52,7 @@
         </form>
 
         <div class="flex items-center gap-4 sm:gap-5 nav-icons">
-            @php
-                $wishlistCount = count(session()->get('wishlist', []));
-                $cartCount = array_sum(session()->get('cart', []));
-            @endphp
-
-            <a href="{{ route('wishlist') }}" wire:navigate class="relative text-[#2A211F] hover:text-[#800020] transition-colors group" title="Wishlist">
-                <i data-lucide="heart" stroke-width="1.5" class="w-5 h-5 {{ request()->routeIs('wishlist') ? 'fill-[#800020] text-[#800020]' : '' }} group-hover:scale-110 transition-transform"></i>
-                @if($wishlistCount > 0)
-                    <span class="absolute -top-1.5 -right-2 bg-[#800020] text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full shadow-sm">
-                        {{ $wishlistCount }}
-                    </span>
-                @endif
-            </a>
-            
-            <a href="{{ route('cart') }}" wire:navigate class="relative text-[#2A211F] hover:text-[#800020] transition-colors group" title="Cart">
-                <i data-lucide="shopping-bag" stroke-width="1.5" class="w-5 h-5 group-hover:scale-110 transition-transform {{ request()->routeIs('cart') ? 'text-[#800020]' : '' }}"></i>
-                @if($cartCount > 0)
-                    <span class="absolute -top-1.5 -right-2 bg-[#800020] text-white text-[10px] font-bold h-4 w-4 flex items-center justify-center rounded-full shadow-sm">
-                        {{ $cartCount }}
-                    </span>
-                @endif
-            </a>
-            
-            @auth('customer')
-                <div class="relative hidden sm:block" x-data="{ open: false }">
-                    <button @click="open = !open" @click.outside="open = false" title="My Account" class="bg-transparent border-none cursor-pointer p-0 m-0 outline-none text-[#800020] transition-colors group">
-                        <i data-lucide="user-check" stroke-width="1.5" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                    </button>
-
-                    <div x-show="open" 
-                         x-transition:enter="transition ease-out duration-200"
-                         x-transition:enter-start="opacity-0 translate-y-2"
-                         x-transition:enter-end="opacity-100 translate-y-0"
-                         x-transition:leave="transition ease-in duration-150"
-                         x-transition:leave-start="opacity-100 translate-y-0"
-                         x-transition:leave-end="opacity-0 translate-y-2"
-                         x-cloak 
-                         style="display: none;" 
-                         class="absolute right-0 mt-6 w-64 bg-[#F4F0EB]/95 backdrop-blur-xl border border-[#E5E0DA] shadow-2xl rounded-2xl py-2 z-50 text-left overflow-hidden">
-                        
-                        <div class="px-6 py-4 bg-white/50 mb-2 border-b border-[#E5E0DA]/50">
-                            <p class="text-[10px] font-bold text-[#706663] uppercase tracking-widest font-sans">Welcome back,</p>
-                            <p class="text-lg font-medium text-[#1b1c1a] truncate mt-1" style="font-family: 'Noto Serif', serif;">
-                                {{ auth('customer')->user()->name ?? 'User' }}
-                            </p>
-                        </div>
-                        <a href="{{ route('profile.account') }}" class="flex items-center px-6 py-3 text-sm font-medium text-[#2A211F] hover:bg-white/80 hover:text-[#800020] transition-colors gap-3 font-sans">
-                            <i data-lucide="user" stroke-width="1.5" class="w-4 h-4"></i> My Profile
-                        </a>
-                        <a href="{{ route('profile.orders') }}" class="flex items-center px-6 py-3 text-sm font-medium text-[#2A211F] hover:bg-white/80 hover:text-[#800020] transition-colors gap-3 font-sans">
-                            <i data-lucide="package" stroke-width="1.5" class="w-4 h-4"></i> Order History
-                        </a>
-                        <div class="border-t border-[#E5E0DA] mt-2 pt-2">
-                            <form method="POST" action="{{ route('customer.logout') }}" class="m-0 p-0">
-                                @csrf
-                                <button type="submit" class="w-full flex items-center px-6 py-3 text-sm font-medium text-[#800020] hover:bg-white/80 transition-colors gap-3 bg-transparent border-none cursor-pointer text-left outline-none font-sans">
-                                    <i data-lucide="log-out" stroke-width="1.5" class="w-4 h-4"></i> Sign Out
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            @else
-                <button x-data @click="$dispatch('open-login-modal')" title="Login / Signup" class="hidden sm:block bg-transparent border-none cursor-pointer p-0 m-0 outline-none text-[#2A211F] hover:text-[#800020] transition-colors group">
-                    <i data-lucide="user" stroke-width="1.5" class="w-5 h-5 group-hover:scale-110 transition-transform"></i>
-                </button>
-            @endauth
+        <livewire:nav-icons />
         </div>
     </div>
 

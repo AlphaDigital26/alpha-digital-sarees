@@ -165,7 +165,7 @@
                 
                 <button wire:click="toggleWishlist({{ $product->id }})" class="p-2 m-0 rounded-full hover:bg-[#F4F0EB] transition-colors flex-shrink-0" title="Add to Wishlist">
                     <svg xmlns="http://www.w3.org/2000/svg" 
-                         class="h-7 w-7 transition-colors duration-300 {{ in_array($product->id, session()->get('wishlist', [])) ? 'fill-[#800020] text-[#800020]' : 'fill-none text-gray-400 hover:text-[#800020]' }}" 
+                         class="h-7 w-7 transition-colors duration-300 {{ in_array($product->id, \App\Services\WishlistService::getWishlistProductIds()) ? 'fill-[#800020] text-[#800020]' : 'fill-none text-gray-400 hover:text-[#800020]' }}" 
                          viewBox="0 0 24 24" 
                          stroke="currentColor" 
                          stroke-width="1.5">
@@ -300,48 +300,70 @@
                 <h2 class="font-serif text-3xl md:text-4xl text-[#2A211F]">You May Also Like</h2>
             </div>
             
-            {{-- Changed to lg:grid-cols-4 and added max-w-6xl mx-auto to perfectly size the cards --}}
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 md:gap-8 max-w-6xl mx-auto">
-                {{-- Loop up to 4 products --}}
-                @foreach($similarProducts->take(4) as $simProduct)
-                    @php
-                        $mainImg = is_array($simProduct->images) && count($simProduct->images) > 0
-                            ? asset('storage/' . $simProduct->images[0])
-                            : 'https://images.unsplash.com/photo-1610030469668-93510ec67d9e?auto=format&fit=crop&w=500';
-                        $hoverImg = is_array($simProduct->images) && count($simProduct->images) > 1
-                            ? asset('storage/' . $simProduct->images[1])
-                            : $mainImg;
-                    @endphp
+            {{-- Slider Container with Alpine.js --}}
+            <div class="relative max-w-7xl mx-auto px-12 sm:px-16 lg:px-24 group" x-data="{
+                scrollLeft() { $refs.slider.scrollBy({ left: -$refs.slider.clientWidth, behavior: 'smooth' }); },
+                scrollRight() { $refs.slider.scrollBy({ left: $refs.slider.clientWidth, behavior: 'smooth' }); }
+            }">
+                
+                {{-- Prev Button --}}
+                <button @click="scrollLeft()" class="absolute left-0 lg:left-4 top-[35%] -translate-y-1/2 z-10 bg-white/90 shadow-md p-3 rounded-full text-gray-500 hover:text-[#800020] hover:bg-white transition hidden md:flex items-center justify-center cursor-pointer border border-[#E5E0DA]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                </button>
+
+                {{-- Scrollable Area --}}
+                <div x-ref="slider" class="flex gap-4 md:gap-6 lg:gap-8 overflow-x-auto snap-x snap-mandatory pb-8" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    <style>
+                        [x-ref="slider"]::-webkit-scrollbar { display: none; }
+                    </style>
                     
-                    <div class="product-card group relative">
-                        <a href="{{ route('shop.product', $simProduct->id) }}" wire:navigate class="block w-full h-full no-underline">
-                            
-                            {{-- Image Wrapper with Hover Effects --}}
-                            <div class="img-wrapper relative bg-[#F4F0EB] aspect-[3/4] overflow-hidden rounded-sm mb-4">
-                                {{-- Heart Icon (Appears on hover) --}}
-                                <div class="absolute top-3 right-3 z-10 bg-white p-2 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                    </svg>
+                    {{-- Loop ALL similar products --}}
+                    @foreach($similarProducts as $simProduct)
+                        @php
+                            $mainImg = is_array($simProduct->images) && count($simProduct->images) > 0
+                                ? asset('storage/' . $simProduct->images[0])
+                                : 'https://images.unsplash.com/photo-1610030469668-93510ec67d9e?auto=format&fit=crop&w=500';
+                            $hoverImg = is_array($simProduct->images) && count($simProduct->images) > 1
+                                ? asset('storage/' . $simProduct->images[1])
+                                : $mainImg;
+                        @endphp
+                        
+                        {{-- Sizing: 2 per row on mobile, 3 on tablet, 4 on large screens --}}
+                        <div class="product-card group relative flex-none w-[calc(50%-8px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-24px)] snap-start">
+                            <a href="{{ route('shop.product', $simProduct->id) }}" wire:navigate class="block w-full h-full no-underline">
+                                
+                                {{-- Image Wrapper with Hover Effects --}}
+                                <div class="img-wrapper relative bg-[#F4F0EB] aspect-[3/4] overflow-hidden rounded-sm mb-4">
+                                    {{-- Heart Icon (Appears on hover) --}}
+                                    <div class="absolute top-3 right-3 z-10 bg-white p-2 rounded-full shadow-sm opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="transition: all 0.3s; {{ in_array($simProduct->id, \App\Services\WishlistService::getWishlistProductIds()) ? 'fill: #800020; color: #800020;' : 'fill: none; color: #706663;' }}">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+    </svg>
+                                    </div>
+                                    
+                                    <img src="{{ $mainImg }}" alt="{{ $simProduct->name }}" class="main-img w-full h-full object-cover">
+                                    <img src="{{ $hoverImg }}" alt="{{ $simProduct->name }} (Hover)" class="hover-img absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500">
                                 </div>
                                 
-                                <img src="{{ $mainImg }}" alt="{{ $simProduct->name }}" class="main-img">
-                                <img src="{{ $hoverImg }}" alt="{{ $simProduct->name }} (Hover)" class="hover-img">
-                            </div>
-                            
-                            {{-- Text Info --}}
-                            <div class="text-center">
-                                <h3 class="font-sans text-[0.85rem] font-semibold text-[#555] mb-2 line-clamp-2 min-h-[2.5rem]">
-                                    {{ $simProduct->name }}
-                                </h3>
-                                <p class="font-sans text-[0.9rem] font-bold text-[#800020]">
-                                    Rs. {{ number_format($simProduct->current_price, 2) }}
-                                </p>
-                            </div>
-                            
-                        </a>
-                    </div>
-                @endforeach
+                                {{-- Text Info --}}
+                                <div class="text-center">
+                                    <h3 class="font-sans text-[0.85rem] font-semibold text-[#555] mb-2 line-clamp-2 min-h-[2.5rem]">
+                                        {{ $simProduct->name }}
+                                    </h3>
+                                    <p class="font-sans text-[0.9rem] font-bold text-[#800020]">
+                                        Rs. {{ number_format($simProduct->current_price, 2) }}
+                                    </p>
+                                </div>
+                                
+                            </a>
+                        </div>
+                    @endforeach
+                </div>
+
+                {{-- Next Button --}}
+                <button @click="scrollRight()" class="absolute right-0 lg:right-4 top-[35%] -translate-y-1/2 z-10 bg-white/90 shadow-md p-3 rounded-full text-gray-500 hover:text-[#800020] hover:bg-white transition hidden md:flex items-center justify-center cursor-pointer border border-[#E5E0DA]">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                </button>
             </div>
         </div>
     @endif
@@ -352,55 +374,38 @@
             <h2 class="font-serif text-3xl md:text-4xl text-[#2A211F]">Customer Reviews</h2>
         </div>
         
-        <div class="max-w-4xl mx-auto">
+        <div class="max-w-4xl mx-auto" x-data="{
+            isOpen: false,
+            activeImage: '',
+            review: null,
+            init() {
+                this.$watch('isOpen', value => {
+                    document.body.style.overflow = value ? 'hidden' : '';
+                });
+            },
+            openModal(reviewData, startImage) {
+                this.review = reviewData;
+                this.activeImage = startImage;
+                this.isOpen = true;
+            },
+            prevImage() {
+                let currentIndex = this.review.photos.indexOf(this.activeImage);
+                if (currentIndex > 0) {
+                    this.activeImage = this.review.photos[currentIndex - 1];
+                } else {
+                    this.activeImage = this.review.photos[this.review.photos.length - 1];
+                }
+            },
+            nextImage() {
+                let currentIndex = this.review.photos.indexOf(this.activeImage);
+                if (currentIndex < this.review.photos.length - 1) {
+                    this.activeImage = this.review.photos[currentIndex + 1];
+                } else {
+                    this.activeImage = this.review.photos[0];
+                }
+            }
+        }">
             
-            {{-- Review Form --}}
-            @auth('customer')
-                <div class="bg-white p-6 md:p-8 rounded-sm border border-[#E5E0DA] mb-12">
-                    <h3 class="font-serif text-xl text-[#2A211F] mb-4">Write a Review</h3>
-                    <form wire:submit.prevent="submitReview" class="space-y-4">
-                        <div>
-                            <label class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Rating</label>
-                            <div class="flex gap-1" x-data="{ rating: @entangle('rating').live, hoverRating: 0 }">
-                                <template x-for="i in 5" :key="i">
-                                    <button type="button" 
-                                            @click="rating = i" 
-                                            @mouseenter="hoverRating = i" 
-                                            @mouseleave="hoverRating = 0"
-                                            class="focus:outline-none transition-colors duration-150">
-                                        <svg xmlns="http://www.w3.org/2000/svg" 
-                                             class="w-8 h-8" 
-                                             :class="(hoverRating >= i || (!hoverRating && rating >= i)) ? 'text-yellow-500 fill-current' : 'text-gray-300 fill-current'" 
-                                             viewBox="0 0 24 24" stroke="none">
-                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                        </svg>
-                                    </button>
-                                </template>
-                            </div>
-                            @error('rating') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                        </div>
-                        
-                        <div>
-                            <label for="comment" class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Your Review (Optional)</label>
-                            <textarea wire:model="comment" id="comment" rows="4" class="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E0DA] rounded-sm focus:outline-none focus:border-[#800020] transition-colors resize-none text-[14px]" placeholder="Tell us what you think about this product..."></textarea>
-                            @error('comment') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
-                        </div>
-                        
-                        <div class="pt-2">
-                            <button type="submit" class="bg-[#800020] text-white font-bold py-3 px-8 rounded-sm hover:bg-[#5D4037] transition-colors shadow-sm uppercase tracking-widest text-xs">
-                                Submit Review
-                            </button>
-                        </div>
-                    </form>
-                </div>
-            @else
-                <div class="bg-[#FAFAFA] p-6 text-center border border-[#E5E0DA] rounded-sm mb-12">
-                    <p class="text-gray-600 mb-4">Please log in to leave a review.</p>
-                    <button wire:click="$dispatch('open-login-modal')" class="bg-[#800020] text-white font-bold py-2.5 px-6 rounded-sm hover:bg-[#5D4037] transition-colors uppercase tracking-widest text-xs">
-                        Log In
-                    </button>
-                </div>
-            @endauth
 
             {{-- Existing Reviews --}}
             @if($product->reviews && $product->reviews->count() > 0)
@@ -419,9 +424,38 @@
                             </div>
                             <span class="text-xs text-gray-400 block mb-3">{{ $review->created_at->format('M d, Y') }}</span>
                             @if($review->comment)
-                                <p class="text-gray-600 text-sm leading-relaxed" style="font-family: 'Manrope', sans-serif;">
+                                <p class="text-gray-600 text-sm leading-relaxed break-words" style="font-family: 'Manrope', sans-serif;">
                                     {{ $review->comment }}
                                 </p>
+                            @endif
+                            @if(is_array($review->photos) && count($review->photos) > 0)
+                                @php
+                                    $reviewData = [
+                                        'name' => $review->customer->name ?? 'Guest User',
+                                        'rating' => $review->rating,
+                                        'comment' => $review->comment,
+                                        'photos' => array_map(function($p) { return asset('storage/' . $p); }, $review->photos)
+                                    ];
+                                @endphp
+                                <div class="mt-4 flex gap-2 flex-wrap">
+                                    @foreach($review->photos as $photo)
+                                        <a href="#" 
+                                           data-review="{{ json_encode($reviewData) }}"
+                                           data-photo="{{ asset('storage/' . $photo) }}"
+                                           @click.prevent="openModal(JSON.parse($el.dataset.review), $el.dataset.photo)" 
+                                           class="block w-20 h-20 rounded overflow-hidden border border-[#E5E0DA] hover:opacity-80 transition cursor-pointer">
+                                            <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
+                                        </a>
+                                    @endforeach
+                                </div>
+                            @endif
+                            @if($review->admin_reply)
+                                <div class="mt-4 bg-[#F5F0EB] p-4 rounded-sm border-l-4 border-[#800020]">
+                                    <span class="font-bold text-[#800020] text-sm block mb-1">Response from Alpha Digital</span>
+                                    <p class="text-gray-700 text-sm leading-relaxed" style="font-family: 'Manrope', sans-serif;">
+                                        {{ $review->admin_reply }}
+                                    </p>
+                                </div>
                             @endif
                         </div>
                     @endforeach
@@ -429,6 +463,72 @@
             @else
                 <p class="text-center text-gray-500 italic">No reviews yet. Be the first to review this product!</p>
             @endif
+
+            {{-- Review Image Lightbox Modal --}}
+            <template x-teleport="body">
+                <div x-show="isOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-10" style="display: none;">
+                    <div class="absolute inset-0 bg-black bg-opacity-80" @click="isOpen = false"></div>
+                    
+                    <div class="relative z-10 w-full max-w-6xl h-[85vh] flex flex-col md:flex-row bg-white rounded-lg shadow-2xl overflow-hidden animate-fade-in-up">
+                        <button @click="isOpen = false" class="absolute top-4 right-4 z-20 text-gray-400 hover:text-black transition bg-white border border-gray-200 cursor-pointer p-2 rounded-full shadow-md hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                        </button>
+
+                        <!-- Left: Large Image Area -->
+                        <div class="w-full md:w-[60%] bg-[#F5F0EB] flex items-center justify-center p-4 relative group">
+                            <!-- Prev Arrow -->
+                            <button x-show="review && review.photos && review.photos.length > 1" @click="prevImage()" class="absolute left-4 z-20 text-[#800020] hover:text-white bg-white hover:bg-[#800020] transition border border-[#E5E0DA] cursor-pointer p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                            </button>
+                            
+                            <img :src="activeImage" class="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-lg">
+                            
+                            <!-- Next Arrow -->
+                            <button x-show="review && review.photos && review.photos.length > 1" @click="nextImage()" class="absolute right-4 z-20 text-[#800020] hover:text-white bg-white hover:bg-[#800020] transition border border-[#E5E0DA] cursor-pointer p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 focus:opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            </button>
+                        </div>
+
+                        <!-- Right: Review Details -->
+                        <div class="w-full md:w-[40%] p-6 md:p-8 flex flex-col h-full overflow-y-auto bg-white">
+                            <h3 class="font-bold text-lg text-gray-900 mb-6 border-b border-gray-100 pb-3">Customer photos and review</h3>
+                            
+                            <div class="flex items-center gap-3 mb-3">
+                                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
+                                    <span x-text="review.name.charAt(0).toUpperCase()"></span>
+                                </div>
+                                <span class="font-bold text-[#1b1c1a]" x-text="review.name"></span>
+                            </div>
+
+                            <div class="flex items-center gap-2 mb-4">
+                                <div class="flex gap-0.5">
+                                    <template x-for="i in 5">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" :class="i <= review.rating ? 'text-[#FF9900]' : 'text-gray-300'" viewBox="0 0 24 24" stroke="none">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    </template>
+                                </div>
+                                <span class="text-[13px] font-bold text-[#C45500]">Verified Purchase</span>
+                            </div>
+
+                            <p class="text-gray-700 text-[14px] leading-relaxed mb-6 whitespace-pre-wrap break-words" x-text="review.comment" style="font-family: 'Manrope', sans-serif;"></p>
+
+                            <!-- Thumbnails Gallery -->
+                            <div class="mt-auto pt-6">
+                                <div class="flex gap-2 flex-wrap">
+                                    <template x-for="photo in review.photos">
+                                        <button @click="activeImage = photo" 
+                                                class="w-16 h-16 rounded overflow-hidden border-2 transition focus:outline-none cursor-pointer"
+                                                :class="activeImage === photo ? 'border-[#e77600] shadow-sm' : 'border-transparent opacity-70 hover:opacity-100 hover:border-gray-300'">
+                                            <img :src="photo" class="w-full h-full object-cover">
+                                        </button>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
         </div>
     </div>
 </main>
