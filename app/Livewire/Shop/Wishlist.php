@@ -4,42 +4,31 @@ namespace App\Livewire\Shop;
 
 use Livewire\Component;
 use Livewire\Attributes\Computed;
-use App\Models\Product;
+use App\Services\WishlistService;
+use App\Services\CartService;
 
 class Wishlist extends Component
 {
     #[Computed]
     public function wishlistItems()
     {
-        $wishlistIds = session()->get('wishlist', []);
-        
-        if (empty($wishlistIds)) {
-            return collect(); 
-        }
-
-        return Product::with('fabric')->whereIn('id', $wishlistIds)->get();
+        return WishlistService::getWishlist()->pluck('product');
     }
 
     public function removeItem($productId)
     {
-        $wishlist = session()->get('wishlist', []);
-        $wishlist = array_filter($wishlist, fn($id) => $id != $productId);
-        
-        session()->put('wishlist', $wishlist);
+        WishlistService::remove($productId);
         $this->dispatch('toast', msg: 'Item removed from wishlist', type: 'success');
+        $this->dispatch('wishlist-updated');
     }
 
     public function moveToCart($productId)
     {
-        $cart = session()->get('cart', []);
-        if (isset($cart[$productId])) {
-            $cart[$productId]++;
-        } else {
-            $cart[$productId] = 1;
-        }
-        session()->put('cart', $cart);
-
-        // DELIBERATELY REMOVED $this->removeItem($productId) SO IT STAYS IN WISHLIST
+        CartService::add($productId);
+        WishlistService::remove($productId); // Removing it from wishlist since it's "moved"
+        
+        $this->dispatch('cart-updated');
+        $this->dispatch('wishlist-updated');
         
         session()->flash('success', 'Added to your Shopping Bag!');
         return redirect()->route('cart');

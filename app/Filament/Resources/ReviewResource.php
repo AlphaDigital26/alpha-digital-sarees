@@ -20,6 +20,17 @@ class ReviewResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-star';
     protected static ?int $navigationSort = 7;
 
+    public static function getNavigationBadge(): ?string
+    {
+        $count = static::getModel()::where('is_read', false)->count();
+        return $count > 0 ? (string) $count : null;
+    }
+
+    public static function getNavigationBadgeColor(): ?string
+    {
+        return 'success';
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -38,6 +49,14 @@ class ReviewResource extends Resource
                     ->maxValue(5),
                 Forms\Components\Textarea::make('comment')
                     ->columnSpanFull(),
+                Forms\Components\FileUpload::make('photos')
+                    ->multiple()
+                    ->image()
+                    ->directory('reviews')
+                    ->columnSpanFull(),
+                Forms\Components\Textarea::make('admin_reply')
+                    ->label('Admin Reply')
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -45,21 +64,24 @@ class ReviewResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\IconColumn::make('is_read')
+                    ->label('New')
+                    ->icon(fn (Review $record): string => $record->is_read ? '' : 'heroicon-s-bell')
+                    ->color('success')
+                    ->tooltip('New or edited review'),
                 Tables\Columns\TextColumn::make('customer.name')
                     ->sortable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('product.name')
                     ->sortable()
-                    ->searchable(),
+                    ->searchable()
+                    ->wrap(),
                 Tables\Columns\TextColumn::make('rating')
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('comment')
                     ->limit(50)
                     ->searchable(),
-                Tables\Columns\IconColumn::make('is_read')
-                    ->boolean()
-                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
@@ -73,12 +95,30 @@ class ReviewResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\Action::make('mark_as_read')
-                    ->label('Mark as Read')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->action(fn (Review $record) => $record->update(['is_read' => true]))
-                    ->hidden(fn (Review $record) => $record->is_read),
+                Tables\Actions\Action::make('reply')
+                    ->label('Reply')
+                    ->icon('heroicon-o-chat-bubble-left-ellipsis')
+                    ->color('primary')
+                    ->form([
+                        Forms\Components\Textarea::make('admin_reply')
+                            ->label('Your Reply')
+                            ->required()
+                            ->default(fn (Review $record) => $record->admin_reply),
+                    ])
+                    ->action(function (array $data, Review $record): void {
+                        $record->update([
+                            'admin_reply' => $data['admin_reply'],
+                            'is_read' => true,
+                        ]);
+                        \Filament\Notifications\Notification::make()->title('Reply Saved')->success()->send();
+                    }),
+                Tables\Actions\ViewAction::make()
+                    ->mutateRecordDataUsing(function (array $data, Review $record): array {
+                        if (!$record->is_read) {
+                            $record->update(['is_read' => true]);
+                        }
+                        return $data;
+                    }),
                 Tables\Actions\DeleteAction::make(),
             ])
             ->bulkActions([

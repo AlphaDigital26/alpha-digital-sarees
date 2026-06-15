@@ -50,34 +50,13 @@ class Product extends Component
 
     public function addToCart($productId, $isBuyNow = false)
     {
-        // 1. Get current cart from session
-        $cart = session()->get('cart', []);
-
-        // 2. Add or increment quantity using the selected quantity
-        if (isset($cart[$productId])) {
-            $newQuantity = $cart[$productId] + $this->quantity;
-            if ($newQuantity > $this->product->stock) {
-                $cart[$productId] = $this->product->stock;
-                if (!$isBuyNow) {
-                    $this->dispatch('toast', msg: 'Maximum available stock added to cart', type: 'error');
-                }
-            } else {
-                $cart[$productId] = $newQuantity;
-                if (!$isBuyNow) {
-                    $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
-                }
-            }
-        } else {
-            $cart[$productId] = $this->quantity;
-            if (!$isBuyNow) {
-                $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
-            }
+        \App\Services\CartService::add($productId, $this->quantity);
+        
+        if (!$isBuyNow) {
+            $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
         }
 
-        // 3. Save back to session
-        session()->put('cart', $cart);
-
-        // 5. Update cart counter (if navbar is listening)
+        // Update cart counter (if navbar is listening)
         $this->dispatch('cart-updated');
     }
 
@@ -102,7 +81,7 @@ class Product extends Component
         return redirect()->route('checkout.summary');
     }
 
-        // Handles the "Add to Wishlist" button
+    // Handles the "Add to Wishlist" button
     public function toggleWishlist($productId)
     {
         // 1. If they are a guest, stop them and open the Login Popup!
@@ -113,47 +92,19 @@ class Product extends Component
             return; 
         }
 
-        // 2. If they are logged in, run your normal wishlist logic
-        $wishlist = session()->get('wishlist', []);
+        // 2. Toggle in DB
+        $added = \App\Services\WishlistService::toggle($productId);
         
-        if (in_array($productId, $wishlist)) {
-            $wishlist = array_filter($wishlist, fn($id) => $id != $productId);
-            $this->dispatch('toast', msg: 'Removed from Wishlist', type: 'success');
-        } else {
-            $wishlist[] = $productId;
+        if ($added) {
             $this->dispatch('toast', msg: 'Added to Wishlist!', type: 'success');
+        } else {
+            $this->dispatch('toast', msg: 'Removed from Wishlist', type: 'success');
         }
         
-        session()->put('wishlist', $wishlist);
         $this->dispatch('wishlist-updated');
     }
 
-    public function submitReview()
-    {
-        if (!auth('customer')->check()) {
-            $this->dispatch('open-login-modal');
-            return;
-        }
 
-        $this->validate([
-            'rating' => 'required|integer|min:1|max:5',
-            'comment' => 'nullable|string|max:1000',
-        ]);
-
-        \App\Models\Review::create([
-            'customer_id' => auth('customer')->id(),
-            'product_id' => $this->product->id,
-            'rating' => $this->rating,
-            'comment' => $this->comment,
-        ]);
-
-        $this->rating = 5;
-        $this->comment = '';
-        
-        $this->product->load('reviews.customer');
-
-        $this->dispatch('toast', msg: 'Thank you for your review!', type: 'success');
-    }
 
     public function render()
     {
