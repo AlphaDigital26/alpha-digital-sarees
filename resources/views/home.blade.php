@@ -7,28 +7,27 @@
         @endphp
 
         @foreach($carousels as $index => $carousel)
-            <div class="slide" 
+            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%]" 
                  style="background-image: url('{{ asset("storage/" . $carousel->image) }}');
                         animation: fadeHero {{ $animationDuration }}s infinite;
-                        animation-delay: {{ $index * 5 }}s;
-                        display: flex; align-items: center; justify-content: flex-start; padding: 0 10%;">
+                        animation-delay: {{ $index * 5 }}s;">
                 
-                <div class="hero-content" style="position: relative; z-index: 2;">
+                <div class="hero-content relative z-[2] w-full max-w-[500px]">
                     
                     @if($carousel->sub_heading)
-                        <p class="subtitle" style="color: white;">{{ $carousel->sub_heading }}</p>
+                        <p class="subtitle text-sm md:text-base text-white tracking-widest mb-2">{{ $carousel->sub_heading }}</p>
                     @endif
 
                     @if($carousel->heading)
-                        <h1>{{ $carousel->heading }}</h1>
+                        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal my-2 md:my-4 leading-tight drop-shadow-md text-white">{{ $carousel->heading }}</h1>
                     @endif
 
                     @if($carousel->text)
-                        <p style="margin-bottom: 2rem; max-width: 500px; line-height: 1.6;">{{ $carousel->text }}</p>
+                        <p class="text-sm md:text-base mb-6 md:mb-8 leading-relaxed text-white">{{ $carousel->text }}</p>
                     @endif
 
                     @if($carousel->button_text && $carousel->button_link)
-                        <a href="{{ $carousel->button_link }}" class="btn-primary" style="display: inline-block; text-decoration: none;">
+                        <a href="{{ $carousel->button_link }}" class="btn-primary inline-block no-underline">
                             {{ $carousel->button_text }}
                         </a>
                     @endif
@@ -38,10 +37,10 @@
         @endforeach
         
         @if($totalSlides === 0)
-            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80'); opacity: 1;">
-                <div class="hero-content" style="position: relative; z-index: 2;">
-                    <h1>Welcome to Our Store</h1>
-                    <a href="/shop" class="btn-primary" style="display: inline-block; text-decoration: none;">SHOP NOW</a>
+            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%]" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80'); opacity: 1;">
+                <div class="hero-content relative z-[2] w-full max-w-[500px]">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal my-2 md:my-4 leading-tight drop-shadow-md text-white">Welcome to Our Store</h1>
+                    <a href="/shop" class="btn-primary inline-block no-underline mt-4">SHOP NOW</a>
                 </div>
             </div>
         @endif
@@ -74,14 +73,14 @@
                         </div>
                         <h3>{{ $product->name }}</h3>
                     </a>
-                    <div class="flex items-baseline justify-center gap-2 mt-1 mb-2">
-                        <p class="font-bold text-[#800020] m-0 text-sm">₹{{ number_format($product->current_price, 2) }}</p>
+                    <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
+                        <p class="font-bold text-[#800020] m-0 text-sm whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                         @if($product->original_price > $product->current_price)
-                            <p class="text-gray-400 line-through text-xs m-0 font-normal" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                            <p class="text-gray-400 line-through text-xs m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
                             @php
                                 $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
                             @endphp
-                            <span class="text-green-600 text-[10px] font-bold">({{ $discountPercent }}% OFF)</span>
+                            <span class="text-green-600 text-[10px] font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
                         @endif
                     </div>
                 </div>
@@ -117,14 +116,14 @@
                         </div>
                         <h3>{{ $product->name }}</h3>
                     </a>
-                    <div class="flex items-baseline justify-center gap-2 mt-1 mb-2">
-                        <p class="font-bold text-[#800020] m-0 text-sm">₹{{ number_format($product->current_price, 2) }}</p>
+                    <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
+                        <p class="font-bold text-[#800020] m-0 text-sm whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                         @if($product->original_price > $product->current_price)
-                            <p class="text-gray-400 line-through text-xs m-0 font-normal" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                            <p class="text-gray-400 line-through text-xs m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
                             @php
                                 $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
                             @endphp
-                            <span class="text-green-600 text-[10px] font-bold">({{ $discountPercent }}% OFF)</span>
+                            <span class="text-green-600 text-[10px] font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
                         @endif
                     </div>
                 </div>

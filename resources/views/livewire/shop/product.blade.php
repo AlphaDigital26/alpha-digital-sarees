@@ -175,7 +175,7 @@
             </div>
 
             {{-- UPDATED PRICE SECTION --}}
-            <div class="mt-4 mb-4 flex items-baseline gap-3">
+            <div class="mt-4 mb-4 flex flex-col md:flex-row items-start md:items-baseline gap-1 md:gap-3">
                 <p class="price text-2xl font-bold text-[#800020] leading-none m-0 p-0">
                     Rs. {{ number_format($product->current_price, 2) }}
                 </p>
@@ -184,12 +184,14 @@
                     @php 
                         $discount = round((($product->original_price - $product->current_price) / $product->original_price) * 100); 
                     @endphp
-                    <p class="text-sm text-gray-400 line-through m-0">
-                        Rs. {{ number_format($product->original_price, 2) }}
-                    </p>
-                    <span class="text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded">
-                        {{ $discount }}% OFF
-                    </span>
+                    <div class="flex items-center gap-2">
+                        <p class="text-sm text-gray-400 line-through m-0">
+                            Rs. {{ number_format($product->original_price, 2) }}
+                        </p>
+                        <span class="text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded">
+                            {{ $discount }}% OFF
+                        </span>
+                    </div>
                 @endif
             </div>
 
