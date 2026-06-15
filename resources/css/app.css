@@ -95,7 +95,7 @@
 
   /* Hero Section */
   .hero {
-    @apply h-[80vh] relative flex items-center px-[10%] overflow-hidden mt-[76px];
+    @apply h-[65vh] md:h-[80vh] min-h-[500px] md:min-h-[600px] relative flex items-center overflow-hidden mt-[76px];
   }
   
   .content-section:first-of-type {
