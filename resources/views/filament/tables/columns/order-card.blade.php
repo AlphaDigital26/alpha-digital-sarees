@@ -39,13 +39,29 @@
 
 <style>
     .oc-card {
-        display: flex; flex-direction: column; width: 100%; box-sizing: border-box; font-family: 'Manrope', sans-serif; height: 100%; padding: 12px;
-        background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04);
-        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: flex; flex-direction: column; width: 100%; box-sizing: border-box; font-family: 'Manrope', sans-serif; height: 100%; padding: 4px;
+        background-color: transparent; border: none; box-shadow: none;
     }
-    .oc-card:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 15px 35px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.06);
+    
+    /* Make the native Filament outer card prominent in Light Mode */
+    .fi-ta-record:has(.oc-card) {
+        box-shadow: 0 10px 25px rgba(0,0,0,0.08) !important;
+        border: 1px solid #d1d5db !important;
+        transition: transform 0.2s ease, box-shadow 0.2s ease !important;
+    }
+    .fi-ta-record:has(.oc-card):hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.12) !important;
+    }
+    
+    /* Remove prominence in Dark Mode so it blends with Filament */
+    .dark .fi-ta-record:has(.oc-card) {
+        box-shadow: none !important;
+        border-color: rgba(255,255,255,0.05) !important;
+    }
+    .dark .fi-ta-record:has(.oc-card):hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.3) !important;
     }
     .oc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
     .oc-avatar-container { display: flex; align-items: center; gap: 12px; }
@@ -78,7 +94,6 @@
     
     /* Dark Mode Styles */
     .dark .oc-card { background-color: transparent; border-color: transparent; box-shadow: none; padding: 4px; }
-    .dark .oc-card:hover { box-shadow: none; transform: translateY(-2px); }
     .dark .oc-title { color: #f3f4f6; }
     .dark .oc-subtitle { color: #9ca3af; }
     .dark .oc-date-section { border-color: rgba(255,255,255,0.1); color: #9ca3af; }
