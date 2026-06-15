@@ -24,7 +24,7 @@ class UserAnalyticsWidget extends BaseWidget
                 ->color('primary')
                 ->extraAttributes(['class' => 'custom-stat-card border-t-blue centered-stat text-primary']),
                 
-            Stat::make('REVIEWS', '0')
+            Stat::make('REVIEWS', \App\Models\Review::count())
                 ->descriptionIcon('heroicon-o-star', 'before')
                 ->color('warning')
                 ->extraAttributes(['class' => 'custom-stat-card border-t-yellow centered-stat text-warning']),
