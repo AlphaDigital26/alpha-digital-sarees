@@ -1,51 +1,125 @@
 <x-layouts.app>
-    <section class="hero">
-    <div class="hero-slides">
-        @php 
-            $totalSlides = $carousels->count(); 
-            $animationDuration = $totalSlides > 0 ? $totalSlides * 5 : 5;
-        @endphp
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-        @foreach($carousels as $index => $carousel)
-            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%]" 
-                 style="background-image: url('{{ asset("storage/" . $carousel->image) }}');
-                        animation: fadeHero {{ $animationDuration }}s infinite;
-                        animation-delay: {{ $index * 5 }}s;">
+    <section class="hero w-full relative" style="height: auto; aspect-ratio: 16/9; min-height: 400px; max-height: 80vh; background-color: #000;">
+        <div class="swiper hero-swiper h-full w-full" style="background-color: #000;">
+            <div class="swiper-wrapper">
+                @php $totalSlides = $carousels->count(); @endphp
                 
-                <div class="hero-content relative z-[2] w-full max-w-[500px]">
-                    
-                    @if($carousel->sub_heading)
-                        <p class="subtitle text-sm md:text-base text-white tracking-widest mb-2">{{ $carousel->sub_heading }}</p>
-                    @endif
+                @foreach($carousels as $carousel)
+                    <div class="swiper-slide overflow-hidden relative" style="background-color: transparent;">
+                        <!-- Background image with zoom effect -->
+                        <div class="hero-bg absolute inset-0 w-full h-full bg-no-repeat" 
+                             style="background-image: url('{{ asset("storage/" . $carousel->image) }}'); background-size: cover; background-position: top center;">
+                        </div>
+                        
+                        <!-- Overlay -->
+                        <div class="absolute inset-0 bg-black/40 z-[1]"></div>
+                        
+                        <!-- Content -->
+                        <div class="relative z-[2] h-full w-full flex items-center justify-center text-center md:justify-start md:text-left px-12 md:px-[10%]">
+                            <div class="hero-content w-full max-w-[600px]">
+                                @if($carousel->sub_heading)
+                                    <p class="subtitle text-sm md:text-base text-white tracking-widest mb-3" data-swiper-parallax="-100" data-swiper-parallax-opacity="0" data-swiper-parallax-duration="1000">{{ $carousel->sub_heading }}</p>
+                                @endif
 
-                    @if($carousel->heading)
-                        <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal my-2 md:my-4 leading-tight drop-shadow-md text-white">{{ $carousel->heading }}</h1>
-                    @endif
+                                @if($carousel->heading)
+                                    <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal my-4 leading-tight drop-shadow-lg text-white" data-swiper-parallax="-200" data-swiper-parallax-opacity="0" data-swiper-parallax-duration="1200">{{ $carousel->heading }}</h1>
+                                @endif
 
-                    @if($carousel->text)
-                        <p class="text-sm md:text-base mb-6 md:mb-8 leading-relaxed text-white">{{ $carousel->text }}</p>
-                    @endif
+                                @if($carousel->text)
+                                    <p class="text-base md:text-lg mb-8 leading-relaxed text-white drop-shadow-md" data-swiper-parallax="-300" data-swiper-parallax-opacity="0" data-swiper-parallax-duration="1400">{{ $carousel->text }}</p>
+                                @endif
 
-                    @if($carousel->button_text && $carousel->button_link)
-                        <a href="{{ $carousel->button_link }}" class="btn-primary inline-block no-underline">
-                            {{ $carousel->button_text }}
-                        </a>
-                    @endif
-
-                </div>
+                                @if($carousel->button_text && $carousel->button_link)
+                                    <div data-swiper-parallax="-400" data-swiper-parallax-opacity="0" data-swiper-parallax-duration="1600">
+                                        <a href="{{ $carousel->button_link }}" class="btn-primary inline-block no-underline px-8 py-3 text-lg">
+                                            {{ $carousel->button_text }}
+                                        </a>
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
+                
+                @if($totalSlides === 0)
+                    <div class="swiper-slide overflow-hidden relative" style="background-color: transparent;">
+                        <div class="hero-bg absolute inset-0 w-full h-full bg-no-repeat" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80'); background-size: cover; background-position: top center;"></div>
+                        <div class="absolute inset-0 bg-black/30 z-[1]"></div>
+                        <div class="relative z-[2] h-full w-full flex items-center justify-center text-center md:justify-start md:text-left px-12 md:px-[10%]">
+                            <div class="hero-content w-full max-w-[600px]">
+                                <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-normal my-4 leading-tight drop-shadow-lg text-white" data-swiper-parallax="-200">Welcome to Our Store</h1>
+                                <div data-swiper-parallax="-400">
+                                    <a href="/shop" class="btn-primary inline-block no-underline px-8 py-3 text-lg mt-4">SHOP NOW</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
-        @endforeach
-        
-        @if($totalSlides === 0)
-            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%]" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80'); opacity: 1;">
-                <div class="hero-content relative z-[2] w-full max-w-[500px]">
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal my-2 md:my-4 leading-tight drop-shadow-md text-white">Welcome to Our Store</h1>
-                    <a href="/shop" class="btn-primary inline-block no-underline mt-4">SHOP NOW</a>
-                </div>
-            </div>
-        @endif
-    </div>
+            
+            <!-- Navigation Buttons Removed -->
+
+            <!-- Pagination -->
+            <div class="swiper-pagination"></div>
+        </div>
     </section>
+
+    <style>
+        /* Premium Fade to Black Transition */
+        .hero-swiper .swiper-slide {
+            opacity: 0 !important;
+            transition: opacity 0.8s ease-in-out 0s !important;
+            pointer-events: none;
+        }
+        .hero-swiper .swiper-slide.swiper-slide-active {
+            opacity: 1 !important;
+            transition: opacity 0.8s ease-in-out 1.1s !important;
+            pointer-events: auto;
+        }
+
+        /* Ken Burns Effect using Swiper active class */
+        .hero-bg {
+            transform: scale(1.05);
+            transition: transform 8s ease-out;
+        }
+        .swiper-slide-active .hero-bg {
+            transform: scale(1);
+        }
+        
+        /* Swiper Pagination Styling - Enhanced & Prominent */
+        .swiper-pagination {
+            bottom: 20px !important;
+        }
+        .swiper-pagination-bullet {
+            width: 12px;
+            height: 12px;
+            background: rgba(255,255,255,0.4);
+            border: 2px solid #ffffff;
+            opacity: 1;
+            transition: all 0.4s ease;
+            cursor: pointer;
+        }
+        .swiper-pagination-bullet-active {
+            background: #ffffff;
+            width: 32px;
+            border-radius: 6px;
+            transform: none;
+        }
+
+        /* Grab cursor for desktop drag-to-swipe */
+        .hero-swiper {
+            cursor: grab;
+        }
+        .hero-swiper:active {
+            cursor: grabbing;
+        }
+    </style>
+
+    <!-- Swiper JS -->
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 
     <section class="content-section bg-neutral">
         <div class="section-header">
@@ -271,26 +345,38 @@
     </section>
 
     <script>
-        function fixCarouselClicks() {
-            // Check the opacity of the slides every 100 milliseconds
-            setInterval(() => {
-                const slides = document.querySelectorAll('.hero-slides .slide');
-                slides.forEach(slide => {
-                    // Get the current opacity from the CSS animation
-                    const opacity = parseFloat(window.getComputedStyle(slide).opacity);
-                    
-                    // If the slide is visible, allow clicks. If it's fading out/invisible, disable clicks.
-                    if (opacity > 0.1) {
-                        slide.style.pointerEvents = 'auto';
-                    } else {
-                        slide.style.pointerEvents = 'none';
-                    }
-                });
-            }, 100);
-        }
+        document.addEventListener('DOMContentLoaded', function() {
+            initSwiper();
+        });
+        document.addEventListener('livewire:navigated', function() {
+            initSwiper();
+        });
 
-        // Run the fix when the page loads
-        document.addEventListener('DOMContentLoaded', fixCarouselClicks);
-        document.addEventListener('livewire:navigated', fixCarouselClicks);
+        function initSwiper() {
+            if(typeof Swiper !== 'undefined') {
+                const swiperEl = document.querySelector('.hero-swiper');
+                if (swiperEl && !swiperEl.swiper) {
+                    new Swiper('.hero-swiper', {
+                        effect: 'fade',
+                        fadeEffect: { crossFade: true },
+                        speed: 1900, // 0.8s fade out + 0.3s black hold + 0.8s fade in
+                        parallax: true,
+                        loop: true,
+                        simulateTouch: true,   // Enable touch/swipe on mobile & tablet
+                        grabCursor: true,      // Show grab cursor on desktop drag
+                        touchRatio: 1,
+                        touchAngle: 45,
+                        autoplay: {
+                            delay: 5000,
+                            disableOnInteraction: false,
+                        },
+                        pagination: {
+                            el: '.swiper-pagination',
+                            clickable: true,
+                        },
+                    });
+                }
+            }
+        }
     </script>
 </x-layouts.app>

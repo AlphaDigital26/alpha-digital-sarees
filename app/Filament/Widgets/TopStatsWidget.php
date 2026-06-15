@@ -39,7 +39,7 @@ class TopStatsWidget extends BaseWidget
                 ->icon('heroicon-o-shopping-cart')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-purple']),
                 
-            Stat::make('Rating & Reviews', \App\Models\Review::count() ?? 0)
+            Stat::make('New Reviews', \App\Models\Review::where('is_read', false)->count() ?? 0)
                 ->url(\App\Filament\Resources\ReviewResource::getUrl('index'))
                 ->icon('heroicon-o-chat-bubble-left-ellipsis')
                 ->extraAttributes(['class' => 'custom-stat-card top-row-card card-icon-yellow']),
