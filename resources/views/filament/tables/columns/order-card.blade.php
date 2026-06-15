@@ -39,32 +39,59 @@
 
 <style>
     .oc-card {
-        display: flex; flex-direction: column; width: 100%; box-sizing: border-box; font-family: 'Manrope', sans-serif; height: 100%; padding: 4px;
+        display: flex; flex-direction: column; width: 100%; box-sizing: border-box; font-family: 'Manrope', sans-serif; height: 100%; padding: 12px;
+        background-color: #ffffff; border: 1px solid #d1d5db; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.08), 0 4px 10px rgba(0,0,0,0.04);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
     }
-    .oc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
-    .oc-avatar-container { display: flex; align-items: center; gap: 16px; }
-    .oc-avatar { width: 56px; height: 56px; border-radius: 50%; border: 1px solid #E5E0DA; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 20px; background-color: #800020; box-shadow: 0 1px 2px rgba(0,0,0,0.05); flex-shrink: 0; }
-    .oc-title { font-weight: bold; color: #1b1c1a; font-size: 18px; line-height: 1.2; margin: 0; font-family: 'Noto Serif', serif; }
-    .oc-subtitle { font-size: 14px; color: #706663; font-weight: 500; margin-top: 4px; margin-bottom: 0; letter-spacing: 0.02em; }
-    .oc-status-container { display: flex; flex-direction: column; align-items: flex-end; gap: 6px; }
-    .oc-status-badge { display: inline-flex; align-items: center; border-radius: 6px; padding: 4px 10px; font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid; }
-    .oc-payment-status { font-size: 11px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; }
-    .oc-date-section { border-top: 1px solid #E5E0DA; border-bottom: 1px solid #E5E0DA; padding: 10px 0; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #706663; font-weight: 500; }
-    .oc-date-left { display: flex; align-items: center; gap: 6px; }
-    .oc-table-header { display: grid; grid-template-columns: 6fr 2fr 4fr; gap: 8px; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #E5E0DA; font-size: 10px; text-transform: uppercase; font-weight: bold; color: #A68A64; letter-spacing: 0.1em; }
-    .oc-table-row { display: grid; grid-template-columns: 6fr 2fr 4fr; gap: 8px; font-size: 12px; align-items: center; margin-bottom: 8px; }
+    .oc-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 15px 35px rgba(0,0,0,0.12), 0 5px 15px rgba(0,0,0,0.06);
+    }
+    .oc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+    .oc-avatar-container { display: flex; align-items: center; gap: 12px; }
+    .oc-avatar { width: 44px; height: 44px; border-radius: 50%; border: 1px solid #E5E0DA; display: flex; align-items: center; justify-content: center; font-weight: bold; color: white; font-size: 16px; background-color: #800020; box-shadow: 0 1px 2px rgba(0,0,0,0.05); flex-shrink: 0; }
+    .oc-title { font-weight: bold; color: #1b1c1a; font-size: 15px; line-height: 1.2; margin: 0; font-family: 'Noto Serif', serif; }
+    .oc-subtitle { font-size: 12px; color: #706663; font-weight: 500; margin-top: 2px; margin-bottom: 0; letter-spacing: 0.02em; }
+    .oc-status-container { display: flex; flex-direction: column; align-items: flex-end; gap: 4px; }
+    .oc-status-badge { display: inline-flex; align-items: center; border-radius: 6px; padding: 2px 8px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid; }
+    .oc-payment-status { font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.05em; }
+    .oc-date-section { border-top: 1px solid #E5E0DA; border-bottom: 1px solid #E5E0DA; padding: 6px 0; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #706663; font-weight: 500; }
+    .oc-date-left { display: flex; align-items: center; gap: 4px; }
+    .oc-table-header { display: grid; grid-template-columns: 6fr 2fr 4fr; gap: 6px; padding-bottom: 6px; margin-bottom: 6px; border-bottom: 1px solid #E5E0DA; font-size: 9px; text-transform: uppercase; font-weight: bold; color: #A68A64; letter-spacing: 0.1em; }
+    .oc-table-row { display: grid; grid-template-columns: 6fr 2fr 4fr; gap: 6px; font-size: 11px; align-items: center; margin-bottom: 6px; }
     .oc-col-1 { color: #1b1c1a; font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .oc-col-2 { text-align: center; color: #706663; font-weight: bold; }
     .oc-col-3 { text-align: right; color: #1b1c1a; font-weight: 500; }
-    .oc-items-list { flex-grow: 1; display: flex; flex-direction: column; margin-bottom: 20px; }
-    .oc-summary { display: flex; flex-direction: column; gap: 8px; border-top: 1px solid #E5E0DA; padding-top: 16px; padding-bottom: 16px; margin-bottom: 16px; }
-    .oc-summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: #706663; font-weight: 500; }
-    .oc-total-row { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 16px; border-bottom: 1px solid #E5E0DA; margin-bottom: 16px; }
-    .oc-total-label { font-size: 14px; font-weight: bold; color: #1b1c1a; text-transform: uppercase; letter-spacing: 0.05em; }
-    .oc-total-value { font-size: 20px; font-weight: bold; color: #800020; font-family: 'Noto Serif', serif; margin: 0; line-height: 1; }
+    .oc-items-list { height: 50px; overflow-y: auto; display: flex; flex-direction: column; margin-bottom: 12px; padding-right: 4px; }
+    .oc-items-list::-webkit-scrollbar { width: 4px; }
+    .oc-items-list::-webkit-scrollbar-track { background: transparent; }
+    .oc-items-list::-webkit-scrollbar-thumb { background: rgba(128, 0, 32, 0.2); border-radius: 4px; }
+    .dark .oc-items-list::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); }
+    .oc-summary { display: flex; flex-direction: column; gap: 4px; border-top: 1px solid #E5E0DA; padding-top: 12px; padding-bottom: 12px; margin-bottom: 12px; }
+    .oc-summary-row { display: flex; justify-content: space-between; align-items: center; font-size: 11px; color: #706663; font-weight: 500; }
+    .oc-total-row { display: flex; justify-content: space-between; align-items: flex-end; padding-bottom: 12px; border-bottom: 1px solid #E5E0DA; margin-bottom: 12px; }
+    .oc-total-label { font-size: 12px; font-weight: bold; color: #1b1c1a; text-transform: uppercase; letter-spacing: 0.05em; }
+    .oc-total-value { font-size: 16px; font-weight: bold; color: #800020; font-family: 'Noto Serif', serif; margin: 0; line-height: 1; }
     .oc-actions { display: flex; justify-content: flex-end; margin-top: auto; }
-    .oc-btn { border: 1px solid #800020; color: #800020; background: transparent; border-radius: 4px; padding: 8px 24px; font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; white-space: nowrap; }
+    .oc-btn { border: 1px solid #800020; color: #800020; background: transparent; border-radius: 4px; padding: 6px 16px; font-size: 10px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.1em; cursor: pointer; transition: all 0.3s ease; text-decoration: none; display: inline-block; white-space: nowrap; }
     .oc-btn:hover { background: #800020; color: white; }
+    
+    /* Dark Mode Styles */
+    .dark .oc-card { background-color: transparent; border-color: transparent; box-shadow: none; padding: 4px; }
+    .dark .oc-card:hover { box-shadow: none; transform: translateY(-2px); }
+    .dark .oc-title { color: #f3f4f6; }
+    .dark .oc-subtitle { color: #9ca3af; }
+    .dark .oc-date-section { border-color: rgba(255,255,255,0.1); color: #9ca3af; }
+    .dark .oc-table-header { border-color: rgba(255,255,255,0.1); color: #fbbf24; }
+    .dark .oc-col-1, .dark .oc-col-3 { color: #e5e7eb; }
+    .dark .oc-col-2 { color: #9ca3af; }
+    .dark .oc-summary { border-color: rgba(255,255,255,0.1); }
+    .dark .oc-summary-row { color: #9ca3af; }
+    .dark .oc-total-row { border-color: rgba(255,255,255,0.1); }
+    .dark .oc-total-label { color: #e5e7eb; }
+    .dark .oc-total-value { color: #fca5a5; }
+    .dark .oc-btn { border-color: #fca5a5; color: #fca5a5; }
+    .dark .oc-btn:hover { background: #fca5a5; color: #111827; }
 </style>
 
 <div class="oc-card">

@@ -106,6 +106,52 @@
     .vo-notes-scroll::-webkit-scrollbar-thumb { background: #e0bfbf; border-radius: 4px; }
     
     @media (max-width: 1024px) { .vo-grid { grid-template-columns: 1fr; } }
+    
+    /* Dark Mode Overrides */
+    .dark .vo-wrapper { color: #f3f4f6; }
+    .dark .vo-header { background: #1f2937; box-shadow: none; border: 1px solid rgba(255,255,255,0.05); }
+    .dark .vo-order-title { color: #f3f4f6; }
+    .dark .vo-order-title span { color: #fca5a5; }
+    .dark .vo-order-date { color: #d1d5db; }
+    .dark .vo-card { background: #1f2937; border: 1px solid rgba(255,255,255,0.05); box-shadow: none; }
+    .dark .vo-card-title { color: #f3f4f6; border-color: rgba(255,255,255,0.1); }
+    .dark .vo-item-row { border-color: rgba(255,255,255,0.05); }
+    .dark .vo-item-img { background: #374151; }
+    .dark .vo-item-details h4 { color: #f3f4f6; }
+    .dark .vo-item-details p { color: #9ca3af; }
+    .dark .vo-item-weight { color: #9ca3af; }
+    .dark .vo-item-price { color: #9ca3af; }
+    .dark .vo-item-total { color: #f3f4f6; }
+    .dark .vo-order-note { color: #d1d5db; }
+    .dark .vo-order-note strong { color: #f3f4f6; }
+    .dark .vo-summary-row { color: #d1d5db; }
+    .dark .vo-summary-total { border-color: rgba(255,255,255,0.1); color: #fca5a5; }
+    .dark .vo-customer-info { color: #f3f4f6; }
+    .dark .vo-customer-info svg { color: #fbbf24; }
+    .dark .vo-address { color: #d1d5db; }
+    .dark .vo-timeline::before { background: rgba(255,255,255,0.1); }
+    .dark .vo-timeline-icon { background: #1f2937; border-color: rgba(255,255,255,0.1); color: #9ca3af; }
+    .dark .vo-timeline-icon.active { border-color: #fca5a5; color: #fca5a5; background: rgba(252, 165, 165, 0.1); }
+    .dark .vo-timeline-title { color: #f3f4f6; }
+    .dark .vo-timeline-date { color: #9ca3af; }
+    .dark .vo-check-icon { color: #fca5a5; }
+    .dark .vo-notes-scroll::-webkit-scrollbar-track { background: transparent; }
+    .dark .vo-notes-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); }
+    
+    /* Button Overrides (important needed for inline styles) */
+    .dark .vo-btn { border-color: rgba(255,255,255,0.2) !important; color: #f3f4f6 !important; background-color: transparent !important; }
+    .dark .vo-btn:hover { background-color: rgba(255,255,255,0.1) !important; }
+    
+    /* Global Inline Color Overrides */
+    .dark .vo-wrapper [style*="color: #1b1c1a"] { color: #f3f4f6 !important; }
+    .dark .vo-wrapper [style*="background-color: #ffffff"] { background-color: #1f2937 !important; border-color: rgba(255,255,255,0.1) !important; color: #f3f4f6 !important; }
+    
+    /* Internal Admin Notes Overrides */
+    .dark .vo-card[style*="background-color: #fbf9f5;"] { background-color: #1f2937 !important; }
+    .dark .vo-card[style*="background-color: #fbf9f5;"] > div > h3 { color: #fca5a5 !important; }
+    .dark .vo-card[style*="background-color: #fbf9f5;"] .vo-notes-scroll > div { background: #374151 !important; border-color: rgba(255,255,255,0.1) !important; color: #d1d5db !important; }
+    .dark .vo-card[style*="background-color: #fbf9f5;"] .vo-notes-scroll > div strong { color: #fca5a5 !important; }
+    .dark .vo-card[style*="background-color: #fbf9f5;"] textarea { background: #1f2937 !important; border-color: rgba(255,255,255,0.1) !important; color: #f3f4f6 !important; }
 </style>
 
 @php
