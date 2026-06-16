@@ -82,7 +82,14 @@
                     <span>₹{{ number_format($cartDetails['total']) }}</span>
                 </div>
 
-                <div class="mt-6">
+                <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs p-3 rounded mt-4 mb-6 flex items-start gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    <p class="m-0 font-medium leading-snug" style="font-family: 'Manrope', sans-serif;">
+                        <strong>Disclaimer:</strong> Payment feature is currently in test mode. No real transactions will occur.
+                    </p>
+                </div>
+
+                <div class="mt-2">
                     <button wire:click="payWithRazorpay" wire:loading.attr="disabled" class="w-full bg-black hover:bg-gray-800 text-white py-4 font-bold text-xs uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-3 disabled:opacity-75 disabled:cursor-wait">
                         <span wire:loading.remove wire:target="payWithRazorpay" class="flex items-center gap-2">
                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>

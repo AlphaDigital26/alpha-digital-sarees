@@ -38,7 +38,7 @@
                             <div class="flex flex-1 flex-col pr-8 justify-between">
                                 <div>
                                     <a href="{{ route('shop.product', $product->id) }}" wire:navigate>
-                                        <h3 class="text-lg sm:text-xl font-bold mb-1.5 text-[#1b1c1a] hover:text-[#800020] transition-colors leading-snug" style="font-family: 'Noto Serif', serif;">
+                                        <h3 class="text-lg sm:text-xl font-bold mb-1.5 text-[#800020] hover:text-[#570013] transition-colors leading-snug" style="font-family: 'Noto Serif', serif;">
                                             {{ $product->name }}
                                         </h3>
                                     </a>
@@ -129,14 +129,21 @@
                     </div>
 
                     @if($this->cartData['totalDiscount'] > 0)
-                    <div class="bg-green-50 text-green-700 text-sm font-medium py-3 px-4 rounded mb-8 flex items-center justify-center gap-2" style="font-family: 'Manrope', sans-serif;">
+                    <div class="bg-green-50 text-green-700 text-sm font-medium py-3 px-4 rounded mb-6 flex items-center justify-center gap-2" style="font-family: 'Manrope', sans-serif;">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M21.41 11.58l-9-9C12.05 2.22 11.55 2 11 2H4c-1.1 0-2 .9-2 2v7c0 .55.22 1.05.59 1.41l9 9c.36.36.86.58 1.41.58s1.05-.22 1.41-.59l7-7c.37-.36.59-.86.59-1.41s-.23-1.06-.59-1.41zM5.5 7C4.67 7 4 6.33 4 5.5S4.67 4 5.5 4 7 4.67 7 5.5 6.33 7 5.5 7zM11 13.5l-2-2 1.41-1.41L11 10.67l3.09-3.09L15.5 9l-4.5 4.5z"/></svg>
                         You'll save ₹{{ number_format($this->cartData['totalDiscount']) }} on this order!
                     </div>
                     @else
-                    <div class="mb-8"></div>
+                    <div class="mb-4"></div>
                     @endif
                     
+                    <div class="bg-yellow-50 border border-yellow-200 text-yellow-800 text-xs p-3 rounded mb-4 flex items-start gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-0.5 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                        <p class="m-0 font-medium leading-snug" style="font-family: 'Manrope', sans-serif;">
+                            <strong>Disclaimer:</strong> Payment feature is currently in test mode. No real transactions will be made.
+                        </p>
+                    </div>
+
                     <button wire:click="checkout" wire:loading.attr="disabled" class="w-full bg-[#800020] text-white py-4 font-bold uppercase tracking-[0.15em] text-xs hover:bg-[#570013] transition-colors shadow-md rounded-sm mb-4 disabled:opacity-75 disabled:cursor-wait flex justify-center items-center gap-2">
                         <span wire:loading.remove wire:target="checkout">Proceed to Checkout</span>
                         <span wire:loading wire:target="checkout">
