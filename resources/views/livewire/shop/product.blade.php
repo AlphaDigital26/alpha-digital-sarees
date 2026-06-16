@@ -350,18 +350,22 @@
                                     <h3 class="font-sans text-[0.85rem] font-semibold text-[#555] mb-2 line-clamp-2 min-h-[2.5rem]">
                                         {{ $simProduct->name }}
                                     </h3>
-                                    <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
-                                        <p class="font-sans text-base font-bold text-[#800020] m-0">
-                                            Rs. {{ number_format($simProduct->current_price, 2) }}
-                                        </p>
-                                        @if($simProduct->original_price > $simProduct->current_price)
-                                            <p class="text-gray-400 line-through text-sm m-0 font-normal">
-                                                Rs. {{ number_format($simProduct->original_price, 2) }}
+                                    <div class="flex flex-col items-center gap-1 mt-1">
+                                        <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
+                                            <p class="font-sans text-base font-bold text-[#800020] m-0">
+                                                Rs. {{ number_format($simProduct->current_price, 2) }}
                                             </p>
+                                            @if($simProduct->original_price > $simProduct->current_price)
+                                                <p class="text-gray-400 line-through text-sm m-0 font-normal">
+                                                    Rs. {{ number_format($simProduct->original_price, 2) }}
+                                                </p>
+                                            @endif
+                                        </div>
+                                        @if($simProduct->original_price > $simProduct->current_price)
                                             @php
                                                 $discountPercent = round((($simProduct->original_price - $simProduct->current_price) / $simProduct->original_price) * 100);
                                             @endphp
-                                            <span class="text-green-600 text-xs font-bold">({{ $discountPercent }}% OFF)</span>
+                                            <span class="text-green-600 text-xs font-bold bg-green-50 px-2 py-0.5 rounded">({{ $discountPercent }}% OFF)</span>
                                         @endif
                                     </div>
                                 </div>
@@ -381,9 +385,23 @@
 
     {{-- REVIEWS SECTION (NEW) --}}
     <div id="reviews" class="w-full mt-24 pt-16 border-t border-[#E5E0DA]">
-        <div class="text-center mb-12">
+        <div class="text-center mb-8">
             <h2 class="font-serif text-3xl md:text-4xl text-[#2A211F]">Customer Reviews</h2>
         </div>
+        
+        {{-- Reviews Filter UI --}}
+        @if($product->reviews && $product->reviews->count() > 0)
+            <div class="flex flex-wrap justify-center gap-3 mb-10">
+                <button wire:click="$set('ratingFilter', null)" class="px-5 py-2 rounded-full text-sm font-bold border transition-colors {{ is_null($ratingFilter) ? 'bg-[#800020] text-white border-[#800020]' : 'bg-white text-gray-600 border-[#E5E0DA] hover:bg-gray-50' }}">
+                    All
+                </button>
+                @for($i = 5; $i >= 1; $i--)
+                    <button wire:click="$set('ratingFilter', {{ $i }})" class="px-4 py-2 rounded-full text-sm font-bold border transition-colors flex items-center gap-1.5 {{ $ratingFilter === $i ? 'bg-[#800020] text-white border-[#800020]' : 'bg-white text-gray-600 border-[#E5E0DA] hover:bg-gray-50' }}">
+                        {{ $i }} <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 {{ $ratingFilter === $i ? 'text-yellow-400' : 'text-yellow-500' }} fill-current" viewBox="0 0 24 24" stroke="none"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </button>
+                @endfor
+            </div>
+        @endif
         
         <div class="max-w-4xl mx-auto" x-data="{
             isOpen: false,
@@ -432,57 +450,64 @@
 
             {{-- Existing Reviews --}}
             @if($product->reviews && $product->reviews->count() > 0)
-                <div class="space-y-8">
-                    @foreach($product->reviews()->latest()->get() as $review)
-                        <div class="border-b border-[#E5E0DA] pb-6">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="font-bold text-[#1b1c1a]">{{ $review->customer->name ?? 'Guest User' }}</span>
-                                <div class="text-yellow-500 text-sm flex gap-0.5">
-                                    @for($i = 1; $i <= 5; $i++)
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-500 fill-current' : 'text-gray-300 fill-current' }}" viewBox="0 0 24 24" stroke="none">
-                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                        </svg>
-                                    @endfor
+                @if($reviews->count() > 0)
+                    <div class="space-y-8">
+                        @foreach($reviews as $review)
+                            <div class="border-b border-[#E5E0DA] pb-6">
+                                <div class="flex items-center justify-between mb-2">
+                                    <span class="font-bold text-[#1b1c1a]">{{ $review->customer->name ?? 'Guest User' }}</span>
+                                    <div class="text-yellow-500 text-sm flex gap-0.5">
+                                        @for($i = 1; $i <= 5; $i++)
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 {{ $i <= $review->rating ? 'text-yellow-500 fill-current' : 'text-gray-300 fill-current' }}" viewBox="0 0 24 24" stroke="none">
+                                                <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                            </svg>
+                                        @endfor
+                                    </div>
                                 </div>
-                            </div>
-                            <span class="text-xs text-gray-400 block mb-3">{{ $review->created_at->format('M d, Y') }}</span>
-                            @if($review->comment)
-                                <p class="text-gray-600 text-sm leading-relaxed break-words" style="font-family: 'Manrope', sans-serif;">
-                                    {{ $review->comment }}
-                                </p>
-                            @endif
-                            @if(is_array($review->photos) && count($review->photos) > 0)
-                                @php
-                                    $reviewData = [
-                                        'name' => $review->customer->name ?? 'Guest User',
-                                        'rating' => $review->rating,
-                                        'comment' => $review->comment,
-                                        'photos' => array_map(function($p) { return asset('storage/' . $p); }, $review->photos)
-                                    ];
-                                @endphp
-                                <div class="mt-4 flex gap-2 flex-wrap">
-                                    @foreach($review->photos as $photo)
-                                        <a href="#" 
-                                           data-review="{{ json_encode($reviewData) }}"
-                                           data-photo="{{ asset('storage/' . $photo) }}"
-                                           @click.prevent="openModal(JSON.parse($el.dataset.review), $el.dataset.photo)" 
-                                           class="block w-20 h-20 rounded overflow-hidden border border-[#E5E0DA] hover:opacity-80 transition cursor-pointer">
-                                            <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
-                            @if($review->admin_reply)
-                                <div class="mt-4 bg-[#F5F0EB] p-4 rounded-sm border-l-4 border-[#800020]">
-                                    <span class="font-bold text-[#800020] text-sm block mb-1">Response from Alpha Digital</span>
-                                    <p class="text-gray-700 text-sm leading-relaxed" style="font-family: 'Manrope', sans-serif;">
-                                        {{ $review->admin_reply }}
+                                <span class="text-xs text-gray-400 block mb-3">{{ $review->created_at->format('M d, Y') }}</span>
+                                @if($review->comment)
+                                    <p class="text-gray-600 text-sm leading-relaxed break-words" style="font-family: 'Manrope', sans-serif;">
+                                        {{ $review->comment }}
                                     </p>
-                                </div>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
+                                @endif
+                                @if(is_array($review->photos) && count($review->photos) > 0)
+                                    @php
+                                        $reviewData = [
+                                            'name' => $review->customer->name ?? 'Guest User',
+                                            'rating' => $review->rating,
+                                            'comment' => $review->comment,
+                                            'photos' => array_map(function($p) { return asset('storage/' . $p); }, $review->photos)
+                                        ];
+                                    @endphp
+                                    <div class="mt-4 flex gap-2 flex-wrap">
+                                        @foreach($review->photos as $photo)
+                                            <a href="#" 
+                                               data-review="{{ json_encode($reviewData) }}"
+                                               data-photo="{{ asset('storage/' . $photo) }}"
+                                               @click.prevent="openModal(JSON.parse($el.dataset.review), $el.dataset.photo)" 
+                                               class="block w-20 h-20 rounded overflow-hidden border border-[#E5E0DA] hover:opacity-80 transition cursor-pointer">
+                                                <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
+                                @if($review->admin_reply)
+                                    <div class="mt-4 bg-[#F5F0EB] p-4 rounded-sm border-l-4 border-[#800020]">
+                                        <span class="font-bold text-[#800020] text-sm block mb-1">Response from Alpha Digital</span>
+                                        <p class="text-gray-700 text-sm leading-relaxed" style="font-family: 'Manrope', sans-serif;">
+                                            {{ $review->admin_reply }}
+                                        </p>
+                                    </div>
+                                @endif
+                            </div>
+                        @endforeach
+                    </div>
+                @else
+                    <div class="text-center py-8">
+                        <p class="text-gray-500 italic mb-4">No {{ $ratingFilter }}-star reviews found for this product.</p>
+                        <button wire:click="$set('ratingFilter', null)" class="text-[#800020] font-bold text-sm hover:underline">View all reviews</button>
+                    </div>
+                @endif
             @else
                 <p class="text-center text-gray-500 italic">No reviews yet. Be the first to review this product!</p>
             @endif
