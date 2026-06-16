@@ -14,10 +14,16 @@ class Product extends Component
     public int $rating = 5;
     public string $comment = '';
 
-    public function mount($id)
+    public function mount($slugOrId)
     {
-        // Fetch the product and its attributes
-        $this->product = ProductModel::with(['fabric', 'color', 'pattern'])->findOrFail($id);
+        // Fallback for old ID-based URLs
+        if (is_numeric($slugOrId)) {
+            $product = ProductModel::findOrFail($slugOrId);
+            return redirect()->route('shop.product', ['slugOrId' => $product->slug], 301);
+        }
+
+        // Fetch the product by slug and its attributes
+        $this->product = ProductModel::with(['fabric', 'color', 'pattern'])->where('slug', $slugOrId)->firstOrFail();
         
         // Set the first image as the default active image
         if (is_array($this->product->images) && count($this->product->images) > 0) {
@@ -139,6 +145,13 @@ class Product extends Component
             'similarProducts' => $similarProducts,
             'settings' => \App\Models\Setting::first(), // Pass settings to the frontend
             'reviews' => $reviews,
+        ])->layout('components.layouts.app', [
+            'metaTitle' => $this->product->meta_title ?: $this->product->name . ' | ALPHA DIGITAL',
+            'metaDescription' => $this->product->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($this->product->description), 150),
+            'metaKeywords' => $this->product->meta_keywords ?: 'saree, ' . optional($this->product->fabric)->name,
+            'canonicalUrl' => $this->product->canonical_url ?: route('shop.product', $this->product->slug),
+            'ogImage' => (is_array($this->product->images) && count($this->product->images) > 0) ? asset('storage/' . $this->product->images[0]) : asset('images/default-og.jpg'),
+            'ogType' => 'product',
         ]);
     }
 }

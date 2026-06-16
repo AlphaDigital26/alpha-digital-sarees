@@ -13,7 +13,6 @@ class Address extends Component
     
     public $first_name;
     public $last_name;
-    public $company;
     public $address_1;
     public $address_2;
     public $city;
@@ -60,7 +59,7 @@ class Address extends Component
             'customer_id' => auth('customer')->id(),
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'company' => $this->company,
+
             'address_1' => $this->address_1,
             'address_2' => $this->address_2,
             'city' => $this->city,
@@ -73,7 +72,7 @@ class Address extends Component
 
         $this->selectedAddressId = $address->id;
         $this->showForm = false;
-        $this->reset(['first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'province', 'postal_code', 'phone', 'is_default']);
+        $this->reset(['first_name', 'last_name', 'address_1', 'address_2', 'city', 'province', 'postal_code', 'phone', 'is_default']);
         $this->loadAddresses();
     }
 

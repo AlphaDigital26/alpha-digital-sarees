@@ -3,9 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $title ?? 'ALPHA DIGITAL | The Heirloom Collection' }}</title>
+    <title>{{ $metaTitle ?? $title ?? 'ALPHA DIGITAL | The Heirloom Collection' }}</title>
+    <meta name="description" content="{{ $metaDescription ?? 'Discover premium handcrafted heirloom sarees at Alpha Digital.' }}">
+    <meta name="keywords" content="{{ $metaKeywords ?? 'saree, handloom, premium sarees, heirloom sarees, ethnic wear' }}">
+    <meta name="robots" content="index, follow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="{{ $ogType ?? 'website' }}">
+    <meta property="og:url" content="{{ request()->url() }}">
+    <meta property="og:title" content="{{ $metaTitle ?? $title ?? 'ALPHA DIGITAL | The Heirloom Collection' }}">
+    <meta property="og:description" content="{{ $metaDescription ?? 'Discover premium handcrafted heirloom sarees at Alpha Digital.' }}">
+    <meta property="og:image" content="{{ $ogImage ?? asset('images/default-og.jpg') }}">
+    
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:url" content="{{ request()->url() }}">
+    <meta name="twitter:title" content="{{ $metaTitle ?? $title ?? 'ALPHA DIGITAL | The Heirloom Collection' }}">
+    <meta name="twitter:description" content="{{ $metaDescription ?? 'Discover premium handcrafted heirloom sarees at Alpha Digital.' }}">
+    <meta name="twitter:image" content="{{ $ogImage ?? asset('images/default-og.jpg') }}">
+    
+    @if(isset($canonicalUrl) && $canonicalUrl)
+        <link rel="canonical" href="{{ $canonicalUrl }}" />
+    @else
+        <link rel="canonical" href="{{ request()->url() }}" />
+    @endif
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Alpha Digital",
+      "url": "{{ url('/') }}",
+      "logo": "{{ asset('images/logo.png') }}",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "telephone": "+91-9876543210",
+        "contactType": "customer service"
+      }
+    }
+    </script>
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles

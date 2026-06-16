@@ -52,6 +52,8 @@ class ReviewResource extends Resource
                 Forms\Components\FileUpload::make('photos')
                     ->multiple()
                     ->image()
+                    ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                    ->maxSize(5120)
                     ->directory('reviews')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('admin_reply')

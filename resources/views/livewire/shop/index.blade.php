@@ -10,10 +10,14 @@
     </div>
 
     <aside class="sidebar" :class="mobileFiltersOpen ? 'block mb-8' : 'hidden md:block'">
-        <h2 class="filter-title">
-            FILTERS 
-            <span wire:loading class="text-xs ml-2 text-gray-400">Updating...</span>
-        </h2>
+        <div class="flex items-center justify-between" style="margin-bottom: 1.5rem; border-bottom: 1px solid #E5E0DA; padding-bottom: 0.5rem;">
+            <h2 class="filter-title" style="border-bottom: none; padding-bottom: 0; margin-bottom: 0;">
+                FILTERS 
+            </h2>
+            @if(count($selectedFabrics) > 0 || count($selectedColors) > 0 || count($selectedPatterns) > 0 || $priceRange || $search)
+                <button wire:click="resetFilters" class="text-xs text-[#800020] uppercase font-bold tracking-widest hover:underline cursor-pointer">Clear All</button>
+            @endif
+        </div>
         
         <div class="filter-group" x-data="{ open: true }">
             <h3 @click="open = !open">
@@ -118,7 +122,7 @@
         <div class="product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" wire:loading.class="opacity-50">
             @forelse($products as $product)
                 <div class="product-card">
-                    <a href="{{ route('shop.product', $product->id) }}" class="block">
+                    <a href="{{ route('shop.product', $product->slug) }}" class="block">
                         <div class="img-wrapper">
                             @php
                                 $mainImageUrl = is_array($product->images) && count($product->images) > 0 

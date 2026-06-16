@@ -101,6 +101,8 @@ class ProductResource extends Resource
                         Forms\Components\FileUpload::make('images')
                             ->label('Product Gallery')
                             ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                            ->maxSize(5120)
                             ->multiple()
                             ->reorderable()
                             ->appendFiles()
@@ -115,6 +117,33 @@ class ProductResource extends Resource
                         Forms\Components\Toggle::make('is_best_seller')
                             ->label('Mark as Best Seller'),
                     ])->columns(2),
+                    
+                Forms\Components\Section::make('SEO Settings')
+                    ->description('Manage search engine optimization for this product')
+                    ->collapsed()
+                    ->schema([
+                        Forms\Components\TextInput::make('slug')
+                            ->label('URL Slug')
+                            ->unique(ignoreRecord: true)
+                            ->required()
+                            ->maxLength(255)
+                            ->helperText('The unique URL identifier. Auto-generated if left blank.'),
+                        Forms\Components\TextInput::make('meta_title')
+                            ->label('Meta Title')
+                            ->maxLength(60)
+                            ->helperText('Optimal length is under 60 characters.'),
+                        Forms\Components\Textarea::make('meta_description')
+                            ->label('Meta Description')
+                            ->maxLength(160)
+                            ->helperText('Optimal length is under 160 characters. This appears in search results.'),
+                        Forms\Components\TextInput::make('meta_keywords')
+                            ->label('Meta Keywords')
+                            ->helperText('Comma separated (e.g. linen saree, handwoven, summer)'),
+                        Forms\Components\TextInput::make('canonical_url')
+                            ->label('Canonical URL')
+                            ->url()
+                            ->helperText('Leave blank to use the default product URL.'),
+                    ])->columns(1),
             ]);
     }
 

@@ -46,7 +46,7 @@ Route::get('/password/reset/{token}', \App\Livewire\Auth\ResetPassword::class)->
 Route::get('/wishlist', Wishlist::class)->name('wishlist');
 
 // --- SINGLE PRODUCT PAGE ---
-Route::get('/product/{id}', ProductComponent::class)->name('shop.product');
+Route::get('/product/{slugOrId}', ProductComponent::class)->name('shop.product');
 
 // --- PROFILE PAGES ---
 Route::middleware('auth:customer')->group(function () {

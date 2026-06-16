@@ -14,7 +14,6 @@ class Addresses extends Component
     // Form fields
     public $first_name;
     public $last_name;
-    public $company;
     public $address_1;
     public $address_2;
     public $city;
@@ -48,7 +47,6 @@ class Addresses extends Component
         $this->editingId = $address->id;
         $this->first_name = $address->first_name;
         $this->last_name = $address->last_name;
-        $this->company = $address->company;
         $this->address_1 = $address->address_1;
         $this->address_2 = $address->address_2;
         $this->city = $address->city;
@@ -109,7 +107,6 @@ class Addresses extends Component
         $data = [
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
-            'company' => $this->company,
             'address_1' => $this->address_1,
             'address_2' => $this->address_2,
             'city' => $this->city,
@@ -136,7 +133,7 @@ class Addresses extends Component
 
     private function resetForm()
     {
-        $this->reset(['editingId', 'first_name', 'last_name', 'company', 'address_1', 'address_2', 'city', 'province', 'postal_code', 'phone', 'is_default']);
+        $this->reset(['editingId', 'first_name', 'last_name', 'address_1', 'address_2', 'city', 'province', 'postal_code', 'phone', 'is_default']);
     }
 
     public function render()

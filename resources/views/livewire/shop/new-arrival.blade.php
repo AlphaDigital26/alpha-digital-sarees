@@ -49,7 +49,7 @@
     <div class="arrival-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
         @forelse($products as $product)
             <div class="arrival-card relative" style="position: relative;" wire:key="product-{{ $product->id }}">
-                <a href="{{ route('shop.product', $product->id) }}" wire:navigate style="text-decoration: none; color: inherit; display: block; position: relative;">
+                <a href="{{ route('shop.product', $product->slug) }}" wire:navigate style="text-decoration: none; color: inherit; display: block; position: relative;">
                     <div class="img-box" style="position: relative;">
                         @php
                             $mainImg = is_array($product->images) && count($product->images) > 0 
