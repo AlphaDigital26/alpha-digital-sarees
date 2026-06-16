@@ -1,18 +1,78 @@
 <x-layouts.app>
-    <section class="hero">
-    <div class="hero-slides">
-        @php 
-            $totalSlides = $carousels->count(); 
-            $animationDuration = $totalSlides > 0 ? $totalSlides * 5 : 5;
-        @endphp
-
+    <section class="hero bg-black" 
+             x-data="{
+                 activeSlide: 0,
+                 visibleSlide: 0,
+                 totalSlides: {{ $carousels->count() }},
+                 autoPlayInterval: null,
+                 touchStartX: 0,
+                 transitionTimeout1: null,
+                 
+                 init() {
+                     if(this.totalSlides <= 1) return;
+                     this.startAutoPlay();
+                 },
+                 startAutoPlay() {
+                     this.autoPlayInterval = setInterval(() => { this.next() }, 5000);
+                 },
+                 resetAutoPlay() {
+                     clearInterval(this.autoPlayInterval);
+                     this.startAutoPlay();
+                 },
+                 next() {
+                     if(this.totalSlides <= 1) return;
+                     this.changeSlide((this.activeSlide + 1) % this.totalSlides);
+                 },
+                 prev() {
+                     if(this.totalSlides <= 1) return;
+                     this.changeSlide((this.activeSlide - 1 + this.totalSlides) % this.totalSlides);
+                 },
+                 goTo(index) {
+                     if(this.activeSlide === index) return;
+                     this.changeSlide(index);
+                 },
+                 changeSlide(newIndex) {
+                     // Clear any pending transitions so manual clicks are instant
+                     clearTimeout(this.transitionTimeout1);
+                     
+                     this.activeSlide = newIndex;
+                     this.resetAutoPlay();
+                     
+                     // Fade out current slide
+                     this.visibleSlide = null;
+                     
+                     // Wait for fade out + short black screen, then fade in new slide
+                     this.transitionTimeout1 = setTimeout(() => {
+                         this.visibleSlide = newIndex;
+                     }, 450); // 400ms fade out + 50ms black
+                 },
+                 handleTouchStart(e) {
+                     this.touchStartX = e.touches[0].clientX;
+                 },
+                 handleTouchEnd(e) {
+                     const touchEndX = e.changedTouches[0].clientX;
+                     const diff = this.touchStartX - touchEndX;
+                     
+                     if (Math.abs(diff) > 50) {
+                         if (diff > 0) {
+                             this.next();
+                         } else {
+                             this.prev();
+                         }
+                     }
+                 }
+             }">
+    <div class="hero-slides w-full h-full relative group" 
+         @touchstart="handleTouchStart" 
+         @touchend="handleTouchEnd">
+        
         @foreach($carousels as $index => $carousel)
-            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%]" 
-                 style="background-image: url('{{ asset("storage/" . $carousel->image) }}');
-                        animation: fadeHero {{ $animationDuration }}s infinite;
-                        animation-delay: {{ $index * 5 }}s;">
+            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%] transition-opacity duration-[400ms] ease-in-out" 
+                 :class="{ '!opacity-100 z-10 pointer-events-auto': visibleSlide === {{ $index }}, '!opacity-0 z-0 pointer-events-none': visibleSlide !== {{ $index }} }"
+                 style="background-image: url('{{ asset("storage/" . $carousel->image) }}');">
                 
-                <div class="hero-content relative z-[2] w-full max-w-[500px]">
+                <div class="hero-content relative z-[2] w-full max-w-[500px] transition-all duration-[600ms] ease-out"
+                     :class="{ 'translate-y-0 opacity-100 delay-[200ms]': visibleSlide === {{ $index }}, 'translate-y-8 opacity-0 delay-0': visibleSlide !== {{ $index }} }">
                     
                     @if($carousel->sub_heading)
                         <p class="subtitle text-sm md:text-base text-white tracking-widest mb-2">{{ $carousel->sub_heading }}</p>
@@ -36,12 +96,35 @@
             </div>
         @endforeach
         
-        @if($totalSlides === 0)
-            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%]" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80'); opacity: 1;">
+        @if($carousels->count() === 0)
+            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%] transition-opacity duration-[600ms] !opacity-100 z-10" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80');">
                 <div class="hero-content relative z-[2] w-full max-w-[500px]">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal my-2 md:my-4 leading-tight drop-shadow-md text-white">Welcome to Our Store</h1>
                     <a href="/shop" class="btn-primary inline-block no-underline mt-4">SHOP NOW</a>
                 </div>
+            </div>
+        @endif
+
+        @if($carousels->count() > 1)
+            <!-- Navigation Arrows -->
+            <button @click.prevent="prev()" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 text-white/70 hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 backdrop-blur-sm hidden sm:flex items-center justify-center">
+                <svg class="w-5 h-5 md:w-6 md:h-6 ml-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <button @click.prevent="next()" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 text-white/70 hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 backdrop-blur-sm hidden sm:flex items-center justify-center">
+                <svg class="w-5 h-5 md:w-6 md:h-6 mr-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+
+            <!-- Dot Indicators -->
+            <div class="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-20 flex items-center justify-center gap-1 md:gap-2">
+                @foreach($carousels as $index => $carousel)
+                    <button @click.prevent="goTo({{ $index }})" 
+                            aria-label="Go to slide {{ $index + 1 }}"
+                            class="group p-2 flex items-center justify-center focus:outline-none">
+                        <span class="h-1.5 md:h-2 rounded-full transition-all duration-500 ease-out shadow-sm"
+                              :class="activeSlide === {{ $index }} ? 'w-8 md:w-10 bg-white' : 'w-1.5 md:w-2 bg-white/40 group-hover:bg-white/70'">
+                        </span>
+                    </button>
+                @endforeach
             </div>
         @endif
     </div>
@@ -270,27 +353,5 @@
         </div>
     </section>
 
-    <script>
-        function fixCarouselClicks() {
-            // Check the opacity of the slides every 100 milliseconds
-            setInterval(() => {
-                const slides = document.querySelectorAll('.hero-slides .slide');
-                slides.forEach(slide => {
-                    // Get the current opacity from the CSS animation
-                    const opacity = parseFloat(window.getComputedStyle(slide).opacity);
-                    
-                    // If the slide is visible, allow clicks. If it's fading out/invisible, disable clicks.
-                    if (opacity > 0.1) {
-                        slide.style.pointerEvents = 'auto';
-                    } else {
-                        slide.style.pointerEvents = 'none';
-                    }
-                });
-            }, 100);
-        }
-
-        // Run the fix when the page loads
-        document.addEventListener('DOMContentLoaded', fixCarouselClicks);
-        document.addEventListener('livewire:navigated', fixCarouselClicks);
-    </script>
+    {{-- Carousel script removed as it is now handled by Alpine.js --}}
 </x-layouts.app>

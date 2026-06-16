@@ -52,7 +52,7 @@
                             </p>
                             
                             <div class="mt-auto flex flex-col justify-end">
-                                <div class="flex items-baseline gap-2">
+                                <div class="flex items-baseline gap-2 {{ $product->original_price > $product->current_price ? '' : 'justify-center' }}">
                                     <span class="text-xl font-bold text-[#800020] leading-none">
                                         Rs. {{ number_format($product->current_price) }}
                                     </span>
