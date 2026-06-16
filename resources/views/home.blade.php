@@ -157,13 +157,13 @@
                         <h3>{{ $product->name }}</h3>
                     </a>
                     <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
-                        <p class="font-bold text-[#800020] m-0 text-sm whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
+                        <p class="font-bold text-[#800020] m-0 text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                         @if($product->original_price > $product->current_price)
-                            <p class="text-gray-400 line-through text-xs m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                            <p class="text-gray-400 line-through text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
                             @php
                                 $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
                             @endphp
-                            <span class="text-green-600 text-[10px] font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
+                            <span class="text-green-600 text-xs font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
                         @endif
                     </div>
                 </div>

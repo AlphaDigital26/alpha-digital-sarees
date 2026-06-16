@@ -176,7 +176,7 @@
 
             {{-- UPDATED PRICE SECTION --}}
             <div class="mt-4 mb-4 flex flex-col md:flex-row items-start md:items-baseline gap-1 md:gap-3">
-                <p class="price text-2xl font-bold text-[#800020] leading-none m-0 p-0">
+                <p class="price text-3xl md:text-4xl font-bold text-[#800020] leading-none m-0 p-0">
                     Rs. {{ number_format($product->current_price, 2) }}
                 </p>
 
@@ -185,10 +185,10 @@
                         $discount = round((($product->original_price - $product->current_price) / $product->original_price) * 100); 
                     @endphp
                     <div class="flex items-center gap-2">
-                        <p class="text-sm text-gray-400 line-through m-0">
+                        <p class="text-xl text-gray-400 line-through m-0">
                             Rs. {{ number_format($product->original_price, 2) }}
                         </p>
-                        <span class="text-xs font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded">
+                        <span class="text-sm font-bold text-green-700 bg-green-100 px-2 py-0.5 rounded">
                             {{ $discount }}% OFF
                         </span>
                     </div>
@@ -350,9 +350,20 @@
                                     <h3 class="font-sans text-[0.85rem] font-semibold text-[#555] mb-2 line-clamp-2 min-h-[2.5rem]">
                                         {{ $simProduct->name }}
                                     </h3>
-                                    <p class="font-sans text-[0.9rem] font-bold text-[#800020]">
-                                        Rs. {{ number_format($simProduct->current_price, 2) }}
-                                    </p>
+                                    <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1">
+                                        <p class="font-sans text-base font-bold text-[#800020] m-0">
+                                            Rs. {{ number_format($simProduct->current_price, 2) }}
+                                        </p>
+                                        @if($simProduct->original_price > $simProduct->current_price)
+                                            <p class="text-gray-400 line-through text-sm m-0 font-normal">
+                                                Rs. {{ number_format($simProduct->original_price, 2) }}
+                                            </p>
+                                            @php
+                                                $discountPercent = round((($simProduct->original_price - $simProduct->current_price) / $simProduct->original_price) * 100);
+                                            @endphp
+                                            <span class="text-green-600 text-xs font-bold">({{ $discountPercent }}% OFF)</span>
+                                        @endif
+                                    </div>
                                 </div>
                                 
                             </a>

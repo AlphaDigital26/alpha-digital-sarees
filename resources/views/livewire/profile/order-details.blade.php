@@ -746,93 +746,106 @@
 
     {{-- REVIEW MODAL --}}
     @if($reviewModalOpen)
-        <div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-[9999] w-screen overflow-y-auto">
-            <div class="flex min-h-full p-4 md:p-8">
-                <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('reviewModalOpen', false)"></div>
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 p-6 md:p-8 animate-fade-in-up m-auto">
+        <div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
+            <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('reviewModalOpen', false)"></div>
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 animate-fade-in-up m-auto flex flex-col max-h-[90vh]">
                 
-                @if($isEditingReview)
-                    <button wire:click="goBackToViewReview" class="absolute top-4 left-4 text-gray-400 hover:text-[#800020] transition bg-transparent border-none cursor-pointer p-1" title="Back to View Review">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                {{-- HEADER (Fixed) --}}
+                <div class="p-6 md:p-8 pb-4 md:pb-4 flex-shrink-0 relative border-b border-[#E5E0DA]">
+                    @if($isEditingReview)
+                        <button wire:click="goBackToViewReview" class="absolute top-6 left-6 text-gray-400 hover:text-[#800020] transition bg-transparent border-none cursor-pointer z-20" title="Back to View Review">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                        </button>
+                    @endif
+                    <button wire:click="$set('reviewModalOpen', false)" class="absolute top-6 right-6 text-gray-400 hover:text-[#800020] transition bg-transparent border-none cursor-pointer z-20" title="Close">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                     </button>
-                @endif
-                <button wire:click="$set('reviewModalOpen', false)" class="absolute top-4 right-4 text-gray-400 hover:text-[#800020] transition bg-transparent border-none cursor-pointer p-1" title="Close">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
 
-                <div class="text-center mb-6">
-                    <h2 class="text-2xl font-serif text-[#1b1c1a] m-0 mb-2">Rate Product</h2>
-                    <p class="text-gray-500 text-sm m-0">Tell us what you think!</p>
+                    <div class="text-center">
+                        <h2 class="text-2xl font-serif text-[#1b1c1a] m-0 mb-2">{{ $isEditingReview ? 'Edit Your Review' : 'Rate Product' }}</h2>
+                        <p class="text-gray-500 text-sm m-0">Tell us what you think!</p>
+                    </div>
                 </div>
 
-                <form wire:submit.prevent="submitReview" class="space-y-6">
-                    <div>
-                        <label class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2 text-center">Rating</label>
-                        <div class="flex gap-1 justify-center" x-data="{ rating: @entangle('reviewRating').live, hoverRating: 0 }">
-                            <template x-for="i in 5" :key="i">
-                                <button type="button" 
-                                        @click="rating = i" 
-                                        @mouseenter="hoverRating = i" 
-                                        @mouseleave="hoverRating = 0"
-                                        class="focus:outline-none transition-colors duration-150 bg-transparent border-none cursor-pointer">
-                                    <svg xmlns="http://www.w3.org/2000/svg" 
-                                         class="w-10 h-10" 
-                                         :class="(hoverRating >= i || (!hoverRating && rating >= i)) ? 'text-yellow-500 fill-current' : 'text-gray-300 fill-current'" 
-                                         viewBox="0 0 24 24" stroke="none">
-                                        <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
-                                    </svg>
-                                </button>
-                            </template>
-                        </div>
-                        @error('reviewRating') <span class="text-red-500 text-xs block text-center mt-1">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label for="reviewComment" class="block text-sm font-bold text-[#1b1c1a] mb-2">Your Review (Optional)</label>
-                        <textarea wire:model="reviewComment" id="reviewComment" rows="4" class="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E0DA] rounded-sm focus:outline-none focus:border-[#800020] focus:ring-1 focus:ring-[#800020] transition-colors resize-none text-[14px]" placeholder="Write your experience..."></textarea>
-                        @error('reviewComment') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
-                    </div>
-
-                    <div>
-                        <label class="block text-sm font-bold text-[#1b1c1a] mb-2">Upload Photos (Optional)</label>
-                        <div class="border border-[#E5E0DA] border-dashed rounded-md px-3 py-3 text-center bg-[#FAFAFA]">
-                            <input type="file" wire:key="review-photos-{{ $uploadIteration }}" wire:model="newPhotos" multiple accept="image/*" class="text-sm w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#F5F0EB] file:text-[#800020] hover:file:bg-[#E5E0DA] transition cursor-pointer">
-                            <div wire:loading wire:target="newPhotos" class="text-xs text-[#800020] mt-2 font-bold animate-pulse">Uploading files...</div>
-                        </div>
-                        @error('newPhotos.*') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                <form wire:submit.prevent="submitReview" class="flex flex-col flex-grow overflow-hidden">
+                    
+                    {{-- BODY (Scrollable) --}}
+                    <div class="p-6 md:p-8 py-6 overflow-y-auto flex-grow hide-modal-scroll space-y-6" style="scrollbar-width: none; -ms-overflow-style: none;">
+                        <style>
+                            .hide-modal-scroll::-webkit-scrollbar { display: none; }
+                        </style>
                         
-                        @if(count($existingPhotos) > 0 || count($reviewPhotos) > 0)
-                            <div class="mt-3 flex gap-2 flex-wrap">
-                                {{-- Existing Photos --}}
-                                @foreach($existingPhotos as $index => $photo)
-                                    <div class="w-16 h-16 rounded overflow-hidden border border-[#E5E0DA] relative group">
-                                        <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
-                                        <button type="button" wire:click="removeExistingPhoto({{ $index }})" class="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-0 group-hover:opacity-100 transition" title="Remove image">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                        </button>
-                                    </div>
-                                @endforeach
-
-                                {{-- New Uploads --}}
-                                @foreach($reviewPhotos as $index => $photo)
-                                    <div class="w-16 h-16 rounded overflow-hidden border border-[#E5E0DA] relative group">
-                                        <img src="{{ $photo->temporaryUrl() }}" class="w-full h-full object-cover">
-                                        <button type="button" wire:click="removeNewPhoto({{ $index }})" class="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-0 group-hover:opacity-100 transition" title="Remove image">
-                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                        </button>
-                                    </div>
-                                @endforeach
+                        <div>
+                            <label class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2 text-center">Rating</label>
+                            <div class="flex gap-1 justify-center" x-data="{ rating: @entangle('reviewRating').live, hoverRating: 0 }">
+                                <template x-for="i in 5" :key="i">
+                                    <button type="button" 
+                                            @click="rating = i" 
+                                            @mouseenter="hoverRating = i" 
+                                            @mouseleave="hoverRating = 0"
+                                            class="focus:outline-none transition-colors duration-150 bg-transparent border-none cursor-pointer">
+                                        <svg xmlns="http://www.w3.org/2000/svg" 
+                                             class="w-10 h-10" 
+                                             :class="(hoverRating >= i || (!hoverRating && rating >= i)) ? 'text-yellow-500 fill-current' : 'text-gray-300 fill-current'" 
+                                             viewBox="0 0 24 24" stroke="none">
+                                            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
+                                        </svg>
+                                    </button>
+                                </template>
                             </div>
-                        @endif
+                            @error('reviewRating') <span class="text-red-500 text-xs block text-center mt-1">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label for="reviewComment" class="block text-sm font-bold text-[#1b1c1a] mb-2">Your Review (Optional)</label>
+                            <textarea wire:model="reviewComment" id="reviewComment" rows="4" class="w-full px-4 py-3 bg-[#FAFAFA] border border-[#E5E0DA] rounded-sm focus:outline-none focus:border-[#800020] focus:ring-1 focus:ring-[#800020] transition-colors resize-none text-[14px]" placeholder="Write your experience..."></textarea>
+                            @error('reviewComment') <span class="text-red-500 text-xs mt-1 block">{{ $message }}</span> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-sm font-bold text-[#1b1c1a] mb-2">Upload Photos (Optional)</label>
+                            <div class="border border-[#E5E0DA] border-dashed rounded-md px-3 py-3 text-center bg-[#FAFAFA]">
+                                <input type="file" wire:key="review-photos-{{ $uploadIteration }}" wire:model="newPhotos" multiple accept="image/*" class="text-sm w-full file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-[#F5F0EB] file:text-[#800020] hover:file:bg-[#E5E0DA] transition cursor-pointer">
+                                <div wire:loading wire:target="newPhotos" class="text-xs text-[#800020] mt-2 font-bold animate-pulse">Uploading files...</div>
+                            </div>
+                            @error('newPhotos.*') <span class="text-xs text-red-500 mt-1 block">{{ $message }}</span> @enderror
+                            
+                            @if(count($existingPhotos) > 0 || count($reviewPhotos) > 0)
+                                <div class="mt-3 flex gap-2 flex-wrap">
+                                    {{-- Existing Photos --}}
+                                    @foreach($existingPhotos as $index => $photo)
+                                        <div class="w-16 h-16 rounded overflow-hidden border border-[#E5E0DA] relative group">
+                                            <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
+                                            <button type="button" wire:click="removeExistingPhoto({{ $index }})" class="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-0 group-hover:opacity-100 transition" title="Remove image">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
+                                        </div>
+                                    @endforeach
+
+                                    {{-- New Uploads --}}
+                                    @foreach($reviewPhotos as $index => $photo)
+                                        <div class="w-16 h-16 rounded overflow-hidden border border-[#E5E0DA] relative group">
+                                            <img src="{{ $photo->temporaryUrl() }}" class="w-full h-full object-cover">
+                                            <button type="button" wire:click="removeNewPhoto({{ $index }})" class="absolute top-0 right-0 bg-red-500 text-white p-0.5 rounded-bl opacity-0 group-hover:opacity-100 transition" title="Remove image">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                            </button>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
                     </div>
 
-                    <div class="flex gap-4 pt-4">
-                        <button type="button" wire:click="$set('reviewModalOpen', false)" class="flex-1 bg-white border border-[#E5E0DA] text-gray-600 font-bold py-3 px-4 rounded hover:bg-gray-50 transition cursor-pointer text-sm tracking-wider uppercase">
-                            Cancel
-                        </button>
-                        <button type="submit" class="flex-1 bg-[#800020] border border-[#800020] text-white font-bold py-3 px-4 rounded hover:bg-[#5D4037] transition shadow-md cursor-pointer text-sm tracking-wider uppercase">
-                            Submit
-                        </button>
+                    {{-- FOOTER (Fixed) --}}
+                    <div class="p-6 md:p-8 pt-4 md:pt-4 flex-shrink-0 border-t border-[#E5E0DA]">
+                        <div class="flex gap-4">
+                            <button type="button" wire:click="$set('reviewModalOpen', false)" class="flex-1 bg-white border border-[#E5E0DA] text-gray-600 font-bold py-3 px-4 rounded hover:bg-gray-50 transition cursor-pointer text-sm tracking-wider uppercase">
+                                Cancel
+                            </button>
+                            <button type="submit" class="flex-1 bg-[#800020] border border-[#800020] text-white font-bold py-3 px-4 rounded hover:bg-[#5D4037] transition shadow-md cursor-pointer text-sm tracking-wider uppercase">
+                                Submit
+                            </button>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -841,16 +854,16 @@
 
     {{-- VIEW REVIEW MODAL --}}
     @if($viewReviewModalOpen && $viewingReview)
-        <div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-[9999] w-screen overflow-y-auto">
-            <div class="flex min-h-full p-4 md:p-8">
-                <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('viewReviewModalOpen', false)"></div>
-                <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 p-6 md:p-8 animate-fade-in-up m-auto">
+        <div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
+            <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('viewReviewModalOpen', false)"></div>
+            <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 animate-fade-in-up m-auto flex flex-col max-h-[90vh]">
                 
-                <button wire:click="$set('viewReviewModalOpen', false)" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition bg-transparent border-none cursor-pointer">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
+                {{-- HEADER (Fixed) --}}
+                <div class="p-6 md:p-8 pb-4 md:pb-4 flex-shrink-0 relative border-b border-[#E5E0DA]">
+                    <button wire:click="$set('viewReviewModalOpen', false)" class="absolute top-6 right-6 text-gray-400 hover:text-gray-600 transition bg-transparent border-none cursor-pointer z-20">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
 
-                <div class="mb-6 border-b border-[#E5E0DA] pb-4">
                     <h2 class="text-xl font-serif text-[#1b1c1a] m-0 mb-2">Your Review</h2>
                     <div class="flex gap-1">
                         @for($i = 1; $i <= 5; $i++)
@@ -861,57 +874,68 @@
                     </div>
                 </div>
 
-                @if($viewingReview->comment)
-                    <div class="mb-4">
-                        <p class="text-gray-600 text-sm leading-relaxed break-words m-0" style="font-family: 'Manrope', sans-serif;">
-                            "{{ $viewingReview->comment }}"
-                        </p>
-                    </div>
-                @endif
-                
-                @if(is_array($viewingReview->photos) && count($viewingReview->photos) > 0)
-                    <div class="mb-4" x-data="{ localImageModalOpen: false, localModalImageSrc: '' }" x-init="$watch('localImageModalOpen', val => document.body.style.overflow = val ? 'hidden' : '')">
-                        <span class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Attached Photos</span>
-                        <div class="flex gap-2 flex-wrap">
-                            @foreach($viewingReview->photos as $photo)
-                                <a href="#" @click.prevent="localModalImageSrc = '{{ asset('storage/' . $photo) }}'; localImageModalOpen = true" class="block w-20 h-20 rounded overflow-hidden border border-[#E5E0DA] hover:opacity-80 transition">
-                                    <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
-                                </a>
-                            @endforeach
+                {{-- BODY (Scrollable) --}}
+                <div class="p-6 md:p-8 py-6 overflow-y-auto flex-grow hide-modal-scroll" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    <style>
+                        .hide-modal-scroll::-webkit-scrollbar { display: none; }
+                    </style>
+                    
+                    @if($viewingReview->comment)
+                        <div class="mb-4">
+                            <p class="text-gray-600 text-sm leading-relaxed break-words m-0" style="font-family: 'Manrope', sans-serif;">
+                                "{{ $viewingReview->comment }}"
+                            </p>
                         </div>
-                        
-                        {{-- Review Image Lightbox Modal --}}
-                        <template x-teleport="body">
-                            <div x-show="localImageModalOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="display: none;">
-                                <div class="absolute inset-0 bg-black opacity-80" @click="localImageModalOpen = false"></div>
-                                <div class="relative z-10 w-full max-w-4xl max-h-[90vh] flex flex-col items-center justify-center">
-                                    <button @click="localImageModalOpen = false" class="absolute -top-10 right-0 text-white hover:text-gray-300 transition bg-transparent border-none cursor-pointer">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                                    </button>
-                                    <img :src="localModalImageSrc" class="max-w-full max-h-[85vh] object-contain rounded shadow-2xl">
-                                </div>
+                    @endif
+                    
+                    @if(is_array($viewingReview->photos) && count($viewingReview->photos) > 0)
+                        <div class="mb-4" x-data="{ localImageModalOpen: false, localModalImageSrc: '' }" x-init="$watch('localImageModalOpen', val => document.body.style.overflow = val ? 'hidden' : '')">
+                            <span class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Attached Photos</span>
+                            <div class="flex gap-2 flex-wrap">
+                                @foreach($viewingReview->photos as $photo)
+                                    <a href="#" @click.prevent="localModalImageSrc = '{{ asset('storage/' . $photo) }}'; localImageModalOpen = true" class="block w-20 h-20 rounded overflow-hidden border border-[#E5E0DA] hover:opacity-80 transition">
+                                        <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
+                                    </a>
+                                @endforeach
                             </div>
-                        </template>
-                    </div>
-                @endif
-                
-                @if($viewingReview->admin_reply)
-                    <div class="mt-4 bg-[#F5F0EB] p-4 rounded-sm border-l-4 border-[#800020]">
-                        <span class="font-bold text-[#800020] text-sm block mb-1">Response from Alpha Digital</span>
-                        <p class="text-gray-700 text-sm leading-relaxed break-words m-0" style="font-family: 'Manrope', sans-serif;">
-                            {{ $viewingReview->admin_reply }}
-                        </p>
-                    </div>
-                @endif
-
-                <div class="flex gap-4 pt-4 mt-6">
-                    <button type="button" wire:click="editReview({{ $viewingReview->product_id }})" class="flex-1 bg-white border border-[#E5E0DA] text-gray-600 font-bold py-3 px-4 rounded hover:bg-gray-50 transition cursor-pointer text-sm tracking-wider uppercase">
-                        Edit Review
-                    </button>
-                    <button type="button" wire:click="$set('viewReviewModalOpen', false)" class="flex-1 bg-[#800020] border border-[#800020] text-white font-bold py-3 px-4 rounded hover:bg-[#5D4037] transition shadow-md cursor-pointer text-sm tracking-wider uppercase">
-                        Close
-                    </button>
+                            
+                            {{-- Review Image Lightbox Modal --}}
+                            <template x-teleport="body">
+                                <div x-show="localImageModalOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4" style="display: none;">
+                                    <div class="absolute inset-0 bg-black opacity-80" @click="localImageModalOpen = false"></div>
+                                    <div class="relative z-10 w-full max-w-4xl max-h-[90vh] flex flex-col items-center justify-center">
+                                        <button @click="localImageModalOpen = false" class="absolute -top-10 right-0 text-white hover:text-gray-300 transition bg-transparent border-none cursor-pointer">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                                        </button>
+                                        <img :src="localModalImageSrc" class="max-w-full max-h-[85vh] object-contain rounded shadow-2xl">
+                                    </div>
+                                </div>
+                            </template>
+                        </div>
+                    @endif
+                    
+                    @if($viewingReview->admin_reply)
+                        <div class="mt-4 bg-[#F5F0EB] p-4 rounded-sm border-l-4 border-[#800020]">
+                            <span class="font-bold text-[#800020] text-sm block mb-1">Response from Alpha Digital</span>
+                            <p class="text-gray-700 text-sm leading-relaxed break-words m-0" style="font-family: 'Manrope', sans-serif;">
+                                {{ $viewingReview->admin_reply }}
+                            </p>
+                        </div>
+                    @endif
                 </div>
+
+                {{-- FOOTER (Fixed) --}}
+                <div class="p-6 md:p-8 pt-4 md:pt-4 flex-shrink-0 border-t border-[#E5E0DA]">
+                    <div class="flex gap-4">
+                        <button type="button" wire:click="editReview({{ $viewingReview->product_id }})" class="flex-1 bg-white border border-[#E5E0DA] text-gray-600 font-bold py-3 px-4 rounded hover:bg-gray-50 transition cursor-pointer text-sm tracking-wider uppercase">
+                            Edit Review
+                        </button>
+                        <button type="button" wire:click="$set('viewReviewModalOpen', false)" class="flex-1 bg-[#800020] border border-[#800020] text-white font-bold py-3 px-4 rounded hover:bg-[#5D4037] transition shadow-md cursor-pointer text-sm tracking-wider uppercase">
+                            Close
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </div>
     @endif
