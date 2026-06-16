@@ -391,7 +391,19 @@
             review: null,
             init() {
                 this.$watch('isOpen', value => {
-                    document.body.style.overflow = value ? 'hidden' : '';
+                    if (value) {
+                        this._scrollY = window.pageYOffset;
+                        document.body.style.position = 'fixed';
+                        document.body.style.top = '-' + this._scrollY + 'px';
+                        document.body.style.width = '100%';
+                        document.body.style.overflowY = 'scroll';
+                    } else {
+                        document.body.style.position = '';
+                        document.body.style.top = '';
+                        document.body.style.width = '';
+                        document.body.style.overflowY = '';
+                        window.scrollTo(0, this._scrollY);
+                    }
                 });
             },
             openModal(reviewData, startImage) {

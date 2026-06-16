@@ -1,22 +1,48 @@
 <div 
-    x-data="{ show: false }" 
-    @close-login-modal.window="show = false"
-    @open-login-modal.window="show = true"
+    x-data="{
+        show: false,
+        _scrollY: 0,
+        _openModal() {
+            this._scrollY = window.pageYOffset;
+            document.body.style.position = 'fixed';
+            document.body.style.top = `-${this._scrollY}px`;
+            document.body.style.width = '100%';
+            document.body.style.overflowY = 'scroll';
+            document.body.classList.add('modal-open');
+            this.show = true;
+        },
+        _closeModal() {
+            this.show = false;
+            document.body.classList.remove('modal-open');
+            document.body.style.position = '';
+            document.body.style.top = '';
+            document.body.style.width = '';
+            document.body.style.overflowY = '';
+            window.scrollTo(0, this._scrollY);
+        }
+    }"
+    x-init="
+        $watch('show', val => { /* handled by _openModal/_closeModal */ });
+        window.addEventListener('open-login-modal', () => _openModal());
+        window.addEventListener('close-login-modal', () => _closeModal());
+    "
+    @close-login-modal.window="_closeModal()"
+    @open-login-modal.window="_openModal()"
     x-show="show" 
     style="display: none;"
-    {{-- Changed z-[100] to z-[9999] so it completely covers the z-1000 navbar --}}
+    {{-- z-[9999] so it completely covers the z-1000 navbar --}}
     class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
 >
     {{-- Made the height responsive (max-h-[95vh]) so it doesn't break on small laptops --}}
     <div 
-        @click.outside="show = false"
+        @click.outside="_closeModal()"
         x-show="show"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100"
         class="bg-white rounded-2xl shadow-2xl flex max-w-[850px] w-full min-h-[500px] md:h-[550px] max-h-[95vh] overflow-hidden relative"
     >
-        <button @click="show = false" class="absolute top-4 right-4 text-gray-500 hover:text-black z-20 transition-colors outline-none border-none bg-transparent cursor-pointer">
+        <button @click="_closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black z-20 transition-colors outline-none border-none bg-transparent cursor-pointer">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
         </button>
 
