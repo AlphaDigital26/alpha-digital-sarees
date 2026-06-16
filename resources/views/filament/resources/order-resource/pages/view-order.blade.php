@@ -152,20 +152,6 @@
     .dark .vo-card[style*="background-color: #fbf9f5;"] .vo-notes-scroll > div { background: #374151 !important; border-color: rgba(255,255,255,0.1) !important; color: #d1d5db !important; }
     .dark .vo-card[style*="background-color: #fbf9f5;"] .vo-notes-scroll > div strong { color: #fca5a5 !important; }
     .dark .vo-card[style*="background-color: #fbf9f5;"] textarea { background: #1f2937 !important; border-color: rgba(255,255,255,0.1) !important; color: #f3f4f6 !important; }
-
-    /* Modals Dark Mode */
-    .dark .vo-modal { background-color: #1f2937 !important; border-color: rgba(255,255,255,0.1) !important; }
-    .dark .vo-modal-header { background-color: #111827 !important; border-color: rgba(255,255,255,0.1) !important; }
-    .dark .vo-modal-header h3 { color: #f3f4f6 !important; }
-    .dark .vo-modal-footer { background-color: #111827 !important; border-color: rgba(255,255,255,0.1) !important; }
-    .dark .vo-modal-body label { color: #d1d5db !important; }
-    .dark .vo-modal-body input, .dark .vo-modal-body select, .dark .vo-modal-body textarea { 
-        background-color: #374151 !important; 
-        border-color: rgba(255,255,255,0.1) !important; 
-        color: #f3f4f6 !important; 
-    }
-    .dark .vo-modal-close { color: #d1d5db !important; }
-    .dark .vo-modal-cancel-btn { color: #d1d5db !important; border-color: rgba(255,255,255,0.2) !important; }
 </style>
 
 @php
@@ -794,16 +780,16 @@
     {{-- NATIVE LIVEWIRE CANCELLATION MODAL --}}
     @if($cancelModalOpen)
     <div class="fixed inset-0 z-50 flex items-center justify-center" style="background-color: rgba(27, 28, 26, 0.7);">
-        <div class="rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden vo-modal" style="font-family: 'Manrope', sans-serif; background-color: #fbf9f5; border: 1px solid #e0bfbf;">
+        <div class="rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden" style="font-family: 'Manrope', sans-serif; background-color: #fbf9f5; border: 1px solid #e0bfbf;">
             
-            <div class="px-6 py-4 flex justify-between items-center vo-modal-header" style="background-color: #f5f3ef; border-bottom: 1px solid #e0bfbf;">
+            <div class="px-6 py-4 flex justify-between items-center" style="background-color: #f5f3ef; border-bottom: 1px solid #e0bfbf;">
                 <h3 class="text-lg font-bold m-0" style="color: #1b1c1a; font-family: 'Noto Serif', serif;">Cancel Order</h3>
-                <button wire:click="$set('cancelModalOpen', false)" class="vo-modal-close" style="color: #A68A64; background: transparent; border: none; cursor: pointer; transition: 0.2s;">
+                <button wire:click="$set('cancelModalOpen', false)" style="color: #A68A64; background: transparent; border: none; cursor: pointer; transition: 0.2s;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             
-            <div class="p-6 vo-modal-body">
+            <div class="p-6">
                 <div class="mb-4">
                     <label class="block text-sm font-bold mb-1" style="color: #5D4037;">Reason for Cancellation *</label>
                     <select wire:model.live="cancellation_reason" class="w-full rounded-md px-3 py-2 text-sm focus:outline-none" style="border: 1px solid #e0bfbf; background-color: #ffffff; color: #1b1c1a;">
@@ -830,8 +816,8 @@
                 @endif
             </div>
             
-            <div class="px-6 py-4 flex justify-end gap-3 vo-modal-footer" style="background-color: #f5f3ef; border-top: 1px solid #e0bfbf;">
-                <button wire:click="$set('cancelModalOpen', false)" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer vo-modal-cancel-btn" style="background-color: transparent; border: 1px solid #e0bfbf; color: #1b1c1a;">Close</button>
+            <div class="px-6 py-4 flex justify-end gap-3" style="background-color: #f5f3ef; border-top: 1px solid #e0bfbf;">
+                <button wire:click="$set('cancelModalOpen', false)" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer" style="background-color: transparent; border: 1px solid #e0bfbf; color: #1b1c1a;">Close</button>
                 <button wire:click="confirmCancellation" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer" style="background-color: #570013; border: 1px solid #570013; color: #ffffff;">Confirm Cancellation</button>
             </div>
             
@@ -842,20 +828,17 @@
     {{-- REJECT REFUND MODAL --}}
     @if($rejectRefundModalOpen)
     <div class="fixed inset-0 z-50 flex items-center justify-center" style="background-color: rgba(27, 28, 26, 0.7);">
-        <div class="rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden vo-modal" style="background-color: #fbf9f5; border: 1px solid #e0bfbf; font-family: 'Manrope', sans-serif;">
-            <div class="px-6 py-4 flex justify-between items-center vo-modal-header" style="background-color: #f5f3ef; border-bottom: 1px solid #e0bfbf;">
+        <div class="rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden" style="background-color: #fbf9f5; border: 1px solid #e0bfbf; font-family: 'Manrope', sans-serif;">
+            <div class="px-6 py-4 flex justify-between items-center" style="background-color: #f5f3ef; border-bottom: 1px solid #e0bfbf;">
                 <h3 class="text-lg font-bold m-0" style="color: #dc2626; font-family: 'Noto Serif', serif;">Reject Refund Request</h3>
-                <button wire:click="$set('rejectRefundModalOpen', false)" class="vo-modal-close" style="color: #A68A64; background: transparent; border: none; cursor: pointer; transition: 0.2s;">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
-                </button>
             </div>
-            <div class="p-6 vo-modal-body">
+            <div class="p-6">
                 <label class="block text-sm font-bold mb-1" style="color: #5D4037;">Rejection Reason *</label>
                 <textarea wire:model.defer="refund_rejection_reason" rows="3" placeholder="Provide a detailed reason for rejecting this refund..." class="w-full rounded-md px-3 py-2 text-sm focus:outline-none" style="border: 1px solid #e0bfbf; background-color: #ffffff; color: #1b1c1a; resize: vertical;"></textarea>
                 @error('refund_rejection_reason') <span style="color: #ef4444; font-size: 11px; display: block; margin-top: 4px;">{{ $message }}</span> @enderror
             </div>
-            <div class="px-6 py-4 flex justify-end gap-3 vo-modal-footer" style="background-color: #f5f3ef; border-top: 1px solid #e0bfbf;">
-                <button wire:click="$set('rejectRefundModalOpen', false)" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer vo-modal-cancel-btn" style="background-color: transparent; border: 1px solid #e0bfbf; color: #1b1c1a;">Cancel</button>
+            <div class="px-6 py-4 flex justify-end gap-3" style="background-color: #f5f3ef; border-top: 1px solid #e0bfbf;">
+                <button wire:click="$set('rejectRefundModalOpen', false)" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer" style="border: 1px solid #e0bfbf;">Cancel</button>
                 <button wire:click="confirmRejectRefund" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer" style="background-color: #dc2626; color: #ffffff; border: 1px solid #dc2626;">Reject Refund</button>
             </div>
         </div>
@@ -865,16 +848,16 @@
     {{-- NATIVE LIVEWIRE SHIPPING MODAL WITH BRAND COLORS --}}
     @if($shippingModalOpen)
     <div class="fixed inset-0 z-50 flex items-center justify-center" style="background-color: rgba(27, 28, 26, 0.7);">
-        <div class="rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden vo-modal" style="font-family: 'Manrope', sans-serif; background-color: #fbf9f5; border: 1px solid #e0bfbf;">
+        <div class="rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden" style="font-family: 'Manrope', sans-serif; background-color: #fbf9f5; border: 1px solid #e0bfbf;">
             
-            <div class="px-6 py-4 flex justify-between items-center vo-modal-header" style="background-color: #f5f3ef; border-bottom: 1px solid #e0bfbf;">
+            <div class="px-6 py-4 flex justify-between items-center" style="background-color: #f5f3ef; border-bottom: 1px solid #e0bfbf;">
                 <h3 class="text-lg font-bold m-0" style="color: #1b1c1a; font-family: 'Noto Serif', serif;">Shipment Details</h3>
-                <button wire:click="$set('shippingModalOpen', false)" class="vo-modal-close" style="color: #A68A64; background: transparent; border: none; cursor: pointer; transition: 0.2s;">
+                <button wire:click="$set('shippingModalOpen', false)" style="color: #A68A64; background: transparent; border: none; cursor: pointer; transition: 0.2s;">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                 </button>
             </div>
             
-            <div class="p-6 vo-modal-body">
+            <div class="p-6">
                 <div class="mb-4">
                     <label class="block text-sm font-bold mb-1" style="color: #5D4037;">Courier Partner *</label>
                     <input type="text" wire:model.defer="courier_partner" placeholder="e.g. BlueDart, FedEx" class="w-full rounded-md px-3 py-2 text-sm focus:outline-none" style="border: 1px solid #e0bfbf; background-color: #ffffff; color: #1b1c1a;">
@@ -894,8 +877,8 @@
                 </div>
             </div>
             
-            <div class="px-6 py-4 flex justify-end gap-3 vo-modal-footer" style="background-color: #f5f3ef; border-top: 1px solid #e0bfbf;">
-                <button wire:click="$set('shippingModalOpen', false)" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer vo-modal-cancel-btn" style="background-color: transparent; border: 1px solid #e0bfbf; color: #1b1c1a;">Cancel</button>
+            <div class="px-6 py-4 flex justify-end gap-3" style="background-color: #f5f3ef; border-top: 1px solid #e0bfbf;">
+                <button wire:click="$set('shippingModalOpen', false)" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer" style="background-color: transparent; border: 1px solid #e0bfbf; color: #1b1c1a;">Cancel</button>
                 <button wire:click="saveShippingDetails" class="px-4 py-2 rounded-md text-sm font-bold cursor-pointer" style="background-color: #800020; border: 1px solid #800020; color: #ffffff;">Save Details</button>
             </div>
             
