@@ -119,7 +119,7 @@
   }
 
   .hero::after {
-    @apply content-[''] absolute top-0 left-0 w-full h-full bg-black/20 z-[1];
+    @apply content-[''] absolute top-0 left-0 w-full h-full bg-black/20 z-[1] pointer-events-none;
   }
 
   /* Fabrics Grid */
@@ -1002,14 +1002,7 @@
   }
 }
 
-/* Animations that are complex and better left as @keyframes */
-@keyframes fadeHero {
-    0% { opacity: 0; transform: scale(1.05); }
-    5% { opacity: 1; }
-    33% { opacity: 1; }
-    38% { opacity: 0; transform: scale(1); }
-    100% { opacity: 0; }
-}
+
 
 /* Hide scrollbar utility */
 @layer utilities {
