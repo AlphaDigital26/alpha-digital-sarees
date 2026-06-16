@@ -8,6 +8,7 @@ use App\Models\Order;
 use App\Models\Address;
 use Razorpay\Api\Api;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\RateLimiter;
 
 class Summary extends Component
 {
@@ -99,47 +100,60 @@ class Summary extends Component
 
     public function payWithRazorpay()
     {
-        $this->showFailureModal = false; // Hide it if they retry
-        $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
-        $totalInPaise = intval($this->cartDetails['total'] * 100); 
-        $receiptId = 'ORD-' . strtoupper(Str::random(10));
+        $executed = RateLimiter::attempt(
+            'checkout-payment:'.auth('customer')->id(),
+            5, // Allow 5 attempts per minute
+            function() {
+                $this->showFailureModal = false; // Hide it if they retry
+                $api = new Api(env('RAZORPAY_KEY'), env('RAZORPAY_SECRET'));
+                $totalInPaise = intval($this->cartDetails['total'] * 100); 
+                $receiptId = 'ORD-' . strtoupper(Str::random(10));
 
-        $razorpayOrder = $api->order->create([
-            'receipt' => $receiptId, 'amount' => $totalInPaise, 'currency' => 'INR'
-        ]);
+                $razorpayOrder = $api->order->create([
+                    'receipt' => $receiptId, 'amount' => $totalInPaise, 'currency' => 'INR'
+                ]);
 
-        $order = Order::create([
-            'order_number' => $receiptId,
-            'customer_id' => auth('customer')->id(),
-            'total_amount' => $this->cartDetails['total'],
-            'status' => 'pending',
-            'razorpay_order_id' => $razorpayOrder['id'],
-            'payment_status' => 'pending',
-            'customer_note' => $this->customer_note, // ADDED: Saving the note to DB
-        ]);
+                $order = \Illuminate\Support\Facades\DB::transaction(function () use ($receiptId, $razorpayOrder) {
+                    $createdOrder = Order::create([
+                        'order_number' => $receiptId,
+                        'customer_id' => auth('customer')->id(),
+                        'total_amount' => $this->cartDetails['total'],
+                        'status' => 'pending',
+                        'razorpay_order_id' => $razorpayOrder['id'],
+                        'payment_status' => 'pending',
+                        'customer_note' => $this->customer_note, // ADDED: Saving the note to DB
+                    ]);
 
-        $this->currentOrderId = $order->id;
+                    foreach ($this->cartDetails['items'] as $item) {
+                        \App\Models\OrderItem::create([
+                            'order_id' => $createdOrder->id,
+                            'product_id' => $item['product']->id,
+                            'quantity' => $item['qty'],
+                            'price' => $item['product']->current_price,
+                        ]);
+                    }
+                    return $createdOrder;
+                });
 
-        foreach ($this->cartDetails['items'] as $item) {
-            \App\Models\OrderItem::create([
-                'order_id' => $order->id,
-                'product_id' => $item['product']->id,
-                'quantity' => $item['qty'],
-                'price' => $item['product']->current_price,
-            ]);
+                $this->currentOrderId = $order->id;
+
+                $this->dispatch('razorpay-checkout', [
+                    'key' => env('RAZORPAY_KEY'),
+                    'amount' => $totalInPaise,
+                    'order_id' => $razorpayOrder['id'],
+                    'name' => 'ALPHA DIGITAL',
+                    'prefill' => [
+                        'name' => auth('customer')->user()->name,
+                        'email' => auth('customer')->user()->email,
+                        'contact' => auth('customer')->user()->phone,
+                    ]
+                ]);
+            }
+        );
+
+        if (! $executed) {
+            $this->dispatch('toast', msg: 'Too many payment attempts. Please try again in a minute.', type: 'error');
         }
-
-        $this->dispatch('razorpay-checkout', [
-            'key' => env('RAZORPAY_KEY'),
-            'amount' => $totalInPaise,
-            'order_id' => $razorpayOrder['id'],
-            'name' => 'ALPHA DIGITAL',
-            'prefill' => [
-                'name' => auth('customer')->user()->name,
-                'email' => auth('customer')->user()->email,
-                'contact' => auth('customer')->user()->phone,
-            ]
-        ]);
     }
 
     public function verifyPayment($razorpayPaymentId, $razorpayOrderId, $razorpaySignature)
@@ -152,23 +166,38 @@ class Summary extends Component
                 'razorpay_signature' => $razorpaySignature
             ]);
 
-            $order = Order::with('items.product')->where('razorpay_order_id', $razorpayOrderId)->first();
-            $order->update(['status' => 'new', 'payment_status' => 'paid', 'razorpay_payment_id' => $razorpayPaymentId]);
-
-            // Dispatch Emails
-            $adminEmail = \App\Models\Setting::first()->contact_email ?? config('mail.from.address');
+            $order = Order::with('items')->where('razorpay_order_id', $razorpayOrderId)->firstOrFail();
             
-            // Deduct stock for each ordered item
-            foreach ($order->items as $item) {
-                if ($item->product) {
-                    $item->product->decrement('stock', $item->quantity);
-                    
-                    // Low stock alert if stock drops to 5 or below
-                    if ($item->product->stock <= 5 && $adminEmail) {
-                        \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminLowStockMail($item->product));
+            // SECURITY CHECK: VERIFY EXACT AMOUNT PAID vs ORDER TOTAL
+            $paymentInfo = $api->payment->fetch($razorpayPaymentId);
+            $expectedAmount = intval($order->total_amount * 100);
+            
+            if ($paymentInfo->amount !== $expectedAmount || $paymentInfo->status !== 'captured') {
+                throw new \Exception("Payment amount mismatch or uncaptured. Potential manipulation detected.");
+            }
+
+            // DB Transaction to prevent stock race conditions
+            $adminEmail = null;
+            \Illuminate\Support\Facades\DB::transaction(function () use ($order, $razorpayPaymentId, &$adminEmail) {
+                $order->update(['status' => 'new', 'payment_status' => 'paid', 'razorpay_payment_id' => $razorpayPaymentId]);
+
+                // Dispatch Emails Config
+                $adminEmail = \App\Models\Setting::first()->contact_email ?? config('mail.from.address');
+                
+                // Deduct stock for each ordered item with Pessimistic Locking
+                foreach ($order->items as $item) {
+                    // lockForUpdate prevents other transactions from modifying this row until this transaction is complete
+                    $product = Product::where('id', $item->product_id)->lockForUpdate()->first();
+                    if ($product) {
+                        $product->decrement('stock', $item->quantity);
+                        
+                        // Low stock alert if stock drops to 5 or below
+                        if ($product->stock <= 5 && $adminEmail) {
+                            \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminLowStockMail($product));
+                        }
                     }
                 }
-            }
+            });
 
             // Customer Emails
             \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderConfirmedMail($order));

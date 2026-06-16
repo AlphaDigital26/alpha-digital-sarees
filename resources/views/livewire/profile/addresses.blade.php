@@ -26,9 +26,6 @@
                     </div>
                 </div>
 
-                <div>
-                    <input type="text" wire:model="company" placeholder="Company" class="w-full border border-outline_variant/70 rounded-sm h-[48px] px-4 text-sm focus:border-primary outline-none transition-colors placeholder-tertiary/70">
-                </div>
 
                 <div>
                     <input type="text" wire:model="address_1" placeholder="Address 1*" class="w-full border border-outline_variant/70 rounded-sm h-[48px] px-4 text-sm focus:border-primary outline-none transition-colors placeholder-tertiary/70">
@@ -92,12 +89,22 @@
                     
                     <h3 class="font-bold text-secondary text-base mb-1 font-serif">{{ $address->first_name }} {{ $address->last_name }}</h3>
                     <div class="text-sm text-tertiary leading-relaxed mt-3">
-                        @if($address->company)<p>{{ $address->company }}</p>@endif
-                        <p>{{ $address->address_1 }}</p>
-                        @if($address->address_2)<p>{{ $address->address_2 }}</p>@endif
-                        <p>{{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}</p>
-                        <p>{{ $address->country }}</p>
-                        @if($address->phone)<p class="mt-2 text-on_surface font-medium">T: {{ $address->phone }}</p>@endif
+                        <div class="flex items-start gap-2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mt-0.5 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.243-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <div>
+
+                                <p>{{ $address->address_1 }}</p>
+                                @if($address->address_2)<p>{{ $address->address_2 }}</p>@endif
+                                <p>{{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}</p>
+                                <p>{{ $address->country }}</p>
+                            </div>
+                        </div>
+                        @if($address->phone)
+                        <div class="flex items-center gap-2 mt-3 text-on_surface font-medium">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-secondary flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" /></svg>
+                            <p>{{ $address->phone }}</p>
+                        </div>
+                        @endif
                     </div>
 
                     <div class="flex items-center gap-3 mt-6">

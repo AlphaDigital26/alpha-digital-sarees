@@ -24,6 +24,8 @@ class CarouselResource extends Resource
                         Forms\Components\FileUpload::make('image')
                             ->label('Slide Image')
                             ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                            ->maxSize(5120)
                             ->directory('carousels')
                             ->required() 
                             ->columnSpanFull(),

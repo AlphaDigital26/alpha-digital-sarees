@@ -349,7 +349,7 @@
                             $img = $product && is_array($product->images) && count($product->images) > 0 
                                 ? asset('storage/' . $product->images[0]) 
                                 : 'https://via.placeholder.com/100x140';
-                            $productUrl = $product ? route('shop.product', $product->id) : '#';
+                            $productUrl = $product ? route('shop.product', $product->slug) : '#';
                         @endphp
                         <div class="block group transition text-inherit {{ !$loop->last ? 'border-b border-[#E5E0DA]' : '' }} px-4 py-4">
                             <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">

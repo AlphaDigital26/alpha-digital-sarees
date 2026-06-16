@@ -141,7 +141,7 @@
         <div class="product-grid">
             @forelse($bestSellers as $product)
                 <div class="product-card">
-                    <a href="{{ route('shop.product', $product->id) }}" class="block">
+                    <a href="{{ route('shop.product', $product->slug) }}" class="block">
                         <div class="img-wrapper">
                             @php
                                 $mainImg = is_array($product->images) && count($product->images) > 0 
@@ -184,7 +184,7 @@
         <div class="product-grid">
             @forelse($latestCollection as $product)
                 <div class="product-card">
-                    <a href="{{ route('shop.product', $product->id) }}" class="block">
+                    <a href="{{ route('shop.product', $product->slug) }}" class="block">
                         <div class="img-wrapper">
                             @php
                                 $mainImg = is_array($product->images) && count($product->images) > 0 
@@ -282,7 +282,7 @@
                     Founded on the principles of preserving traditional Indian handlooms, ALMAARI brings you curated handlooms that tell a story of artisanal mastery and timeless elegance. Each weave is a testament to the hands that crafted it.
                 </p>
                 <div class="heritage-cta">
-                    <button class="btn-heritage">OUR JOURNEY</button>
+                    <a href="{{ route('shop.about') }}" wire:navigate class="btn-heritage inline-block text-center" style="line-height: inherit; text-decoration: none;">OUR JOURNEY</a>
                     <div class="craft-mark">
                         <span class="gold-text">Handcrafted with love</span>
                     </div>

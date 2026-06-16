@@ -28,9 +28,6 @@
                     </div>
                 </div>
 
-                <div>
-                    <input type="text" wire:model="company" placeholder="Company" class="w-full border border-gray-300 rounded h-[48px] px-4 text-sm focus:border-[#800020] outline-none transition-colors">
-                </div>
 
                 <div>
                     <input type="text" wire:model="address_1" placeholder="Address 1*" class="w-full border border-gray-300 rounded h-[48px] px-4 text-sm focus:border-[#800020] outline-none transition-colors">
@@ -95,7 +92,7 @@
                             <div>
                                 <p class="font-bold text-[#2A211F]">{{ $address->first_name }} {{ $address->last_name }}</p>
                                 <div class="text-sm text-gray-600 mt-1 leading-relaxed">
-                                    @if($address->company)<p>{{ $address->company }}</p>@endif
+
                                     <p>{{ $address->address_1 }}</p>
                                     @if($address->address_2)<p>{{ $address->address_2 }}</p>@endif
                                     <p>{{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}</p>

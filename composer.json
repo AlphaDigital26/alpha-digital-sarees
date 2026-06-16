@@ -11,7 +11,9 @@
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.8",
+        "mews/purifier": "^3.4",
         "razorpay/razorpay": "^2.9",
+        "spatie/laravel-sitemap": "^8.0",
         "twilio/sdk": "^8.11"
     },
     "require-dev": {

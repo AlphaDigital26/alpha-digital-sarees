@@ -42,31 +42,41 @@ class LoginPopup extends Component
 
     public function authenticate()
     {
-        $this->validate([
-            'password' => 'required',
-        ]);
+        $executed = \Illuminate\Support\Facades\RateLimiter::attempt(
+            'login-attempts:'.$this->email,
+            5,
+            function() {
+                $this->validate([
+                    'password' => 'required',
+                ]);
 
-        $customer = Customer::where('email', $this->email)->first();
+                $customer = Customer::where('email', $this->email)->first();
 
-        if ($customer && \Illuminate\Support\Facades\Hash::check($this->password, $customer->password)) {
-            if (is_null($customer->email_verified_at)) {
-                $this->sendOtp($customer);
-                $this->step = 7; // Go to OTP verification step
-                return;
+                if ($customer && \Illuminate\Support\Facades\Hash::check($this->password, $customer->password)) {
+                    if (is_null($customer->email_verified_at)) {
+                        $this->sendOtp($customer);
+                        $this->step = 7; // Go to OTP verification step
+                        return;
+                    }
+
+                    Auth::guard('customer')->login($customer, $this->remember);
+                    
+                    // Merge guest cart and wishlist
+                    \App\Services\CartService::mergeGuestCartToCustomer();
+                    \App\Services\WishlistService::mergeGuestWishlistToCustomer();
+                    
+                    $this->redirectUrl = session()->pull('url.intended', request()->header('Referer') ?? '/');
+                    session()->regenerate();
+                    $this->processPendingWishlist();
+                    $this->step = 4;
+                } else {
+                    $this->addError('password', 'Incorrect password. Please try again.');
+                }
             }
+        );
 
-            Auth::guard('customer')->login($customer, $this->remember);
-            
-            // Merge guest cart and wishlist
-            \App\Services\CartService::mergeGuestCartToCustomer();
-            \App\Services\WishlistService::mergeGuestWishlistToCustomer();
-            
-            $this->redirectUrl = session()->pull('url.intended', request()->header('Referer') ?? '/');
-            session()->regenerate();
-            $this->processPendingWishlist();
-            $this->step = 4;
-        } else {
-            $this->addError('password', 'Incorrect password. Please try again.');
+        if (! $executed) {
+            $this->addError('email', 'Too many login attempts. Please try again later.');
         }
     }
 

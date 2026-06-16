@@ -92,7 +92,7 @@
             @if($address)
                 <p class="text-sm font-bold text-[#1b1c1a] mb-2">{{ $address->first_name }} {{ $address->last_name }} <span class="font-normal text-gray-500 ml-2">{{ $address->phone }}</span></p>
                 <div class="text-sm text-gray-600 leading-relaxed m-0">
-                    @if($address->company)<p class="m-0">{{ $address->company }}</p>@endif
+
                     <p class="m-0">{{ $address->address_1 }}</p>
                     @if($address->address_2)<p class="m-0">{{ $address->address_2 }}</p>@endif
                     <p class="m-0">{{ $address->city }}, {{ $address->province }} {{ $address->postal_code }}</p>

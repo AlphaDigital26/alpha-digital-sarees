@@ -20,7 +20,7 @@
             <div class="editorial-slider-container">
                 @foreach($products as $product)
                     <div class="editorial-card">
-                        <a href="{{ route('shop.product', $product->id) }}" class="editorial-card-link">
+                        <a href="{{ route('shop.product', $product->slug) }}" class="editorial-card-link">
                             @php
                                 $mainImg = is_array($product->images) && count($product->images) > 0 
                                     ? asset('storage/' . $product->images[0]) 

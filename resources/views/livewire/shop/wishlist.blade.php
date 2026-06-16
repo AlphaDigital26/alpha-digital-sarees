@@ -30,7 +30,7 @@
                         
                         <div class="relative w-full aspect-[4/5] bg-[#F4F0EB] overflow-hidden">
                             {{-- Image Link --}}
-                            <a href="{{ route('shop.product', $product->id) }}" wire:navigate class="block w-full h-full">
+                            <a href="{{ route('shop.product', $product->slug) }}" wire:navigate class="block w-full h-full">
                                 <img src="{{ $img }}" alt="{{ $product->name }}" class="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-700">
                             </a>
                             
@@ -42,7 +42,7 @@
                         
                         {{-- Details --}}
                         <div class="p-5 flex flex-col flex-grow">
-                            <a href="{{ route('shop.product', $product->id) }}" wire:navigate>
+                            <a href="{{ route('shop.product', $product->slug) }}" wire:navigate>
                                 <h3 class="text-lg font-bold text-[#1b1c1a] hover:text-[#800020] transition-colors line-clamp-1" style="font-family: 'Noto Serif', serif;">
                                     {{ $product->name }}
                                 </h3>

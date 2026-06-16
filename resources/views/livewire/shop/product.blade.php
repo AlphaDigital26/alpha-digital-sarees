@@ -1,3 +1,51 @@
+@push('scripts')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org/",
+  "@type": "Product",
+  "name": "{{ $product->name }}",
+  "image": [
+    @if(is_array($product->images))
+        @foreach($product->images as $img)
+            "{{ asset('storage/' . $img) }}"{{ !$loop->last ? ',' : '' }}
+        @endforeach
+    @endif
+  ],
+  "description": "{{ strip_tags($product->description) }}",
+  "sku": "{{ $product->id }}",
+  "offers": {
+    "@type": "Offer",
+    "url": "{{ request()->url() }}",
+    "priceCurrency": "INR",
+    "price": "{{ $product->current_price }}",
+    "itemCondition": "https://schema.org/NewCondition",
+    "availability": "{{ $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [{
+    "@type": "ListItem",
+    "position": 1,
+    "name": "Home",
+    "item": "{{ route('home') }}"
+  },{
+    "@type": "ListItem",
+    "position": 2,
+    "name": "Shop",
+    "item": "{{ route('shop.index') }}"
+  },{
+    "@type": "ListItem",
+    "position": 3,
+    "name": "{{ $product->name }}"
+  }]
+}
+</script>
+@endpush
+
 <main class="product-main">
     
     {{-- Removed upper inline notification, using toast instead --}}
@@ -330,7 +378,7 @@
                         
                         {{-- Sizing: 2 per row on mobile, 3 on tablet, 4 on large screens --}}
                         <div class="product-card group relative flex-none w-[calc(50%-8px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-24px)] snap-start">
-                            <a href="{{ route('shop.product', $simProduct->id) }}" wire:navigate class="block w-full h-full no-underline">
+                            <a href="{{ route('shop.product', $simProduct->slug) }}" wire:navigate class="block w-full h-full no-underline">
                                 
                                 {{-- Image Wrapper with Hover Effects --}}
                                 <div class="img-wrapper relative bg-[#F4F0EB] aspect-[3/4] overflow-hidden rounded-sm mb-4">
