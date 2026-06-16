@@ -106,6 +106,8 @@ class Product extends Component
 
 
 
+    public $ratingFilter = null;
+
     public function render()
     {
         // Fetch 3 similar products based on the same fabric (excluding this one)
@@ -126,9 +128,17 @@ class Product extends Component
                 ->get();
         }
 
+        // Fetch Reviews with optional rating filter
+        $reviewsQuery = $this->product->reviews()->latest();
+        if ($this->ratingFilter !== null) {
+            $reviewsQuery->where('rating', $this->ratingFilter);
+        }
+        $reviews = $reviewsQuery->get();
+
         return view('livewire.shop.product', [
             'similarProducts' => $similarProducts,
             'settings' => \App\Models\Setting::first(), // Pass settings to the frontend
+            'reviews' => $reviews,
         ]);
     }
 }
