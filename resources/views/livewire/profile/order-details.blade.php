@@ -746,7 +746,20 @@
 
     {{-- REVIEW MODAL --}}
     @if($reviewModalOpen)
-        <div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
+        <div x-data="{ _sy: 0 }" x-init="
+            _sy = window.pageYOffset;
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + _sy + 'px';
+            document.body.style.width = '100%';
+            document.body.style.overflowY = 'scroll';
+            return () => {
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+                document.body.style.overflowY = '';
+                window.scrollTo(0, _sy);
+            }
+        " class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
             <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('reviewModalOpen', false)"></div>
             <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 animate-fade-in-up m-auto flex flex-col max-h-[90vh]">
                 
@@ -854,7 +867,20 @@
 
     {{-- VIEW REVIEW MODAL --}}
     @if($viewReviewModalOpen && $viewingReview)
-        <div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
+        <div x-data="{ _sy: 0 }" x-init="
+            _sy = window.pageYOffset;
+            document.body.style.position = 'fixed';
+            document.body.style.top = '-' + _sy + 'px';
+            document.body.style.width = '100%';
+            document.body.style.overflowY = 'scroll';
+            return () => {
+                document.body.style.position = '';
+                document.body.style.top = '';
+                document.body.style.width = '';
+                document.body.style.overflowY = '';
+                window.scrollTo(0, _sy);
+            }
+        " class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
             <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('viewReviewModalOpen', false)"></div>
             <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 animate-fade-in-up m-auto flex flex-col max-h-[90vh]">
                 
