@@ -121,45 +121,7 @@
 
         <div class="product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" wire:loading.class="opacity-50">
             @forelse($products as $product)
-                <div class="product-card">
-                    <a href="{{ route('shop.product', $product->slug) }}" class="block">
-                        <div class="img-wrapper">
-                            @php
-                                $mainImageUrl = is_array($product->images) && count($product->images) > 0 
-                                    ? asset('storage/' . $product->images[0]) 
-                                    : 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80';
-                                $hoverImageUrl = is_array($product->images) && count($product->images) > 1 
-                                    ? asset('storage/' . $product->images[1]) 
-                                    : $mainImageUrl;
-                            @endphp
-                            <img src="{{ $mainImageUrl }}" alt="{{ $product->name }}" class="main-img">
-                            <img src="{{ $hoverImageUrl }}" alt="{{ $product->name }} (Hover)" class="hover-img">
-                            
-                            <button 
-    wire:click.prevent="toggleWishlist({{ $product->id }})" 
-    style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px); padding: 8px; border-radius: 50%; border: none; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s ease;"
-    onmouseover="this.style.transform='scale(1.1)'"
-    onmouseout="this.style.transform='scale(1)'"
-    title="Add to Wishlist"
->
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5" style="transition: all 0.3s; {{ in_array($product->id, \App\Services\WishlistService::getWishlistProductIds()) ? 'fill: #800020; color: #800020;' : 'fill: none; color: #706663;' }}">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                                </svg>
-</button>
-                        </div>
-                        <h3 class="mt-3 hover:text-indigo-600 transition-colors">{{ $product->name }}</h3>
-                    </a>
-                    <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
-                        <p class="font-bold text-[#800020] m-0 text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
-                        @if($product->original_price > $product->current_price)
-                            <p class="text-gray-400 line-through text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
-                            @php
-                                $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
-                            @endphp
-                            <span class="text-green-600 text-xs font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
-                        @endif
-                    </div>
-                </div>
+                <x-product-card :product="$product" :showWishlist="true" />
             @empty
                 <div style="grid-column: 1 / -1; text-align: center; padding: 3rem 0;">
                     <h3>No Sarees Found</h3>

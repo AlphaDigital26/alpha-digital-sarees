@@ -43,4 +43,13 @@ class Product extends Model
     public function reviews() {
         return $this->hasMany(Review::class);
     }
+
+    // Query Scopes
+    public function scopeNew($query) {
+        return $query->where('is_new', true);
+    }
+
+    public function scopeInStock($query) {
+        return $query->where('stock', '>', 0);
+    }
 }

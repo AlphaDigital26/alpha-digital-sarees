@@ -47,10 +47,10 @@
             <div class="footer-links">
                 <h4>SHOP</h4>
                 <a href="{{ $settings->shop_all_link ?? route('shop.index') }}">All Sarees</a>
-                <a href="#">Best Sellers</a>
+                <a href="{{ route('shop.index', ['filter' => 'best_seller']) }}">Best Sellers</a>
                 <a href="{{ route('shop.new-arrival') }}">New Arrivals</a>
-                <a href="#">Fabrics</a>
-                <a href="#">Ocassion</a>
+                <a href="{{ route('home') }}#fabrics">Fabrics</a>
+                <a href="{{ route('shop.occasion') }}">Ocassion</a>
             </div>
 
             <div class="footer-links">
@@ -64,9 +64,9 @@
 
             <div class="footer-links">
                 <h4>COMPANY</h4>
-                <a href="#">Our Story</a>
-                <a href="#">Artisans</a>
-                <a href="#">Sustainability</a>
+                <a href="{{ route('shop.about') }}">Our Story</a>
+                <a href="{{ route('shop.about') }}#artisans">Artisans</a>
+                <a href="{{ route('shop.about') }}#sustainability">Sustainability</a>
                 <a href="{{ route('home') }}#contact">Contact Us</a>
             </div>
 

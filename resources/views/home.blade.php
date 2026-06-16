@@ -140,33 +140,7 @@
         </div>
         <div class="product-grid">
             @forelse($bestSellers as $product)
-                <div class="product-card">
-                    <a href="{{ route('shop.product', $product->slug) }}" class="block">
-                        <div class="img-wrapper">
-                            @php
-                                $mainImg = is_array($product->images) && count($product->images) > 0 
-                                    ? asset('storage/' . $product->images[0]) 
-                                    : 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80';
-                                $hoverImg = is_array($product->images) && count($product->images) > 1 
-                                    ? asset('storage/' . $product->images[1]) 
-                                    : $mainImg;
-                            @endphp
-                            <img src="{{ $mainImg }}" alt="{{ $product->name }}" class="main-img">
-                            <img src="{{ $hoverImg }}" alt="{{ $product->name }} (Hover)" class="hover-img">
-                        </div>
-                        <h3>{{ $product->name }}</h3>
-                    </a>
-                    <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
-                        <p class="font-bold text-[#800020] m-0 text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
-                        @if($product->original_price > $product->current_price)
-                            <p class="text-gray-400 line-through text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
-                            @php
-                                $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
-                            @endphp
-                            <span class="text-green-600 text-xs font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
-                        @endif
-                    </div>
-                </div>
+                <x-product-card :product="$product" />
             @empty
                 <p class="text-gray-500 italic col-span-full">Add products to your admin panel and mark them as "Best Seller" to see them here.</p>
             @endforelse
@@ -183,40 +157,14 @@
         </div>
         <div class="product-grid">
             @forelse($latestCollection as $product)
-                <div class="product-card">
-                    <a href="{{ route('shop.product', $product->slug) }}" class="block">
-                        <div class="img-wrapper">
-                            @php
-                                $mainImg = is_array($product->images) && count($product->images) > 0 
-                                    ? asset('storage/' . $product->images[0]) 
-                                    : 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80';
-                                $hoverImg = is_array($product->images) && count($product->images) > 1 
-                                    ? asset('storage/' . $product->images[1]) 
-                                    : $mainImg;
-                            @endphp
-                            <img src="{{ $mainImg }}" alt="{{ $product->name }}" class="main-img">
-                            <img src="{{ $hoverImg }}" alt="{{ $product->name }} (Hover)" class="hover-img">
-                        </div>
-                        <h3>{{ $product->name }}</h3>
-                    </a>
-                    <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
-                        <p class="font-bold text-[#800020] m-0 text-sm whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
-                        @if($product->original_price > $product->current_price)
-                            <p class="text-gray-400 line-through text-xs m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
-                            @php
-                                $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
-                            @endphp
-                            <span class="text-green-600 text-[10px] font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
-                        @endif
-                    </div>
-                </div>
+                <x-product-card :product="$product" />
             @empty
                 <p class="text-gray-500 italic col-span-full">Add products to your admin panel and mark them as "New Arrival" to see them here.</p>
             @endforelse
         </div>
     </section>
 
-    <section class="content-section bg-neutral">
+    <section id="fabrics" class="content-section bg-neutral">
         <div class="section-header">
             <div>
                 <p class="subtitle">OUR TEXTURED HERITAGE</p>

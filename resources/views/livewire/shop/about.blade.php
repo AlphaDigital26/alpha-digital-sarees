@@ -16,7 +16,7 @@
         </div>
     </section>
 
-    <section class="craftsmanship-section">
+    <section id="artisans" class="craftsmanship-section">
         <div class="container craft-grid">
             <div class="craft-images">
                 @if($story->control_image_1)
@@ -39,7 +39,7 @@
         </div>
     </section>
 
-    <section class="journey-section">
+    <section id="sustainability" class="journey-section">
         <div class="container">
             <div class="journey-header" data-aos="fade-up">
                 <h2>{{ $story->heading_3 }}</h2>
