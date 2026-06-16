@@ -4,7 +4,7 @@ namespace App\Livewire\Checkout;
 
 use Livewire\Component;
 
-class Address extends Component
+class Address extends BaseCheckoutComponent
 {
     public $addresses = [];
     public $selectedAddressId;
@@ -23,12 +23,13 @@ class Address extends Component
 
     public function mount()
     {
+        $this->ensureAuthenticated();
         $this->loadAddresses();
     }
 
     public function loadAddresses()
     {
-        $this->addresses = auth('customer')->user()->addresses()->get();
+        $this->addresses = $this->getCustomer()->addresses()->get();
         if ($this->addresses->count() > 0 && !$this->selectedAddressId) {
             $default = $this->addresses->where('is_default', true)->first();
             $this->selectedAddressId = $default ? $default->id : $this->addresses->first()->id;
@@ -52,11 +53,11 @@ class Address extends Component
         ]);
 
         if ($this->is_default) {
-            auth('customer')->user()->addresses()->update(['is_default' => false]);
+            $this->getCustomer()->addresses()->update(['is_default' => false]);
         }
 
         $address = \App\Models\Address::create([
-            'customer_id' => auth('customer')->id(),
+            'customer_id' => $this->getCustomer()->id,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
 

@@ -107,7 +107,7 @@ class Order extends Model
             }
             
             if ($order->wasChanged('status') && strtolower($order->status) === 'delivered') {
-                \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderDeliveredMail($order));
+                \Illuminate\Support\Facades\Mail::to($order->customer->email)->send(new \App\Mail\OrderNotificationMail($order, 'delivered'));
             }
         });
     }

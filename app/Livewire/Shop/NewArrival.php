@@ -56,7 +56,7 @@ class NewArrival extends Component
     public function render()
     {
         // Start with only new arrivals
-        $query = Product::where('is_new', true);
+        $query = Product::new();
 
         // 1. Apply Fabric Filter
         if ($this->selectedFabric) {

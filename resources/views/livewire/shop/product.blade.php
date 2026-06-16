@@ -1,28 +1,5 @@
 @push('scripts')
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org/",
-  "@type": "Product",
-  "name": "{{ $product->name }}",
-  "image": [
-    @if(is_array($product->images))
-        @foreach($product->images as $img)
-            "{{ asset('storage/' . $img) }}"{{ !$loop->last ? ',' : '' }}
-        @endforeach
-    @endif
-  ],
-  "description": "{{ strip_tags($product->description) }}",
-  "sku": "{{ $product->id }}",
-  "offers": {
-    "@type": "Offer",
-    "url": "{{ request()->url() }}",
-    "priceCurrency": "INR",
-    "price": "{{ $product->current_price }}",
-    "itemCondition": "https://schema.org/NewCondition",
-    "availability": "{{ $product->stock > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock' }}"
-  }
-}
-</script>
+<x-seo.schema type="product" :data="$product" />
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",

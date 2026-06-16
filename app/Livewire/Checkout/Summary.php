@@ -10,7 +10,7 @@ use Razorpay\Api\Api;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\RateLimiter;
 
-class Summary extends Component
+class Summary extends BaseCheckoutComponent
 {
     public $address;
     public $cartDetails;
@@ -22,80 +22,14 @@ class Summary extends Component
 
     public function mount()
     {
-        $addressId = session()->get('checkout_address_id');
-        
-        // Auto-select default address if not in session
-        if (!$addressId && auth('customer')->check()) {
-            $defaultAddress = auth('customer')->user()->addresses()->where('is_default', true)->first() 
-                           ?? auth('customer')->user()->addresses()->first();
-            if ($defaultAddress) {
-                $addressId = $defaultAddress->id;
-                session()->put('checkout_address_id', $addressId);
-            }
+        $validation = $this->validateCheckout();
+        // If validateCheckout returned a redirect, Livewire handles it automatically via the Redirector
+        if (is_object($validation) && method_exists($validation, 'getStatusCode')) {
+            return $validation; // though Livewire redirects usually abort
         }
-
-        if (!$addressId) return redirect()->route('checkout.address');
         
-        $this->address = Address::find($addressId);
-        $this->cartDetails = $this->getCartData();
-        
-        if (empty($this->cartDetails['items'])) return redirect()->route('cart');
-    }
-
-    private function getCartData()
-    {
-        // Use buy_now_cart if it exists
-        if (session()->has('buy_now_cart')) {
-            $sessionCart = session()->get('buy_now_cart');
-            $items = [];
-            $subtotal = 0;
-            $originalPriceTotal = 0;
-            $totalItems = 0;
-
-            if (!empty($sessionCart)) {
-                $products = Product::whereIn('id', array_keys($sessionCart))->get();
-                foreach ($products as $product) {
-                    $qty = $sessionCart[$product->id] ?? 1;
-                    $items[] = ['product' => $product, 'qty' => $qty];
-                    $subtotal += ($product->current_price * $qty); 
-                    $origPrice = $product->original_price > 0 ? $product->original_price : $product->current_price;
-                    $originalPriceTotal += ($origPrice * $qty);
-                    $totalItems += $qty;
-                }
-            }
-
-            $shipping = ($subtotal > 10000 || $subtotal == 0) ? 0 : 150;
-            $discount = $originalPriceTotal - $subtotal;
-
-            return [
-                'items' => $items, 
-                'subtotal' => $subtotal, 
-                'original_price_total' => $originalPriceTotal,
-                'discount' => $discount,
-                'total_items' => $totalItems,
-                'shipping' => $shipping, 
-                'total' => $subtotal + $shipping
-            ];
-        }
-
-        // Use CartService for normal cart
-        $cart = \App\Services\CartService::getCart();
-        
-        // Reformat items array to match existing structure
-        $items = [];
-        foreach ($cart['items'] as $item) {
-            $items[] = ['product' => $item['product'], 'qty' => $item['qty']];
-        }
-
-        return [
-            'items' => $items,
-            'subtotal' => $cart['subtotal'],
-            'original_price_total' => $cart['totalOriginalPrice'],
-            'discount' => $cart['totalDiscount'],
-            'total_items' => $cart['totalItems'],
-            'shipping' => $cart['shipping'],
-            'total' => $cart['total']
-        ];
+        $this->address = $validation['address'];
+        $this->cartDetails = $validation['cart'];
     }
 
     public function payWithRazorpay()
@@ -200,12 +134,12 @@ class Summary extends Component
             });
 
             // Customer Emails
-            \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderConfirmedMail($order));
-            \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\PaymentSuccessMail($order));
+            \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderNotificationMail($order, 'confirmed'));
+            \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderNotificationMail($order, 'payment_success'));
             
             // Admin Email
             if ($adminEmail) {
-                \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\AdminNewOrderMail($order));
+                \Illuminate\Support\Facades\Mail::to($adminEmail)->send(new \App\Mail\OrderNotificationMail($order, 'admin_new_order'));
             }
 
             // Clear carts if applicable
@@ -236,7 +170,7 @@ class Summary extends Component
             $order = Order::find($this->currentOrderId);
             if ($order && $order->status === 'pending') {
                 $order->update(['status' => 'failed', 'payment_status' => 'failed']);
-                \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderFailedMail($order));
+                \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderNotificationMail($order, 'failed'));
             }
         }
         $this->showFailureModal = true;
