@@ -355,7 +355,7 @@
                         
                         {{-- Sizing: 2 per row on mobile, 3 on tablet, 4 on large screens --}}
                         <div class="product-card group relative flex-none w-[calc(50%-8px)] md:w-[calc(33.333%-16px)] lg:w-[calc(25%-24px)] snap-start">
-                            <a href="{{ route('shop.product', $simProduct->slug) }}" wire:navigate class="block w-full h-full no-underline">
+                            <a href="{{ route('shop.product', $simProduct->slug ?? $simProduct->id) }}" wire:navigate class="block w-full h-full no-underline">
                                 
                                 {{-- Image Wrapper with Hover Effects --}}
                                 <div class="img-wrapper relative bg-[#F4F0EB] aspect-[3/4] overflow-hidden rounded-sm mb-4">

@@ -1,7 +1,7 @@
 @props(['product', 'showWishlist' => false, 'isNewArrival' => false])
 
 <div class="{{ $isNewArrival ? 'arrival-card' : 'product-card' }}" style="{{ $isNewArrival ? 'position: relative;' : '' }}" wire:key="product-{{ $product->id }}">
-    <a href="{{ route('shop.product', $product->slug) }}" class="block" @if($isNewArrival) wire:navigate style="text-decoration: none; color: inherit; display: block; position: relative;" @endif>
+    <a href="{{ route('shop.product', $product->slug ?? $product->id) }}" class="block" @if($isNewArrival) wire:navigate style="text-decoration: none; color: inherit; display: block; position: relative;" @endif>
         <div class="{{ $isNewArrival ? 'img-box' : 'img-wrapper' }}" @if($isNewArrival) style="position: relative;" @endif>
             @php
                 $mainImg = is_array($product->images) && count($product->images) > 0 
