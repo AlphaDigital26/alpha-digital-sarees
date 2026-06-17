@@ -5,7 +5,12 @@
 @tailwind utilities;
 
 @layer base {
-  html, body {
+  html {
+    /* NOTE: overflow-x MUST stay off html so position:sticky works on sidebars.
+       Horizontal overflow is controlled at body level instead. */
+    scroll-behavior: smooth;
+  }
+  body {
     @apply overflow-x-hidden;
   }
   body {
@@ -362,19 +367,31 @@
 
   /* Shop Page Specific Styles */
   .shop-container {
-    @apply flex flex-col md:flex-row py-12 px-[5%] gap-8 md:gap-16 bg-neutral min-h-screen mt-[76px];
+    @apply flex flex-col md:flex-row py-10 px-[4%] gap-6 md:gap-12 bg-neutral min-h-screen mt-[76px];
   }
   
   .sidebar {
-    @apply w-full md:w-[260px] md:min-w-[260px] md:max-w-[260px] shrink-0 relative md:sticky top-0 md:top-[100px] h-fit md:max-h-[calc(100vh-120px)] overflow-y-auto scrollbar-hide;
+    @apply w-full md:w-[210px] md:min-w-[210px] md:max-w-[210px] shrink-0;
+    /* Sticky filter panel — stays in place while products scroll */
+    position: sticky;
+    top: 96px;
+    height: calc(100vh - 110px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    align-self: flex-start;
+    /* Hidden scrollbar */
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
+  .sidebar::-webkit-scrollbar { display: none; }
   
   .filter-title {
-    @apply font-serif text-[1.4rem] tracking-[2px] text-primary border-b border-[#E5E0DA] pb-4 mb-8;
+    @apply font-serif text-[1rem] tracking-[3px] text-primary pb-3 mb-5;
+    border-bottom: 1px solid #E5E0DA;
   }
   
   .filter-group {
-    @apply mb-10 border-b border-[#E5E0DA]/50 pb-6;
+    @apply mb-0 border-b border-[#E5E0DA]/40 py-4;
   }
   
   .filter-group:last-child {
@@ -382,19 +399,23 @@
   }
   
   .filter-group h3 {
-    @apply flex justify-between items-center font-sans text-[0.75rem] font-extrabold uppercase tracking-[1.5px] text-secondary cursor-pointer select-none;
+    @apply flex justify-between items-center font-sans text-[0.68rem] font-extrabold uppercase tracking-[1.8px] text-[#706663] cursor-pointer select-none py-0;
+    transition: color 0.2s;
+  }
+  .filter-group h3:hover {
+    @apply text-primary;
   }
   
   .filter-content {
-    @apply pt-5;
+    @apply pt-3;
   }
   
   .filter-group label {
-    @apply flex items-center font-sans text-[0.9rem] mb-3 cursor-pointer text-[#2A211F] transition-colors duration-300 hover:text-primary;
+    @apply flex items-center font-sans text-[0.8rem] mb-2 cursor-pointer text-[#555] transition-colors duration-200 hover:text-primary;
   }
   
   .filter-group input[type="checkbox"], .filter-group input[type="radio"] {
-    @apply accent-primary mr-3 w-4 h-4;
+    @apply accent-primary mr-2.5 w-3.5 h-3.5;
   }
   
   .color-options {
@@ -418,11 +439,11 @@
   }
   
   .listing-area {
-    @apply grow;
+    @apply grow min-w-0;
   }
   
   .listing-header {
-    @apply flex justify-between items-center mb-10 font-sans;
+    @apply flex justify-between items-center mb-7 font-sans;
   }
   
   .item-count {

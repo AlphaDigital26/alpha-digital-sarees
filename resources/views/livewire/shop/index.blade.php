@@ -1,5 +1,8 @@
 
-<main class="shop-container" x-data="{ mobileFiltersOpen: false }">
+<main class="shop-container" x-data="{ mobileFiltersOpen: false }" x-init="
+    // Close mobile filter panel whenever this page is (re)loaded or navigated to
+    document.addEventListener('livewire:navigated', () => { mobileFiltersOpen = false; });
+">
     <!-- Mobile Filter Toggle Button -->
     <div class="md:hidden w-full mb-4">
         <button @click="mobileFiltersOpen = !mobileFiltersOpen" class="w-full flex items-center justify-between bg-white border border-[#E5E0DA] py-3 px-4 font-sans font-bold text-[#2A211F] text-[0.8rem] tracking-[1px] shadow-sm">
@@ -19,11 +22,11 @@
             @endif
         </div>
         
-        <div class="filter-group" x-data="{ open: true }">
+        <div class="filter-group" x-data="{ open: false }">
             <h3 @click="open = !open">
                 FABRIC
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                <svg x-show="open" style="display: none;" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
             <div class="filter-content max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 @foreach($fabrics as $fabric)
@@ -35,11 +38,11 @@
             </div>
         </div>
 
-        <div class="filter-group" x-data="{ open: true }">
+        <div class="filter-group" x-data="{ open: false }">
             <h3 @click="open = !open">
                 COLOR
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                <svg x-show="open" style="display: none;" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
             <div class="filter-content flex flex-col gap-3 mt-4 max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 @foreach($colors as $color)
@@ -67,11 +70,11 @@
             </div>
         </div>
 
-        <div class="filter-group" x-data="{ open: true }">
+        <div class="filter-group" x-data="{ open: false }">
             <h3 @click="open = !open">
                 PRICE
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                <svg x-show="open" style="display: none;" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
             <div class="filter-content max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 <label><input type="radio" wire:model.live="priceRange" value="under_5k"> Under 5k</label>
@@ -88,11 +91,11 @@
             </div>
         </div>
 
-        <div class="filter-group" x-data="{ open: true }">
+        <div class="filter-group" x-data="{ open: false }">
             <h3 @click="open = !open">
                 PATTERN
                 <svg x-show="!open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" /></svg>
-                <svg x-show="open" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="display: none;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
+                <svg x-show="open" style="display: none;" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
             <div class="filter-content max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
                 @foreach($patterns as $pattern)
