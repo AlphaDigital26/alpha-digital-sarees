@@ -140,7 +140,7 @@
         </div>
         <div class="product-grid">
             @forelse($bestSellers as $product)
-                <x-product-card :product="$product" />
+                <x-product-card :product="$product" :inlinePricing="true" />
             @empty
                 <p class="text-gray-500 italic col-span-full">Add products to your admin panel and mark them as "Best Seller" to see them here.</p>
             @endforelse
@@ -157,7 +157,7 @@
         </div>
         <div class="product-grid">
             @forelse($latestCollection as $product)
-                <x-product-card :product="$product" />
+                <x-product-card :product="$product" :inlinePricing="true" />
             @empty
                 <p class="text-gray-500 italic col-span-full">Add products to your admin panel and mark them as "New Arrival" to see them here.</p>
             @endforelse
@@ -224,25 +224,25 @@
     <section class="heritage-crafted">
         <div class="heritage-container">
             <div class="heritage-text">
-                <p class="subtitle">ESTABLISHED 1994</p>
-                <h2>The thread that connects generations.</h2>
+                <p class="subtitle">Established With 20 Years Of Experience</p>
+                <h2>Crafting designs that bring brands to life.</h2>
                 <p class="heritage-description">
-                    Founded on the principles of preserving traditional Indian handlooms, ALMAARI brings you curated handlooms that tell a story of artisanal mastery and timeless elegance. Each weave is a testament to the hands that crafted it.
+                    Built on two decades of expertise, Alpha Digital combines creativity, advanced digital printing, and skilled craftsmanship to deliver exceptional results. Led by experienced partners and powered by in-house production, we ensure every project reflects quality, precision, and innovation from concept to completion.
                 </p>
                 <div class="heritage-cta">
                     <a href="{{ route('shop.about') }}" wire:navigate class="btn-heritage inline-block text-center" style="line-height: inherit; text-decoration: none;">OUR JOURNEY</a>
                     <div class="craft-mark">
-                        <span class="gold-text">Handcrafted with love</span>
+                        <span class="gold-text">Made for Elegance</span>
                     </div>
                 </div>
             </div>
 
             <div class="heritage-visual">
                 <div class="main-image-frame">
-                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" class="heritage-main-img" alt="Artisan Weaver">
+                    <img src="{{ asset('images/heritage-main-opt.jpg') }}" class="heritage-main-img" alt="Butterfly Saree">
                 </div>
                 <div class="overlap-image-frame">
-                    <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" class="heritage-sub-img" alt="Loom Detail">
+                    <img src="{{ asset('images/heritage-sub.jpg') }}" class="heritage-sub-img" alt="Butterfly Fabric Detail">
                 </div>
                 <div class="heritage-accent-box"></div>
             </div>

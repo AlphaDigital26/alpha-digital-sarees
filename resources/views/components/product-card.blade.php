@@ -1,4 +1,4 @@
-@props(['product', 'showWishlist' => false, 'isNewArrival' => false])
+@props(['product', 'showWishlist' => false, 'isNewArrival' => false, 'inlinePricing' => false])
 
 <div class="{{ $isNewArrival ? 'arrival-card' : 'product-card' }}" style="{{ $isNewArrival ? 'position: relative;' : '' }}" wire:key="product-{{ $product->id }}">
     <a href="{{ route('shop.product', $product->slug ?? $product->id) }}" class="block" @if($isNewArrival) wire:navigate style="text-decoration: none; color: inherit; display: block; position: relative;" @endif>
@@ -36,30 +36,68 @@
         @if($isNewArrival)
         <div class="arrival-info">
             <h3>{{ $product->name }}</h3>
-            <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
-                <p class="font-bold text-[#800020] m-0 text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
+            @if($inlinePricing)
+                <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2 mt-1 mb-2">
+                    <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
+                    @if($product->original_price > $product->current_price)
+                        <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                        @php
+                            $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
+                        @endphp
+                        <span class="text-green-600 text-xs font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
+                    @endif
+                </div>
+            @else
+                <div class="flex flex-col items-center justify-center mt-1 mb-2">
+                    <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2">
+                        <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
+                        @if($product->original_price > $product->current_price)
+                            <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                        @endif
+                    </div>
+                    @if($product->original_price > $product->current_price)
+                        @php
+                            $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
+                        @endphp
+                        <span class="text-green-600 text-xs font-bold whitespace-nowrap mt-1">({{ $discountPercent }}% OFF)</span>
+                    @else
+                        <span class="text-transparent text-xs font-bold whitespace-nowrap mt-1 select-none" aria-hidden="true">&nbsp;</span>
+                    @endif
+                </div>
+            @endif
+            <button class="btn-view" tabindex="-1">QUICK VIEW</button>
+        </div>
+        @else
+        <h3>{{ $product->name }}</h3>
+        @if($inlinePricing)
+            <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2 mt-1 mb-2">
+                <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                 @if($product->original_price > $product->current_price)
-                    <p class="text-gray-400 line-through text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                    <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
                     @php
                         $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
                     @endphp
                     <span class="text-green-600 text-xs font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
                 @endif
             </div>
-            <button class="btn-view" tabindex="-1">QUICK VIEW</button>
-        </div>
         @else
-        <h3>{{ $product->name }}</h3>
-        <div class="flex flex-wrap items-baseline justify-center gap-x-2 gap-y-1 mt-1 mb-2">
-            <p class="font-bold text-[#800020] m-0 text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
-            @if($product->original_price > $product->current_price)
-                <p class="text-gray-400 line-through text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
-                @php
-                    $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
-                @endphp
-                <span class="text-green-600 text-xs font-bold whitespace-nowrap">({{ $discountPercent }}% OFF)</span>
-            @endif
-        </div>
+            <div class="flex flex-col items-center justify-center mt-1 mb-2">
+                <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2">
+                    <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
+                    @if($product->original_price > $product->current_price)
+                        <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                    @endif
+                </div>
+                @if($product->original_price > $product->current_price)
+                    @php
+                        $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
+                    @endphp
+                    <span class="text-green-600 text-xs font-bold whitespace-nowrap mt-1">({{ $discountPercent }}% OFF)</span>
+                @else
+                    <span class="text-transparent text-xs font-bold whitespace-nowrap mt-1 select-none" aria-hidden="true">&nbsp;</span>
+                @endif
+            </div>
+        @endif
         @endif
     </a>
 </div>
