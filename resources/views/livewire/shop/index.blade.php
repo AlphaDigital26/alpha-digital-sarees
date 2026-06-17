@@ -119,7 +119,7 @@
             </div>
         </div>
 
-        <div class="product-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6" wire:loading.class="opacity-50">
+        <div class="product-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6" wire:loading.class="opacity-50">
             @forelse($products as $product)
                 <x-product-card :product="$product" :showWishlist="true" />
             @empty

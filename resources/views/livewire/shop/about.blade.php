@@ -32,7 +32,7 @@
                 @endif
             </div>
             <div class="craft-text" data-aos="fade-left" data-aos-delay="200">
-                <span class="label">CRAFTSMANSHIP</span>
+                <span class="label inline-block mb-4 sm:mb-6">CRAFTSMANSHIP</span>
                 <h2>{{ $story->heading_2 }}</h2>
                 <p>{!! nl2br(e($story->para_2)) !!}</p>
             </div>
