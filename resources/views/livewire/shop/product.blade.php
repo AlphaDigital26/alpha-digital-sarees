@@ -226,9 +226,13 @@
 
             <div class="purchase-controls">
                 {{-- Stock Status --}}
-                @if($product->stock > 0)
+                @if($product->stock > 5)
                     <span class="stock-status text-green-600 font-bold block italic text-sm mb-2">
-                        In Stock ({{ $product->stock }} left)
+                        In Stock
+                    </span>
+                @elseif($product->stock > 0)
+                    <span class="stock-status text-orange-500 font-bold block italic text-sm mb-2">
+                        Only {{ $product->stock }} left
                     </span>
                 @else
                     <span class="stock-status text-red-500 font-bold block italic text-sm mb-2">

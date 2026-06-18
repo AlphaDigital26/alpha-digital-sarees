@@ -53,6 +53,12 @@ class LoginPopup extends Component
                 $customer = Customer::where('email', $this->email)->first();
 
                 if ($customer && \Illuminate\Support\Facades\Hash::check($this->password, $customer->password)) {
+                    // Age restriction check
+                    if ($customer->dob && \Carbon\Carbon::parse($customer->dob)->age < 18) {
+                        $this->addError('email', 'You must be at least 18 years old to log in to this website.');
+                        return;
+                    }
+
                     if (is_null($customer->email_verified_at)) {
                         $this->sendOtp($customer);
                         $this->step = 7; // Go to OTP verification step
@@ -102,9 +108,11 @@ class LoginPopup extends Component
             'last_name' => 'required|string|max:100',
             'phone' => 'required|numeric|digits:10|unique:customers,phone',
             'password' => 'required|string|min:6|confirmed',
-            'dob' => 'required|date',
+            'dob' => 'required|date|before_or_equal:-18 years',
             'gender' => 'required|string',
             'agree_tos' => 'accepted', 
+        ], [
+            'dob.before_or_equal' => 'You must be at least 18 years old to create an account.',
         ]);
 
         $customer = Customer::create([

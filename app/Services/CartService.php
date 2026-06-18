@@ -121,6 +121,9 @@ class CartService
         $cart = Cart::where($identifier)->where('product_id', $productId)->first();
 
         if ($cart) {
+            if ($cart->quantity >= $product->stock) {
+                return false; // Already at max stock
+            }
             $newQty = $cart->quantity + $qty;
             if ($newQty <= $product->stock) {
                 $cart->update(['quantity' => $newQty]);
@@ -128,6 +131,7 @@ class CartService
                 $cart->update(['quantity' => $product->stock]);
             }
         } else {
+            if ($product->stock < 1) return false;
             Cart::create(array_merge($identifier, [
                 'product_id' => $productId,
                 'quantity' => min($qty, $product->stock)
