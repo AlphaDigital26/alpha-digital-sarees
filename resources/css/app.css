@@ -372,18 +372,23 @@
   
   .sidebar {
     @apply w-full md:w-[210px] md:min-w-[210px] md:max-w-[210px] shrink-0;
-    /* Sticky filter panel — stays in place while products scroll */
-    position: sticky;
-    top: 96px;
-    height: calc(100vh - 110px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    align-self: flex-start;
-    /* Hidden scrollbar */
-    scrollbar-width: none;
-    -ms-overflow-style: none;
   }
-  .sidebar::-webkit-scrollbar { display: none; }
+  
+  @media (min-width: 768px) {
+    .sidebar {
+      /* Sticky filter panel — stays in place while products scroll */
+      position: sticky;
+      top: 96px;
+      height: calc(100vh - 110px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      align-self: flex-start;
+      /* Hidden scrollbar */
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+    }
+    .sidebar::-webkit-scrollbar { display: none; }
+  }
   
   .filter-title {
     @apply font-serif text-[1rem] tracking-[3px] text-primary pb-3 mb-5;
