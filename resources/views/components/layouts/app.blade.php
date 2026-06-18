@@ -1,9 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ $metaTitle ?? $title ?? 'ALPHA DIGITAL | The Heirloom Collection' }}</title>
+    
+    <title>{{ $metaTitle ?? $title ?? 'Alpha Digital Saree | Shop the Best Adsarees Online' }}</title>
+
     <x-seo.meta 
         :metaTitle="$metaTitle ?? null"
         :title="$title ?? null"
@@ -11,8 +13,9 @@
         :metaKeywords="$metaKeywords ?? null"
         :ogType="$ogType ?? null"
         :ogImage="$ogImage ?? null"
-        :canonicalUrl="$canonicalUrl ?? null"
+        :canonicalUrl="$canonicalUrl ?? url()->current()" 
     />
+
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&family=Noto+Serif:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     
@@ -27,8 +30,8 @@
         $settings = \App\Models\Setting::getSiteSettings();
     @endphp
     @if($settings && $settings->favicon_image)
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings->favicon_image) }}?v={{ time() }}">
-        <link rel="shortcut icon" href="{{ asset('storage/' . $settings->favicon_image) }}?v={{ time() }}">
+        <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings->favicon_image) }}">
+        <link rel="apple-touch-icon" href="{{ asset('storage/' . $settings->favicon_image) }}">
     @endif
 </head>
 <body>

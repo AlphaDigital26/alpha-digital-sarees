@@ -45,7 +45,7 @@
                  class="absolute right-0 mt-6 w-64 bg-[#F4F0EB]/95 backdrop-blur-xl border border-[#E5E0DA] shadow-2xl rounded-2xl py-2 z-50 text-left overflow-hidden">
                 
                 <div class="px-6 py-4 bg-white/50 mb-2 border-b border-[#E5E0DA]/50">
-                    <p class="text-[10px] font-bold text-[#706663] uppercase tracking-widest font-sans">Welcome back,</p>
+                    <p class="text-[10px] font-bold text-[#706663] uppercase tracking-widest font-sans">Welcome,</p>
                     <p class="text-lg font-medium text-[#1b1c1a] truncate mt-1" style="font-family: 'Noto Serif', serif;">
                         {{ auth('customer')->user()->name ?? 'User' }}
                     </p>

@@ -17,6 +17,11 @@ use App\Livewire\Shop\Product as ProductComponent;
 use App\Models\Carousel;
 use App\Models\Product as ProductModel; 
 
+// --- AUTH REDIRECT ---
+Route::get('/login', function () {
+    return redirect()->route('home');
+})->name('login');
+
 // --- HOME PAGE (Combined into a single route) ---
 Route::get('/', function () {
     return view('home', [

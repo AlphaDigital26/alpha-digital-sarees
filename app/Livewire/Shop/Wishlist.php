@@ -24,14 +24,19 @@ class Wishlist extends Component
 
     public function moveToCart($productId)
     {
-        CartService::add($productId);
-        WishlistService::remove($productId); // Removing it from wishlist since it's "moved"
+        $added = CartService::add($productId);
         
-        $this->dispatch('cart-updated');
-        $this->dispatch('wishlist-updated');
-        
-        session()->flash('success', 'Added to your Shopping Bag!');
-        return redirect()->route('cart');
+        if ($added) {
+            WishlistService::remove($productId); // Removing it from wishlist since it's "moved"
+            
+            $this->dispatch('cart-updated');
+            $this->dispatch('wishlist-updated');
+            
+            session()->flash('success', 'Added to your Shopping Bag!');
+            return redirect()->route('cart');
+        } else {
+            $this->dispatch('toast', msg: 'Cannot add to cart. Maximum stock reached.', type: 'error');
+        }
     }
 
     public function render()

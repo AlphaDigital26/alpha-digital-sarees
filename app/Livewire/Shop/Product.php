@@ -4,6 +4,7 @@ namespace App\Livewire\Shop;
 
 use Livewire\Component;
 use App\Models\Product as ProductModel;
+use Illuminate\Support\Str;
 
 class Product extends Component
 {
@@ -56,14 +57,20 @@ class Product extends Component
 
     public function addToCart($productId, $isBuyNow = false)
     {
-        \App\Services\CartService::add($productId, $this->quantity);
+        $added = \App\Services\CartService::add($productId, $this->quantity);
         
         if (!$isBuyNow) {
-            $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
+            if ($added) {
+                $this->dispatch('toast', msg: 'Item added to cart', type: 'success');
+            } else {
+                $this->dispatch('toast', msg: 'Maximum stock limit reached', type: 'error');
+            }
         }
 
-        // Update cart counter (if navbar is listening)
-        $this->dispatch('cart-updated');
+        if ($added) {
+            // Update cart counter (if navbar is listening)
+            $this->dispatch('cart-updated');
+        }
     }
 
     // Handles the "Buy It Now" button
@@ -115,43 +122,40 @@ class Product extends Component
     public $ratingFilter = null;
 
     public function render()
-    {
-        // Fetch 3 similar products based on the same fabric (excluding this one)
-        $similarProducts = collect();
-        if ($this->product->fabric_id) {
-            $similarProducts = ProductModel::where('fabric_id', $this->product->fabric_id)
-                ->where('id', '!=', $this->product->id)
-                ->latest()
-                ->take(3)
-                ->get();
-        }
+{
+    // 1. Similar Products (Efficient Query)
+    $similarProducts = \App\Models\Product::where('fabric_id', $this->product->fabric_id)
+        ->where('id', '!=', $this->product->id)
+        ->latest()
+        ->take(3)
+        ->get();
 
-        // If no products match the fabric, just grab 3 random ones as a fallback
-        if ($similarProducts->isEmpty()) {
-            $similarProducts = ProductModel::where('id', '!=', $this->product->id)
-                ->inRandomOrder()
-                ->take(3)
-                ->get();
-        }
-
-        // Fetch Reviews with optional rating filter
-        $reviewsQuery = $this->product->reviews()->latest();
-        if ($this->ratingFilter !== null) {
-            $reviewsQuery->where('rating', $this->ratingFilter);
-        }
-        $reviews = $reviewsQuery->get();
-
-        return view('livewire.shop.product', [
-            'similarProducts' => $similarProducts,
-            'settings' => \App\Models\Setting::first(), // Pass settings to the frontend
-            'reviews' => $reviews,
-        ])->layout('components.layouts.app', [
-            'metaTitle' => $this->product->meta_title ?: $this->product->name . ' | ALPHA DIGITAL',
-            'metaDescription' => $this->product->meta_description ?: \Illuminate\Support\Str::limit(strip_tags($this->product->description), 150),
-            'metaKeywords' => $this->product->meta_keywords ?: 'saree, ' . optional($this->product->fabric)->name,
-            'canonicalUrl' => $this->product->canonical_url ?: route('shop.product', $this->product->slug),
-            'ogImage' => (is_array($this->product->images) && count($this->product->images) > 0) ? asset('storage/' . $this->product->images[0]) : asset('images/default-og.jpg'),
-            'ogType' => 'product',
-        ]);
+    if ($similarProducts->isEmpty()) {
+        $similarProducts = \App\Models\Product::where('id', '!=', $this->product->id)
+            ->inRandomOrder()
+            ->take(3)
+            ->get();
     }
+
+    // 2. Reviews (Logic is fine)
+    $reviewsQuery = $this->product->reviews()->latest();
+    if ($this->ratingFilter !== null) {
+        $reviewsQuery->where('rating', $this->ratingFilter);
+    }
+    $reviews = $reviewsQuery->get();
+
+    // 3. Return View with dynamic SEO (The correct way)
+    return view('livewire.shop.product', [
+        'similarProducts' => $similarProducts,
+        'settings' => \Illuminate\Support\Facades\Cache::remember('site_settings', 3600, fn() => \App\Models\Setting::first()),
+        'reviews' => $reviews,
+    ])->layout('components.layouts.app', [
+        'metaTitle' => $this->product->meta_title ?: $this->product->name . ' | Alpha Digital',
+        'metaDescription' => $this->product->meta_description ?: Str::limit(strip_tags($this->product->description), 150),
+        'metaKeywords' => $this->product->meta_keywords ?: 'saree, ' . optional($this->product->fabric)->name,
+        'canonicalUrl' => $this->product->canonical_url ?: route('shop.product', $this->product->slug),
+        'ogImage' => !empty($this->product->images) ? asset('storage/' . $this->product->images[0]) : asset('images/default-og.jpg'),
+        'ogType' => 'product',
+    ]);
+}
 }

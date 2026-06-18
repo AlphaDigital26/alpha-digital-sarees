@@ -38,7 +38,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            ->path('admin')
+            ->path('alpha-portal')
             ->login()
             ->sidebarWidth('18rem')
             ->collapsedSidebarWidth('4rem')
