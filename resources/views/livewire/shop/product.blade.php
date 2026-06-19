@@ -159,7 +159,7 @@
                         src="{{ asset('storage/' . $activeImage) }}"
                         id="expandedImg"
                         wire:loading.class="opacity-50"
-                        class="transition-opacity duration-200 w-full h-full object-cover"
+                        class="transition-opacity duration-200 main-image-styled"
                     >
                     
                     <!-- Amazon-style Zoom Pane (Hidden on mobile) -->
