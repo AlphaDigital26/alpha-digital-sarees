@@ -43,7 +43,7 @@ class Setting extends Model
             $changed = false;
 
             if ($model->logo_image) {
-                $newLogoPath = $model->optimizeImageToWebp($model->logo_image);
+                $newLogoPath = $model->optimizeImageToWebp($model->logo_image, 600, 600);
                 if ($newLogoPath !== $model->logo_image) {
                     $model->logo_image = $newLogoPath;
                     $changed = true;
@@ -51,7 +51,7 @@ class Setting extends Model
             }
 
             if ($model->footer_background_image) {
-                $newFooterBg = $model->optimizeImageToWebp($model->footer_background_image);
+                $newFooterBg = $model->optimizeImageToWebp($model->footer_background_image, 1920, 1080);
                 if ($newFooterBg !== $model->footer_background_image) {
                     $model->footer_background_image = $newFooterBg;
                     $changed = true;

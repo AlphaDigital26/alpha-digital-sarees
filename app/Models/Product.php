@@ -28,7 +28,7 @@ class Product extends Model
             
             if (is_array($images)) {
                 foreach ($images as $key => $imagePath) {
-                    $newPath = $model->optimizeImageToWebp($imagePath);
+                    $newPath = $model->optimizeImageToWebp($imagePath, 800, 1200);
                     if ($newPath !== $imagePath) {
                         $images[$key] = $newPath;
                         $changed = true;

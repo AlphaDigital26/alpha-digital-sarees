@@ -26,7 +26,7 @@ class Carousel extends Model
     {
         static::saved(function ($model) {
             if ($model->image) {
-                $newPath = $model->optimizeImageToWebp($model->image);
+                $newPath = $model->optimizeImageToWebp($model->image, 1920, 1080);
                 if ($newPath !== $model->image) {
                     $model->image = $newPath;
                     $model->saveQuietly();
