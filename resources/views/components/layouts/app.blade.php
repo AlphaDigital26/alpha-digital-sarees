@@ -26,13 +26,10 @@
     
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    @php
-        $settings = \App\Models\Setting::getSiteSettings();
-    @endphp
-    @if($settings && $settings->favicon_image)
-        <link rel="icon" type="image/png" href="{{ asset('storage/' . $settings->favicon_image) }}">
-        <link rel="apple-touch-icon" href="{{ asset('storage/' . $settings->favicon_image) }}">
-    @endif
+    <link rel="icon" type="image/png" sizes="192x192" href="{{ asset('favicon-192x192.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('favicon-192x192.png') }}">
+    <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
+
 </head>
 <body>
 
