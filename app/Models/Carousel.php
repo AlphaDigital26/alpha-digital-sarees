@@ -16,8 +16,22 @@ class Carousel extends Model
         'is_active',
         'sort_order',
     ];
+    use \App\Traits\OptimizesImages;
 
     protected $casts = [
         'is_active' => 'boolean',
     ];
+
+    protected static function booted()
+    {
+        static::saved(function ($model) {
+            if ($model->image) {
+                $newPath = $model->optimizeImageToWebp($model->image);
+                if ($newPath !== $model->image) {
+                    $model->image = $newPath;
+                    $model->saveQuietly();
+                }
+            }
+        });
+    }
 }

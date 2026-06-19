@@ -30,8 +30,37 @@ class Setting extends Model
         'shipping_returns_link'
     ];
 
+    use \App\Traits\OptimizesImages;
+
     public static function getSiteSettings()
     {
         return self::firstOrCreate(['id' => 1]);
+    }
+
+    protected static function booted()
+    {
+        static::saved(function ($model) {
+            $changed = false;
+
+            if ($model->logo_image) {
+                $newLogoPath = $model->optimizeImageToWebp($model->logo_image);
+                if ($newLogoPath !== $model->logo_image) {
+                    $model->logo_image = $newLogoPath;
+                    $changed = true;
+                }
+            }
+
+            if ($model->footer_background_image) {
+                $newFooterBg = $model->optimizeImageToWebp($model->footer_background_image);
+                if ($newFooterBg !== $model->footer_background_image) {
+                    $model->footer_background_image = $newFooterBg;
+                    $changed = true;
+                }
+            }
+
+            if ($changed) {
+                $model->saveQuietly();
+            }
+        });
     }
 }
