@@ -24,7 +24,55 @@ class ProductResource extends Resource
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->label('Saree Name')
-                            ->required(),
+                            ->required()
+                            ->live(onBlur: true)
+                            ->afterStateUpdated(function (string $operation, $state, Forms\Set $set) {
+                                if ($state) {
+                                    // 1. URL Slug and Title Optimization (Remove connectors to save space)
+                                    $seoName = preg_replace('/\b(with|and|for|in|on|the|a|an)\b/i', '', $state);
+                                    $seoName = preg_replace('/\s+/', ' ', $seoName);
+                                    $seoName = trim($seoName);
+                                    
+                                    $set('slug', \Illuminate\Support\Str::slug($seoName));
+                                    
+                                    // Smart Meta Title (Max 60 chars) - Must include Alpha Digital
+                                    $title1 = 'Buy ' . $seoName . ' | Alpha Digital';
+                                    $title2 = $seoName . ' | Alpha Digital';
+                                    
+                                    if (strlen($title1) <= 60) {
+                                        $set('meta_title', $title1);
+                                    } elseif (strlen($title2) <= 60) {
+                                        $set('meta_title', $title2);
+                                    } else {
+                                        // Force Alpha Digital at the end, truncate the name without breaking words
+                                        $maxLength = 60 - 16; // 44 chars max for the name part
+                                        $truncatedName = mb_substr($seoName, 0, $maxLength);
+                                        $lastSpace = mb_strrpos($truncatedName, ' ');
+                                        if ($lastSpace !== false) {
+                                            $truncatedName = mb_substr($truncatedName, 0, $lastSpace);
+                                        }
+                                        $set('meta_title', trim($truncatedName) . ' | Alpha Digital');
+                                    }
+                                    
+                                    // 2. Meta Description Optimization (Keep natural grammar from original name)
+                                    $lowerState = strtolower($state);
+                                    $desc1 = 'Shop our exclusive ' . $lowerState . ' at Alpha Digital. Discover premium, authentic sarees and experience the perfect blend of tradition and modern elegance.';
+                                    $desc2 = 'Shop ' . $lowerState . ' at Alpha Digital. Discover premium, authentic sarees.';
+                                    $desc3 = 'Buy ' . $lowerState . ' online at Alpha Digital.';
+                                    
+                                    if (strlen($desc1) <= 160) {
+                                        $set('meta_description', $desc1);
+                                    } elseif (strlen($desc2) <= 160) {
+                                        $set('meta_description', $desc2);
+                                    } elseif (strlen($desc3) <= 160) {
+                                        $set('meta_description', $desc3);
+                                    } else {
+                                        $set('meta_description', \Illuminate\Support\Str::limit($desc3, 157, '...'));
+                                    }
+                                    
+                                    $set('meta_keywords', \Illuminate\Support\Str::limit(strtolower($seoName) . ', authentic sarees, alpha digital, Indian ethnic wear', 255, ''));
+                                }
+                            }),
 
                         Forms\Components\Tabs::make('Product Details')
                             ->tabs([

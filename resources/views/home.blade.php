@@ -68,8 +68,12 @@
         
         @foreach($carousels as $index => $carousel)
             <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%] transition-opacity duration-[400ms] ease-in-out" 
-                 :class="{ '!opacity-100 z-10 pointer-events-auto': visibleSlide === {{ $index }}, '!opacity-0 z-0 pointer-events-none': visibleSlide !== {{ $index }} }"
-                 style="background-image: url('{{ asset("storage/" . $carousel->image) }}');">
+                 :class="{ '!opacity-100 z-10 pointer-events-auto': visibleSlide === {{ $index }}, '!opacity-0 z-0 pointer-events-none': visibleSlide !== {{ $index }} }">
+                 
+                <img src="{{ asset('storage/' . $carousel->image) }}" 
+                     alt="{{ $carousel->heading ?? 'Alpha Digital Saree Collection' }}"
+                     @if($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif
+                     class="absolute inset-0 w-full h-full object-cover z-0">
                 
                 <div class="hero-content relative z-[2] w-full max-w-[500px] transition-all duration-[600ms] ease-out"
                      :class="{ 'translate-y-0 opacity-100 delay-[200ms]': visibleSlide === {{ $index }}, 'translate-y-8 opacity-0 delay-0': visibleSlide !== {{ $index }} }">
@@ -97,7 +101,12 @@
         @endforeach
         
         @if($carousels->count() === 0)
-            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%] transition-opacity duration-[600ms] !opacity-100 z-10" style="background-image: url('https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80');">
+            <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%] transition-opacity duration-[600ms] !opacity-100 z-10">
+                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" 
+                     alt="Welcome to Our Store" 
+                     fetchpriority="high" loading="eager" 
+                     class="absolute inset-0 w-full h-full object-cover z-0">
+                     
                 <div class="hero-content relative z-[2] w-full max-w-[500px]">
                     <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal my-2 md:my-4 leading-tight drop-shadow-md text-white">Welcome to Our Store</h1>
                     <a href="/shop" class="btn-primary inline-block no-underline mt-4">SHOP NOW</a>
@@ -107,11 +116,11 @@
 
         @if($carousels->count() > 1)
             <!-- Navigation Arrows -->
-            <button @click.prevent="prev()" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 text-white/70 hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 backdrop-blur-sm hidden sm:flex items-center justify-center">
-                <svg class="w-5 h-5 md:w-6 md:h-6 ml-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7"></path></svg>
+            <button aria-label="Previous Slide" @click.prevent="prev()" class="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 text-white/70 hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 backdrop-blur-sm hidden sm:flex items-center justify-center">
+                <svg aria-hidden="true" class="w-5 h-5 md:w-6 md:h-6 ml-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7"></path></svg>
             </button>
-            <button @click.prevent="next()" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 text-white/70 hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 backdrop-blur-sm hidden sm:flex items-center justify-center">
-                <svg class="w-5 h-5 md:w-6 md:h-6 mr-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7"></path></svg>
+            <button aria-label="Next Slide" @click.prevent="next()" class="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 md:w-14 md:h-14 rounded-full border border-white/30 text-white/70 hover:border-white hover:text-white hover:bg-white/10 transition-all duration-300 opacity-0 group-hover:opacity-100 backdrop-blur-sm hidden sm:flex items-center justify-center">
+                <svg aria-hidden="true" class="w-5 h-5 md:w-6 md:h-6 mr-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7"></path></svg>
             </button>
 
             <!-- Dot Indicators -->
