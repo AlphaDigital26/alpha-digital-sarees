@@ -10,9 +10,10 @@ trait OptimizesImages
 {
     /**
      * Optimizes a single image file to WebP format if it's a JPG/PNG.
+     * Also resizes large images to a maximum dimension.
      * Returns the new file path relative to the storage disk.
      */
-    public function optimizeImageToWebp($imagePath)
+    public function optimizeImageToWebp($imagePath, $maxWidth = 800, $maxHeight = 1200)
     {
         // Only process jpg, jpeg, png, webp
         if (!preg_match('/\.(jpg|jpeg|png|webp)$/i', $imagePath)) {
@@ -30,9 +31,9 @@ trait OptimizesImages
             $manager = new ImageManager(new Driver());
             $image = $manager->read($fullPath);
             
-            // Resize to max 800x1200 while keeping aspect ratio. 
+            // Resize to max dimensions while keeping aspect ratio. 
             // If it's already smaller, scaleDown won't upsize it.
-            $image->scaleDown(800, 1200);
+            $image->scaleDown($maxWidth, $maxHeight);
 
             // New path with .webp extension
             $newPath = preg_replace('/\.(jpg|jpeg|png)$/i', '.webp', $imagePath);

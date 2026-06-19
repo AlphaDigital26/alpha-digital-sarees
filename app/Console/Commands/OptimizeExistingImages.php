@@ -45,7 +45,7 @@ class OptimizeExistingImages extends Command
             $images = $product->images ?? [];
             if (is_array($images)) {
                 foreach ($images as $key => $imagePath) {
-                    $newPath = $product->optimizeImageToWebp($imagePath);
+                    $newPath = $product->optimizeImageToWebp($imagePath, 800, 1200);
                     $processedCount++;
                     if ($newPath !== $imagePath) {
                         $images[$key] = $newPath;
@@ -70,7 +70,7 @@ class OptimizeExistingImages extends Command
 
         foreach ($carousels as $carousel) {
             if ($carousel->image) {
-                $newPath = $carousel->optimizeImageToWebp($carousel->image);
+                $newPath = $carousel->optimizeImageToWebp($carousel->image, 1920, 1080);
                 if ($newPath !== $carousel->image) {
                     $carousel->image = $newPath;
                     $carousel->saveQuietly();
@@ -87,7 +87,7 @@ class OptimizeExistingImages extends Command
             $changed = false;
             
             if ($setting->logo_image) {
-                $newLogoPath = $setting->optimizeImageToWebp($setting->logo_image);
+                $newLogoPath = $setting->optimizeImageToWebp($setting->logo_image, 600, 600);
                 if ($newLogoPath !== $setting->logo_image) {
                     $setting->logo_image = $newLogoPath;
                     $changed = true;
@@ -95,7 +95,7 @@ class OptimizeExistingImages extends Command
             }
 
             if ($setting->footer_background_image) {
-                $newFooterBg = $setting->optimizeImageToWebp($setting->footer_background_image);
+                $newFooterBg = $setting->optimizeImageToWebp($setting->footer_background_image, 1920, 1080);
                 if ($newFooterBg !== $setting->footer_background_image) {
                     $setting->footer_background_image = $newFooterBg;
                     $changed = true;
