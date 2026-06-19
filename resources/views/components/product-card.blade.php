@@ -21,6 +21,7 @@
             @if($showWishlist)
             <button 
                 wire:click.prevent="toggleWishlist({{ $product->id }})" 
+                aria-label="Add to Wishlist"
                 style="position: absolute; top: 15px; right: 15px; background: rgba(255,255,255,0.85); backdrop-filter: blur(4px); padding: 8px; border-radius: 50%; border: none; cursor: pointer; z-index: 10; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1); transition: transform 0.2s ease;"
                 onmouseover="this.style.transform='scale(1.1)'"
                 onmouseout="this.style.transform='scale(1)'"
@@ -40,7 +41,7 @@
                 <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2 mt-1 mb-2">
                     <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                     @if($product->original_price > $product->current_price)
-                        <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                        <p class="text-gray-500 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #6b7280 !important;">₹{{ number_format($product->original_price, 2) }}</p>
                         @php
                             $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
                         @endphp
@@ -52,7 +53,7 @@
                     <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2">
                         <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                         @if($product->original_price > $product->current_price)
-                            <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                            <p class="text-gray-500 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #6b7280 !important;">₹{{ number_format($product->original_price, 2) }}</p>
                         @endif
                     </div>
                     @if($product->original_price > $product->current_price)
@@ -73,7 +74,7 @@
             <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2 mt-1 mb-2">
                 <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                 @if($product->original_price > $product->current_price)
-                    <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                    <p class="text-gray-500 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #6b7280 !important;">₹{{ number_format($product->original_price, 2) }}</p>
                     @php
                         $discountPercent = round((($product->original_price - $product->current_price) / $product->original_price) * 100);
                     @endphp
@@ -85,7 +86,7 @@
                 <div class="flex flex-wrap justify-center items-baseline gap-x-1 sm:gap-x-2">
                     <p class="font-bold text-[#800020] m-0 text-sm sm:text-base md:text-lg whitespace-nowrap">₹{{ number_format($product->current_price, 2) }}</p>
                     @if($product->original_price > $product->current_price)
-                        <p class="text-gray-400 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #9ca3af !important;">₹{{ number_format($product->original_price, 2) }}</p>
+                        <p class="text-gray-500 line-through text-xs sm:text-sm m-0 font-normal whitespace-nowrap" style="color: #6b7280 !important;">₹{{ number_format($product->original_price, 2) }}</p>
                     @endif
                 </div>
                 @if($product->original_price > $product->current_price)

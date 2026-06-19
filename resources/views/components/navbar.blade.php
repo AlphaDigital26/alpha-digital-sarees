@@ -3,8 +3,8 @@
     <!-- Left Section: Hamburger & Logo -->
     <div class="flex items-center gap-4">
         <!-- Mobile Hamburger Button -->
-        <button @click="mobileMenuOpen = !mobileMenuOpen" class="flex items-center lg:hidden text-[#2A211F] hover:text-[#800020] transition-colors focus:outline-none">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <button @click="mobileMenuOpen = !mobileMenuOpen" aria-label="Toggle Navigation Menu" class="flex items-center lg:hidden text-[#2A211F] hover:text-[#800020] transition-colors focus:outline-none">
+            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path x-show="!mobileMenuOpen" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
                 <path x-show="mobileMenuOpen" x-cloak style="display: none;" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -45,8 +45,8 @@
 
     <div class="flex items-center gap-4 sm:gap-6 shrink-0">
         <form action="{{ route('shop.index') }}" method="GET" class="hidden lg:flex items-center h-[42px] m-0 bg-white/50 hover:bg-white transition-colors px-5 rounded-full border border-[#E5E0DA] focus-within:border-[#800020] focus-within:bg-white focus-within:shadow-sm">
-            <button type="submit" class="bg-transparent border-none p-0 m-0 cursor-pointer outline-none flex items-center justify-center text-[#706663] hover:text-[#800020] transition-colors">
-                <i data-lucide="search" class="w-4 h-4"></i>
+            <button type="submit" aria-label="Submit Search" class="bg-transparent border-none p-0 m-0 cursor-pointer outline-none flex items-center justify-center text-[#706663] hover:text-[#800020] transition-colors">
+                <i data-lucide="search" aria-hidden="true" class="w-4 h-4"></i>
             </button>
             <input type="text" name="search" placeholder="Search Alpha Digital" value="{{ request('search') }}" class="border-none bg-transparent outline-none m-0 p-0 pl-3 h-full font-sans text-[13px] text-[#2A211F] placeholder-[#706663] w-[180px] transition-all focus:w-[220px]">
         </form>
@@ -85,8 +85,8 @@
             
             <div class="flex items-center justify-between px-4 mb-6">
                 <a href="{{ route('home') }}" class="text-xl font-bold tracking-widest text-[#800020] font-serif">ALPHA DIGITAL</a>
-                <button @click="mobileMenuOpen = false" class="text-[#2A211F] hover:text-[#800020] focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <button @click="mobileMenuOpen = false" aria-label="Close Navigation Menu" class="text-[#2A211F] hover:text-[#800020] focus:outline-none">
+                    <svg aria-hidden="true" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                     </svg>
                 </button>
@@ -94,8 +94,8 @@
             
             <div class="px-4 mb-6">
                 <form action="{{ route('shop.index') }}" method="GET" class="flex items-center h-[42px] m-0 bg-white px-4 rounded-md border border-[#E5E0DA]">
-                    <button type="submit" class="text-[#706663] mr-2">
-                        <i data-lucide="search" class="w-4 h-4"></i>
+                    <button type="submit" aria-label="Submit Mobile Search" class="text-[#706663] mr-2">
+                        <i data-lucide="search" aria-hidden="true" class="w-4 h-4"></i>
                     </button>
                     <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="w-full bg-transparent border-none outline-none font-sans text-[14px]">
                 </form>
