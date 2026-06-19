@@ -928,7 +928,7 @@
 }
   
   .thumbnails {
-    @apply flex flex-row md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-visible pb-2 md:pb-0 scrollbar-hide;
+    @apply flex flex-row md:flex-col gap-3 md:gap-4 overflow-x-auto md:overflow-y-auto md:max-h-[650px] pb-2 md:pb-0 scrollbar-hide;
   }
   
   .thumb {
@@ -940,11 +940,11 @@
   }
   
   .main-display {
-    @apply flex-1 overflow-hidden w-full;
+    @apply flex-1 overflow-hidden w-full relative;
   }
   
   .main-display img {
-    @apply w-full aspect-[3/4] object-cover transition-opacity duration-300;
+    @apply w-full h-auto max-h-[650px] object-contain transition-opacity duration-300;
   }
   
   .stock-status {
