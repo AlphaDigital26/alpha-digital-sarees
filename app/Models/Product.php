@@ -12,12 +12,33 @@ class Product extends Model
         'occasion', 'stock', 'images', 'is_new', 'is_best_seller',
         'slug', 'meta_title', 'meta_description', 'meta_keywords', 'canonical_url',
     ];
+    use \App\Traits\OptimizesImages;
 
     protected static function booted()
     {
         static::saving(function ($model) {
             if (empty($model->slug)) {
                 $model->slug = \Illuminate\Support\Str::slug($model->name);
+            }
+        });
+
+        static::saved(function ($model) {
+            $changed = false;
+            $images = $model->images ?? [];
+            
+            if (is_array($images)) {
+                foreach ($images as $key => $imagePath) {
+                    $newPath = $model->optimizeImageToWebp($imagePath);
+                    if ($newPath !== $imagePath) {
+                        $images[$key] = $newPath;
+                        $changed = true;
+                    }
+                }
+            }
+
+            if ($changed) {
+                $model->images = array_values($images);
+                $model->saveQuietly();
             }
         });
     }
