@@ -239,6 +239,7 @@ class ProductResource extends Resource
                     ->label('Best Seller')
                     ->boolean(),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 // You can add table filters here later if needed
             ])
