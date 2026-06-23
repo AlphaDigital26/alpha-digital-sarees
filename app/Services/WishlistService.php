@@ -67,6 +67,7 @@ class WishlistService
         
         return Wishlist::where($identifier)
             ->with('product.fabric')
+            ->latest()
             ->get();
     }
 

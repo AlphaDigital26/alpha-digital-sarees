@@ -102,15 +102,10 @@
         
         @if($carousels->count() === 0)
             <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%] transition-opacity duration-[600ms] !opacity-100 z-10">
-                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" 
+                <img src="{{ asset('images/carousel1.webp') }}"
                      alt="Welcome to Our Store" 
                      fetchpriority="high" loading="eager" 
                      class="absolute inset-0 w-full h-full object-cover z-0">
-                     
-                <div class="hero-content relative z-[2] w-full max-w-[500px]">
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-normal my-2 md:my-4 leading-tight drop-shadow-md text-white">Welcome to Our Store</h1>
-                    <a href="/shop" class="btn-primary inline-block no-underline mt-4">SHOP NOW</a>
-                </div>
             </div>
         @endif
 
@@ -195,7 +190,7 @@
                 @if(isset($featuredFabrics[0]))
                     <div class="fab-large">
                         <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[0]->image) }}');">
-                            <button class="label">{{ strtoupper($featuredFabrics[0]->name) }}</button>
+                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[0]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[0]->name) }}</a>
                         </div>
                     </div>
                 @endif
@@ -205,20 +200,20 @@
                     @if(isset($featuredFabrics[1]))
                         @php $fab1Url = asset('storage/' . $featuredFabrics[1]->image); @endphp
                         <div class="fab-img" style="background-image: url('{{ $fab1Url }}');">
-                            <button class="label">{{ strtoupper($featuredFabrics[1]->name) }}</button>
+                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[1]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[1]->name) }}</a>
                         </div>
                     @endif
 
                     <div class="fab-bottom-row">
                         @if(isset($featuredFabrics[2]))
                             <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[2]->image) }}');">
-                                <button class="label">{{ strtoupper($featuredFabrics[2]->name) }}</button>
+                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[2]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[2]->name) }}</a>
                             </div>
                         @endif
                         
                         @if(isset($featuredFabrics[3]))
                             <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[3]->image) }}');">
-                                <button class="label">{{ strtoupper($featuredFabrics[3]->name) }}</button>
+                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[3]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[3]->name) }}</a>
                             </div>
                         @endif
                     </div>
@@ -248,10 +243,10 @@
 
             <div class="heritage-visual">
                 <div class="main-image-frame">
-                    <img src="{{ asset('images/heritage-main-opt.jpg') }}" class="heritage-main-img" alt="Butterfly Saree">
+                    <img src="{{ asset('images/heritage-main-opt.webp') }}" class="heritage-main-img" alt="Butterfly Saree">
                 </div>
                 <div class="overlap-image-frame">
-                    <img src="{{ asset('images/heritage-sub.jpg') }}" class="heritage-sub-img" alt="Butterfly Fabric Detail">
+                    <img src="{{ asset('images/heritage-sub.webp') }}" class="heritage-sub-img" alt="Butterfly Fabric Detail">
                 </div>
                 <div class="heritage-accent-box"></div>
             </div>
@@ -275,14 +270,14 @@
                     <div class="contact-details">
                         @if($settings && $settings->contact_address)
                             <div class="detail-item">
-                                <h4>THE SHOWROOM</h4>
+                                <h4>Our Address</h4>
                                 <p>{!! nl2br(e($settings->contact_address)) !!}</p>
                             </div>
                         @endif
                         
                         @if($settings && ($settings->contact_email || $settings->contact_phone))
                             <div class="detail-item">
-                                <h4>ASSISTANCE</h4>
+                                <h4>Contact Us</h4>
                                 <p>
                                     @if($settings->contact_email)
                                         {{ $settings->contact_email }}

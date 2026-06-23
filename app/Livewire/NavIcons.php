@@ -18,6 +18,7 @@ class NavIcons extends Component
 
     #[On('cart-updated')]
     #[On('wishlist-updated')]
+    #[On('refresh-wishlist')]
     public function updateCounts()
     {
         $this->cartCount = \App\Services\CartService::getCartCount();

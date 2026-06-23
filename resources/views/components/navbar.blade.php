@@ -44,12 +44,26 @@
     </nav>
 
     <div class="flex items-center gap-4 sm:gap-6 shrink-0">
-        <form action="{{ route('shop.index') }}" method="GET" class="hidden lg:flex items-center h-[42px] m-0 bg-white/50 hover:bg-white transition-colors px-5 rounded-full border border-[#E5E0DA] focus-within:border-[#800020] focus-within:bg-white focus-within:shadow-sm">
-            <button type="submit" aria-label="Submit Search" class="bg-transparent border-none p-0 m-0 cursor-pointer outline-none flex items-center justify-center text-[#706663] hover:text-[#800020] transition-colors">
-                <i data-lucide="search" aria-hidden="true" class="w-4 h-4"></i>
-            </button>
-            <input type="text" name="search" placeholder="Search Alpha Digital" value="{{ request('search') }}" class="border-none bg-transparent outline-none m-0 p-0 pl-3 h-full font-sans text-[13px] text-[#2A211F] placeholder-[#706663] w-[180px] transition-all focus:w-[220px]">
-        </form>
+        <div class="relative z-[1001] hidden lg:block" x-data="searchComponent('{{ request('search') }}')">
+            <form action="{{ route('shop.index') }}" method="GET" @submit="if(!query.trim()) $event.preventDefault()" class="flex items-center h-[48px] m-0 bg-white/50 hover:bg-white transition-colors px-2 rounded-full border border-[#E5E0DA] focus-within:border-[#800020] focus-within:bg-white focus-within:shadow-sm">
+                <button type="submit" aria-label="Submit Search" class="bg-transparent border-none w-[44px] h-[44px] cursor-pointer outline-none flex items-center justify-center text-[#706663] hover:text-[#800020] transition-colors shrink-0">
+                    <i data-lucide="search" aria-hidden="true" class="w-5 h-5"></i>
+                </button>
+                <input type="text" name="search" autocomplete="off" placeholder="Search Alpha Digital" x-model="query" @input.debounce.300ms="fetchSuggestions" @focus="open = true" @click.outside="open = false" @keydown.escape.window="open = false" class="border-none bg-transparent outline-none m-0 px-2 h-full font-sans text-[13px] text-[#2A211F] placeholder-[#706663] w-[180px] transition-all focus:w-[220px]">
+            </form>
+            <div x-show="open && suggestions.length > 0" x-transition x-cloak class="absolute top-[calc(100%+8px)] left-0 w-full min-w-[280px] bg-white rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-[#E5E0DA] overflow-hidden text-left py-2">
+                <ul class="m-0 p-0 list-none">
+                    <template x-for="suggestion in suggestions" :key="suggestion">
+                        <li>
+                            <a :href="'{{ route('shop.index') }}?search=' + encodeURIComponent(suggestion)" class="flex items-center px-4 py-2 text-[14px] text-[#2A211F] hover:bg-[#F4F0EB] transition-colors no-underline">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-3 text-[#706663] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                <span x-html="highlight(suggestion)" class="font-sans text-[#2A211F]"></span>
+                            </a>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
 
         <div class="flex items-center gap-4 sm:gap-5 nav-icons">
         <livewire:nav-icons />
@@ -92,13 +106,25 @@
                 </button>
             </div>
             
-            <div class="px-4 mb-6">
-                <form action="{{ route('shop.index') }}" method="GET" class="flex items-center h-[42px] m-0 bg-white px-4 rounded-md border border-[#E5E0DA]">
-                    <button type="submit" aria-label="Submit Mobile Search" class="text-[#706663] mr-2">
-                        <i data-lucide="search" aria-hidden="true" class="w-4 h-4"></i>
+            <div class="px-4 mb-6 relative" x-data="searchComponent('{{ request('search') }}')">
+                <form action="{{ route('shop.index') }}" method="GET" @submit="if(!query.trim()) $event.preventDefault()" class="flex items-center h-[48px] m-0 bg-white px-2 rounded-md border border-[#E5E0DA]">
+                    <button type="submit" aria-label="Submit Mobile Search" class="text-[#706663] w-[44px] h-[44px] flex items-center justify-center shrink-0">
+                        <i data-lucide="search" aria-hidden="true" class="w-5 h-5"></i>
                     </button>
-                    <input type="text" name="search" placeholder="Search" value="{{ request('search') }}" class="w-full bg-transparent border-none outline-none font-sans text-[14px]">
+                    <input type="text" name="search" autocomplete="off" placeholder="Search" x-model="query" @input.debounce.300ms="fetchSuggestions" @focus="open = true" @click.outside="open = false" @keydown.escape.window="open = false" class="w-full h-full bg-transparent border-none outline-none font-sans text-[14px] px-2">
                 </form>
+                <div x-show="open && suggestions.length > 0" x-transition x-cloak class="absolute top-[calc(100%+8px)] left-4 right-4 bg-white rounded-md shadow-[0_10px_30px_rgba(0,0,0,0.1)] border border-[#E5E0DA] overflow-hidden text-left py-2 z-50">
+                    <ul class="m-0 p-0 list-none">
+                        <template x-for="suggestion in suggestions" :key="suggestion">
+                            <li>
+                                <a :href="'{{ route('shop.index') }}?search=' + encodeURIComponent(suggestion)" class="flex items-center px-4 py-3 text-[14px] text-[#2A211F] hover:bg-[#F4F0EB] transition-colors no-underline">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-3 text-[#706663] shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
+                                    <span x-html="highlight(suggestion)" class="font-sans text-[#2A211F]"></span>
+                                </a>
+                            </li>
+                        </template>
+                    </ul>
+                </div>
             </div>
             
             <div class="flex-1 px-2 space-y-1 overflow-y-auto">
@@ -123,4 +149,42 @@
             </div>
         </div>
     </template>
+
+    <script>
+        if (typeof window.searchComponent === 'undefined') {
+            window.searchComponent = function(initialQuery = '') {
+                return {
+                    query: initialQuery,
+                    suggestions: [],
+                    open: false,
+                    async fetchSuggestions() {
+                        if (this.query.trim().length < 2) {
+                            this.suggestions = [];
+                            this.open = false;
+                            return;
+                        }
+                        try {
+                            const response = await fetch(`/api/search-suggestions?q=${encodeURIComponent(this.query)}`);
+                            this.suggestions = await response.json();
+                            this.open = true;
+                        } catch (error) {
+                            console.error('Error fetching suggestions:', error);
+                        }
+                    },
+                    highlight(text) {
+                        if (!this.query) return text;
+                        const escapedQuery = this.query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                        const regex = new RegExp(`(${escapedQuery})`, 'i');
+                        const parts = text.split(regex);
+                        return parts.map(part => {
+                            if (part.toLowerCase() === this.query.toLowerCase()) {
+                                return `<span class="font-normal">${part}</span>`;
+                            }
+                            return part ? `<span class="font-bold">${part}</span>` : '';
+                        }).join('');
+                    }
+                };
+            }
+        }
+    </script>
 </header>

@@ -4,6 +4,7 @@ namespace App\Livewire\Shop;
 
 use Livewire\Component;
 use App\Models\Product;
+use Livewire\Attributes\On;
 use App\Models\Fabric;
 use App\Models\Color;
 use App\Models\Pattern;
@@ -17,17 +18,17 @@ class NewArrival extends Component
     public $selectedPattern = null;
 
     // Load More Property
-    public $amount = 8;
+    public $amount = 20;
     
     // Reset amount when any filter is clicked
     public function updated($propertyName)
     {
-        $this->amount = 8;
+        $this->amount = 20;
     }
     
     public function loadMore()
     {
-        $this->amount += 8;
+        $this->amount += 16;
     }
 
     // Added Wishlist Toggle Functionality
@@ -45,12 +46,19 @@ class NewArrival extends Component
         $added = \App\Services\WishlistService::toggle($productId);
         
         if ($added) {
-            session()->flash('success', 'Added to Wishlist!');
+            $this->dispatch('toast', msg: 'Added to Wishlist!', type: 'success');
         } else {
-            session()->flash('success', 'Removed from Wishlist');
+            $this->dispatch('toast', msg: 'Removed from Wishlist', type: 'success');
         }
         
         $this->dispatch('wishlist-updated');
+    }
+
+    #[On('wishlist-updated')]
+    #[On('refresh-wishlist')]
+    public function refreshWishlistState()
+    {
+        // Empty method to trigger re-render
     }
 
     public function render()

@@ -158,6 +158,7 @@
                         x-ref="mainImage"
                         src="{{ asset('storage/' . $activeImage) }}"
                         id="expandedImg"
+                        wire:target="setActiveImage"
                         wire:loading.class="opacity-50"
                         class="transition-opacity duration-200 main-image-styled"
                     >

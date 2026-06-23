@@ -89,4 +89,21 @@
             </svg>
         </button>
     @endauth
+
+    <script>
+        document.addEventListener('livewire:initialized', () => {
+            Livewire.on('wishlist-updated', () => {
+                sessionStorage.setItem('wishlist_changed', '1');
+            });
+        });
+
+        document.addEventListener('livewire:navigated', () => {
+            if (sessionStorage.getItem('wishlist_changed') === '1') {
+                sessionStorage.removeItem('wishlist_changed');
+                if (typeof Livewire !== 'undefined') {
+                    Livewire.dispatch('refresh-wishlist');
+                }
+            }
+        });
+    </script>
 </div>

@@ -1,9 +1,9 @@
 <main class="arrival-container" style="padding-top: 1.5rem;">
     
     <div class="arrival-header" style="margin-bottom: 2rem;">
-        <p class="subtitle">SPRING SUMMER 2026</p>
+        <p class="subtitle">DISCOVER THE LATEST ARRIVALS</p>
         <h1 style="margin-top: 0.5rem;">Just Introduced</h1>
-        <p class="description">Discover the latest masterpieces from our looms, where traditional artistry meets modern silhouettes.</p>
+        <p class="description">Explore the newest additions to the Alpha Digital collection. Our latest sarees bring together timeless elegance, exceptional quality, and the perfect drape for every occasion.</p>
     </div>
 
     <x-toast-notification />

@@ -5,6 +5,7 @@ namespace App\Livewire\Shop;
 use Livewire\Component;
 use App\Models\Product as ProductModel;
 use Illuminate\Support\Str;
+use Livewire\Attributes\On;
 
 class Product extends Component
 {
@@ -117,24 +118,40 @@ class Product extends Component
         $this->dispatch('wishlist-updated');
     }
 
+    #[On('wishlist-updated')]
+    #[On('refresh-wishlist')]
+    public function refreshWishlistState()
+    {
+        // Empty method to trigger re-render
+    }
+
 
 
     public $ratingFilter = null;
 
     public function render()
 {
-    // 1. Similar Products (Efficient Query)
-    $similarProducts = \App\Models\Product::where('fabric_id', $this->product->fabric_id)
-        ->where('id', '!=', $this->product->id)
-        ->latest()
-        ->take(3)
+    // 1. Similar Products (Improved Recommendation Logic)
+    $similarProducts = \App\Models\Product::where('id', '!=', $this->product->id)
+        ->where(function($query) {
+            $query->where('fabric_id', $this->product->fabric_id)
+                  ->orWhere('pattern_id', $this->product->pattern_id)
+                  ->orWhere('color_id', $this->product->color_id);
+        })
+        ->inRandomOrder()
+        ->take(10)
         ->get();
 
-    if ($similarProducts->isEmpty()) {
-        $similarProducts = \App\Models\Product::where('id', '!=', $this->product->id)
+    // Fallback: If we didn't find enough similar products, fill the rest with random products
+    if ($similarProducts->count() < 10) {
+        $needed = 10 - $similarProducts->count();
+        $moreProducts = \App\Models\Product::where('id', '!=', $this->product->id)
+            ->whereNotIn('id', $similarProducts->pluck('id'))
             ->inRandomOrder()
-            ->take(3)
+            ->take($needed)
             ->get();
+            
+        $similarProducts = $similarProducts->concat($moreProducts);
     }
 
     // 2. Reviews (Logic is fine)

@@ -77,10 +77,10 @@
                 <svg x-show="open" style="display: none;" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7" /></svg>
             </h3>
             <div class="filter-content max-h-52 overflow-y-auto pr-2 [&::-webkit-scrollbar]:w-1 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:bg-[#E5E0DA] [&::-webkit-scrollbar-thumb]:rounded-full hover:[&::-webkit-scrollbar-thumb]:bg-[#D1C9C0]" x-show="open" x-collapse>
-                <label><input type="radio" wire:model.live="priceRange" value="under_5k"> Under 5k</label>
-                <label><input type="radio" wire:model.live="priceRange" value="5k_10k"> 5k - 10k</label>
-                <label><input type="radio" wire:model.live="priceRange" value="10k_20k"> 10k - 20k</label>
-                <label><input type="radio" wire:model.live="priceRange" value="above_20k"> Above 20k</label>
+                <label><input type="radio" wire:model.live="priceRange" value="under_2k"> Under 2k</label>
+                <label><input type="radio" wire:model.live="priceRange" value="2k_3k"> 2k - 3k</label>
+                <label><input type="radio" wire:model.live="priceRange" value="3k_5k"> 3k - 5k</label>
+                <label><input type="radio" wire:model.live="priceRange" value="above_5k"> Above 5k</label>
                 
                 <div class="price-range mt-3 flex items-center gap-2">
                     <p class="text-[0.8rem] m-0">Range &rarr; ₹</p>
@@ -122,7 +122,7 @@
             </div>
         </div>
 
-        <div class="product-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6" wire:loading.class="opacity-50">
+        <div class="product-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-6">
             @forelse($products as $product)
                 <x-product-card :product="$product" :showWishlist="true" />
             @empty

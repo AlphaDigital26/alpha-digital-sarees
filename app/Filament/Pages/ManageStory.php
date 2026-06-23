@@ -33,13 +33,13 @@ class ManageStory extends Page implements HasForms
         return $form->schema([
             Forms\Components\Group::make()->schema([
                 Forms\Components\Section::make('Main Hero')->schema([
-                    Forms\Components\FileUpload::make('main_image')->directory('stories'),
+                    Forms\Components\FileUpload::make('main_image')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
                     Forms\Components\TextInput::make('main_heading'),
                     Forms\Components\Textarea::make('para_1'),
                 ]),
                 Forms\Components\Section::make('Craftsmanship')->schema([
-                    Forms\Components\FileUpload::make('control_image_1')->directory('stories'),
-                    Forms\Components\FileUpload::make('control_image_2')->directory('stories'),
+                    Forms\Components\FileUpload::make('control_image_1')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
+                    Forms\Components\FileUpload::make('control_image_2')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
                     Forms\Components\TextInput::make('heading_2'),
                     Forms\Components\Textarea::make('para_2'),
                 ]),
@@ -47,10 +47,10 @@ class ManageStory extends Page implements HasForms
                     Forms\Components\TextInput::make('heading_3'),
                     Forms\Components\RichEditor::make('text_3'),
                     Forms\Components\Grid::make(4)->schema([
-                        Forms\Components\FileUpload::make('journey_img_1'),
-                        Forms\Components\FileUpload::make('journey_img_2'),
-                        Forms\Components\FileUpload::make('journey_img_3'),
-                        Forms\Components\FileUpload::make('journey_img_4'),
+                        Forms\Components\FileUpload::make('journey_img_1')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
+                        Forms\Components\FileUpload::make('journey_img_2')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
+                        Forms\Components\FileUpload::make('journey_img_3')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
+                        Forms\Components\FileUpload::make('journey_img_4')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
                     ])
                 ]),
             ])->disabled(fn () => !$this->isEditing)
