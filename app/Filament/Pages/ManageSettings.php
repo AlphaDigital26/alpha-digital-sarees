@@ -65,6 +65,8 @@ class ManageSettings extends Page implements HasForms
                                             ->visible(fn ($get) => $get('logo_type') === 'text'),
                                         Forms\Components\FileUpload::make('logo_image')
                                             ->directory('settings')
+                                            ->image()
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
                                             ->visible(fn ($get) => $get('logo_type') === 'image'),
                                     ]),
 
@@ -86,6 +88,7 @@ class ManageSettings extends Page implements HasForms
                                         Forms\Components\FileUpload::make('footer_background_image')
                                             ->label('Background Image')
                                             ->image()
+                                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
                                             ->directory('settings'),
                                         
                                         Forms\Components\TextInput::make('footer_brand_heading'),

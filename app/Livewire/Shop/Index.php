@@ -5,6 +5,7 @@ namespace App\Livewire\Shop;
 use Livewire\Component;
 use Livewire\WithPagination;
 use Livewire\Attributes\Url;
+use Livewire\Attributes\On;
 use App\Models\Product;
 use App\Models\Fabric;
 use App\Models\Color;
@@ -24,12 +25,17 @@ class Index extends Component
     public $occasion = null;
 
     // Filter Arrays
+    #[Url]
     public $selectedFabrics = [];
+    
+    #[Url]
     public $selectedColors = [];
+    
+    #[Url]
     public $selectedPatterns = [];
     
     // Load More Property
-    public $amount = 8;
+    public $amount = 20;
     
     // Price & Sorting Filters from your UI
     public $priceRange = null;
@@ -40,12 +46,12 @@ class Index extends Component
     // Reset amount when any filter is clicked
     public function updated($propertyName)
     {
-        $this->amount = 8;
+        $this->amount = 20;
     }
     
     public function loadMore()
     {
-        $this->amount += 8;
+        $this->amount += 16;
     }
 
     public function resetFilters()
@@ -70,12 +76,19 @@ class Index extends Component
         $added = \App\Services\WishlistService::toggle($productId);
         
         if ($added) {
-            session()->flash('success', 'Added to Wishlist!');
+            $this->dispatch('toast', msg: 'Added to Wishlist!', type: 'success');
         } else {
-            session()->flash('success', 'Removed from Wishlist');
+            $this->dispatch('toast', msg: 'Removed from Wishlist', type: 'success');
         }
         
         $this->dispatch('wishlist-updated');
+    }
+
+    #[On('wishlist-updated')]
+    #[On('refresh-wishlist')]
+    public function refreshWishlistState()
+    {
+        // Empty method to trigger re-render
     }
 
     public function render()
@@ -104,10 +117,10 @@ class Index extends Component
         $query->when(!empty($this->selectedPatterns), fn($q) => $q->whereIn('pattern_id', $this->selectedPatterns));
 
         // Radio Button Price Filters
-        if ($this->priceRange === 'under_5k') $query->where('current_price', '<', 5000);
-        if ($this->priceRange === '5k_10k') $query->whereBetween('current_price', [5000, 10000]);
-        if ($this->priceRange === '10k_20k') $query->whereBetween('current_price', [10000, 20000]);
-        if ($this->priceRange === 'above_20k') $query->where('current_price', '>', 20000);
+        if ($this->priceRange === 'under_2k') $query->where('current_price', '<', 2000);
+        if ($this->priceRange === '2k_3k') $query->whereBetween('current_price', [2000, 3000]);
+        if ($this->priceRange === '3k_5k') $query->whereBetween('current_price', [3000, 5000]);
+        if ($this->priceRange === 'above_5k') $query->where('current_price', '>', 5000);
 
         // Custom Min/Max Price Filters
         $query->when($this->minPrice, fn($q) => $q->where('current_price', '>=', $this->minPrice));

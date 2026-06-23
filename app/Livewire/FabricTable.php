@@ -11,6 +11,9 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class FabricTable extends Component implements HasForms, HasTable
 {
@@ -30,7 +33,15 @@ class FabricTable extends Component implements HasForms, HasTable
                 ->label('Fabric Image (Optional)')
                 ->image()
                 ->directory('fabrics')
-                ->helperText('Upload an image if you want to feature this on the homepage.'),
+                ->saveUploadedFileUsing(function (Forms\Components\FileUpload $component, TemporaryUploadedFile $file) {
+                    $manager = new ImageManager(new Driver());
+                    $image = $manager->read($file->getRealPath());
+                    $encoded = $image->toWebp(80);
+                    $filename = $component->getDirectory() . '/' . uniqid('fabric_') . '.webp';
+                    $component->getDisk()->put($filename, (string) $encoded);
+                    return $filename;
+                })
+                ->helperText('Upload an image if you want to feature this on the homepage. Image will be converted to WebP automatically.'),
                 
             Forms\Components\Toggle::make('is_featured')
                 ->label('Feature on Homepage')

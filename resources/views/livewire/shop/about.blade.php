@@ -1,7 +1,7 @@
 <main>
-    <section class="about-hero" @if($story->main_image) style="background-image: linear-gradient(to bottom, rgba(253,251,247,0) 60%, rgba(253,251,247,1) 100%), url('{{ asset('storage/' . $story->main_image) }}');" @endif>
+    <section class="about-hero" style="background-image: linear-gradient(to bottom, rgba(253,251,247,0) 60%, rgba(253,251,247,1) 100%), url('{{ $story->main_image ? asset('storage/' . $story->main_image) : asset('images/hero-img.webp') }}');">
         <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
-            <span class="label" data-aos="fade-up" data-aos-delay="100">OUR STORY</span>
+            <!-- <span class="label" data-aos="fade-up" data-aos-delay="100">OUR STORY</span> -->
             <h1 data-aos="fade-up" data-aos-delay="300">{!! nl2br(e($story->main_heading)) !!}</h1>
         </div>
     </section>
@@ -22,17 +22,17 @@
                 @if($story->control_image_1)
                 <img src="{{ asset('storage/' . $story->control_image_1) }}" class="img-base" data-aos="fade-right" data-aos-delay="100">
                 @else
-                <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" class="img-base" data-aos="fade-right" data-aos-delay="100">
+                <img src="{{ asset('images/craftsmanship1.webp') }}" class="img-base" data-aos="fade-right" data-aos-delay="100">
                 @endif
 
                 @if($story->control_image_2)
                 <img src="{{ asset('storage/' . $story->control_image_2) }}" class="img-overlay-frame" data-aos="fade-up" data-aos-delay="300">
                 @else
-                <img src="https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&q=80" class="img-overlay-frame" data-aos="fade-up" data-aos-delay="300">
+                <img src="{{ asset('images/craftsmanship2.webp') }}" class="img-overlay-frame" data-aos="fade-up" data-aos-delay="300">
                 @endif
             </div>
             <div class="craft-text" data-aos="fade-left" data-aos-delay="200">
-                <span class="label inline-block mb-4 sm:mb-6">CRAFTSMANSHIP</span>
+                <p class="subtitle mb-4 sm:mb-6" style="color: #800020;">THE ART OF DIGITAL PRINTING</p>
                 <h2>{{ $story->heading_2 }}</h2>
                 <p>{!! nl2br(e($story->para_2)) !!}</p>
             </div>

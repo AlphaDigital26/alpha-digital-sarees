@@ -51,7 +51,7 @@
         </button>
 
         <div class="hidden md:block md:w-[45%] relative bg-[#F4F0EB]">
-            <img src="https://images.unsplash.com/photo-1610030469983-98e550d6193c?auto=format&fit=crop&q=80" class="w-full h-full object-cover" alt="Alpha Digital">
+            <img src="{{ asset('images/LoginPopup.webp') }}" class="w-full h-full object-cover" alt="Alpha Digital">
         </div>
 
         <div class="w-full md:w-[55%] flex flex-col pt-8 md:pt-10 px-8 md:px-12 pb-6 bg-white overflow-y-auto" style="-ms-overflow-style: none; scrollbar-width: none;">
@@ -261,7 +261,7 @@
                     <p class="text-[13px] text-gray-500 leading-relaxed max-w-[280px] mx-auto mb-8">
                         We've sent a password reset link to <span class="font-bold text-black">{{ $email }}</span>. Please check your inbox.
                     </p>
-                    <button wire:click="closePopup" class="w-full bg-black text-white border-none h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors text-[15px] cursor-pointer">
+                    <button @click="_closeModal()" class="w-full bg-black text-white border-none h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors text-[15px] cursor-pointer">
                         Close
                     </button>
                 </div>

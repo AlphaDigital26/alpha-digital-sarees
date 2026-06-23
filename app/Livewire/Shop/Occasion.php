@@ -4,6 +4,7 @@ namespace App\Livewire\Shop;
 
 use Livewire\Component;
 use App\Models\Product;
+use Livewire\Attributes\On;
 use App\Models\Occasion as OccasionModel;
 
 class Occasion extends Component
@@ -23,12 +24,19 @@ class Occasion extends Component
         $added = \App\Services\WishlistService::toggle($productId);
         
         if ($added) {
-            session()->flash('success', 'Added to Wishlist!');
+            $this->dispatch('toast', msg: 'Added to Wishlist!', type: 'success');
         } else {
-            session()->flash('success', 'Removed from Wishlist');
+            $this->dispatch('toast', msg: 'Removed from Wishlist', type: 'success');
         }
         
         $this->dispatch('wishlist-updated');
+    }
+
+    #[On('wishlist-updated')]
+    #[On('refresh-wishlist')]
+    public function refreshWishlistState()
+    {
+        // Empty method to trigger re-render
     }
 
     public function render()

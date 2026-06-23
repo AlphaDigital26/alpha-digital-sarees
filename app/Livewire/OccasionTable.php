@@ -11,11 +11,37 @@ use Filament\Forms\Contracts\HasForms;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Tables\Concerns\InteractsWithTable;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use Intervention\Image\ImageManager;
+use Intervention\Image\Drivers\Gd\Driver;
 
 class OccasionTable extends Component implements HasForms, HasTable
 {
     use InteractsWithForms;
     use InteractsWithTable;
+
+    protected function getOccasionFormSchema(): array
+    {
+        return [
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->unique(ignoreRecord: true)
+                ->maxLength(255),
+            Forms\Components\FileUpload::make('image')
+                ->image()
+                ->directory('occasions')
+                ->saveUploadedFileUsing(function (Forms\Components\FileUpload $component, TemporaryUploadedFile $file) {
+                    $manager = new ImageManager(new Driver());
+                    $image = $manager->read($file->getRealPath());
+                    $encoded = $image->toWebp(80);
+                    $filename = $component->getDirectory() . '/' . uniqid('occasion_') . '.webp';
+                    $component->getDisk()->put($filename, (string) $encoded);
+                    return $filename;
+                })
+                ->helperText('Image will be converted to WebP automatically.')
+                ->nullable(),
+        ];
+    }
 
     public function table(Table $table): Table
     {
@@ -32,29 +58,11 @@ class OccasionTable extends Component implements HasForms, HasTable
             ->headerActions([
                 Tables\Actions\CreateAction::make()
                     ->model(Occasion::class)
-                    ->form([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->maxLength(255),
-                        Forms\Components\FileUpload::make('image')
-                            ->image()
-                            ->directory('occasions')
-                            ->nullable(),
-                    ]),
+                    ->form($this->getOccasionFormSchema()),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
-                    ->form([
-                        Forms\Components\TextInput::make('name')
-                            ->required()
-                            ->unique(ignoreRecord: true)
-                            ->maxLength(255),
-                        Forms\Components\FileUpload::make('image')
-                            ->image()
-                            ->directory('occasions')
-                            ->nullable(),
-                    ]),
+                    ->form($this->getOccasionFormSchema()),
                 Tables\Actions\DeleteAction::make(),
             ]);
     }

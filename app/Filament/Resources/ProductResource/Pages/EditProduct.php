@@ -17,9 +17,10 @@ class EditProduct extends EditRecord
         ];
     }
 
-    // This forces the redirect back to the main products table
     protected function getRedirectUrl(): string
     {
-        return $this->getResource()::getUrl('index');
+        return $this->previousUrl ?? $this->getResource()::getUrl('index');
     }
+
+
 }

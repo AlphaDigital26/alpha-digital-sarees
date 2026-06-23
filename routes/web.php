@@ -42,6 +42,20 @@ Route::get('/new-arrival', NewArrival::class)->name('shop.new-arrival');
 Route::get('/occasion', Occasion::class)->name('shop.occasion');
 Route::get('/about', About::class)->name('shop.about');
 
+// --- SEARCH SUGGESTIONS ---
+Route::get('/api/search-suggestions', function (Illuminate\Http\Request $request) {
+    $search = $request->query('q');
+    if (!$search || strlen($search) < 2) return response()->json([]);
+    
+    $suggestions = \App\Models\Product::where('name', 'like', "%{$search}%")
+        ->select('name')
+        ->limit(8)
+        ->get()
+        ->pluck('name');
+        
+    return response()->json($suggestions);
+})->name('api.search.suggestions');
+
 // --- CART PAGE ---
 Route::get('/cart', Cart::class)->name('cart');
 
