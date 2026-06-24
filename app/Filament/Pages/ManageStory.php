@@ -33,7 +33,27 @@ class ManageStory extends Page implements HasForms
         return $form->schema([
             Forms\Components\Group::make()->schema([
                 Forms\Components\Section::make('Main Hero')->schema([
-                    Forms\Components\FileUpload::make('main_image')->directory('stories')->image()->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg']),
+                    Forms\Components\FileUpload::make('main_image')
+                        ->label('Desktop Hero Image')
+                        ->directory('stories')
+                        ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                        ->helperText('Landscape orientation recommended (16:9 ratio).'),
+                        
+                    Forms\Components\FileUpload::make('main_image_mobile')
+                        ->label('Mobile Hero Image (Optional – Portrait 4:5)')
+                        ->directory('stories/mobile')
+                        ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                        ->helperText('Upload a portrait image (4:5 ratio) for mobile devices. If left blank, the desktop image is used.'),
+
+                    Forms\Components\FileUpload::make('main_image_tablet')
+                        ->label('Tablet Hero Image (Optional – Landscape 4:3)')
+                        ->directory('stories/tablet')
+                        ->image()
+                        ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                        ->helperText('Upload a landscape image (4:3 ratio) for tablet devices. If left blank, the desktop image is used.'),
+
                     Forms\Components\TextInput::make('main_heading'),
                     Forms\Components\Textarea::make('para_1'),
                 ]),
@@ -71,7 +91,11 @@ class ManageStory extends Page implements HasForms
     public function save(): void {
         if (!$this->isEditing) return;
 
-        Story::updateOrCreate(['id' => 1], $this->form->getState());
+        $story = Story::updateOrCreate(['id' => 1], $this->form->getState());
+        
+        // Refresh form state with the latest DB values (e.g., optimized .webp paths)
+        $this->form->fill($story->toArray());
+        
         $this->isEditing = false;
         Notification::make()->success()->title('Saved!')->send();
     }

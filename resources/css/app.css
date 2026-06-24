@@ -17,6 +17,19 @@
   body {
     @apply font-sans bg-neutral text-[#2A211F] leading-relaxed m-0 p-0 box-border;
   }
+
+  /* ── Modal scroll-lock ────────────────────────────────────────────────────
+     Applied by JS (_openModal / _closeModal) on the <body> and <html> elements.
+     Acts as a CSS-level safety net on top of the JS position:fixed trick.
+  ── */
+  html.modal-open,
+  body.modal-open {
+    overflow: hidden !important;
+    /* Prevents iOS momentum scrolling from bleeding through */
+    touch-action: none;
+    overscroll-behavior: none;
+  }
+
   h1, h2, h3, .logo {
     @apply font-serif;
   }
