@@ -414,5 +414,66 @@ class AdminPanelProvider extends PanelProvider
                 </style>
             '),
         );
+        FilamentView::registerRenderHook(
+            'panels::body.end',
+            fn (): string => Blade::render('
+                <script>
+                (function () {
+                    /**
+                     * After editing a product, the redirect URL contains #table-row-{id}.
+                     * This script waits for Livewire to finish rendering, then scrolls
+                     * the matching table row into view and briefly highlights it.
+                     */
+                    function scrollToEditedRow() {
+                        var hash = window.location.hash; // e.g. #table-row-42
+                        if (!hash || !hash.startsWith("#table-row-")) return;
+
+                        var recordId = hash.replace("#table-row-", "");
+                        if (!recordId) return;
+
+                        // Filament edit links contain /edit at the end with the record ID in the path
+                        // e.g. href="/alpha-portal/products/42/edit"
+                        var editLinks = document.querySelectorAll("a[href*=\"/" + recordId + "/edit\"]");
+                        if (!editLinks.length) return;
+
+                        // Walk up to the nearest table row container
+                        var row = editLinks[0].closest("tr, [class*=fi-ta-record]");
+                        if (!row) {
+                            // fallback: scroll the link itself into view
+                            editLinks[0].scrollIntoView({ behavior: "smooth", block: "center" });
+                            return;
+                        }
+
+                        // Scroll into view
+                        row.scrollIntoView({ behavior: "smooth", block: "center" });
+
+                        // Brief highlight flash so user knows which row was edited
+                        row.style.transition = "background-color 0.4s ease";
+                        row.style.backgroundColor = "rgba(128, 0, 32, 0.08)";
+                        setTimeout(function () {
+                            row.style.backgroundColor = "";
+                        }, 2000);
+
+                        // Clean fragment from URL so back/forward nav is clean
+                        history.replaceState(null, "", window.location.pathname + window.location.search);
+                    }
+
+                    // Wait for Livewire to finish its first render
+                    document.addEventListener("livewire:navigated", function () {
+                        setTimeout(scrollToEditedRow, 300);
+                    });
+
+                    // Also handle plain page loads (non-SPA navigation)
+                    if (document.readyState === "complete") {
+                        setTimeout(scrollToEditedRow, 500);
+                    } else {
+                        window.addEventListener("load", function () {
+                            setTimeout(scrollToEditedRow, 500);
+                        });
+                    }
+                })();
+                </script>
+            '),
+        );
     }
 }

@@ -46,17 +46,17 @@
         x-transition:enter-end="opacity-100 scale-100"
         class="bg-white rounded-2xl shadow-2xl flex max-w-[850px] w-full min-h-[500px] md:h-[550px] max-h-[95vh] overflow-hidden relative"
     >
-        <button @click="_closeModal()" class="absolute top-4 right-4 text-gray-500 hover:text-black z-20 transition-colors outline-none border-none bg-transparent cursor-pointer">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-        </button>
-
         <div class="hidden md:block md:w-[45%] relative bg-[#F4F0EB]">
             <img src="{{ asset('images/LoginPopup.webp') }}" class="w-full h-full object-cover" alt="Alpha Digital">
         </div>
 
-        <div class="w-full md:w-[55%] flex flex-col pt-8 md:pt-10 px-8 md:px-12 pb-6 bg-white overflow-y-auto" style="-ms-overflow-style: none; scrollbar-width: none;">
+        <div class="w-full md:w-[55%] flex flex-col pt-8 md:pt-10 px-8 md:px-12 pb-6 bg-white overflow-y-auto relative" style="-ms-overflow-style: none; scrollbar-width: none;">
             
-            <div class="text-center mb-6 flex justify-center">
+            <button @click="_closeModal()" class="absolute top-6 right-6 text-gray-500 hover:text-black z-20 transition-colors outline-none border-none bg-transparent cursor-pointer" aria-label="Close">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+
+            <div class="text-center mb-6 mt-6 md:mt-2 flex justify-center">
                  <h1 class="text-xl font-bold tracking-[0.2em] text-[#800020] uppercase m-0" style="font-family: 'Noto Serif', serif;">
                     ALPHA DIGITAL
                 </h1>
