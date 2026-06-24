@@ -2,32 +2,80 @@
     x-data="{
         show: false,
         _scrollY: 0,
+        _wheelHandler: null,
+        _touchHandler: null,
+        _keyHandler: null,
+
+        _blockScroll(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        },
+
+        _blockKeys(e) {
+            const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+            if (scrollKeys.includes(e.keyCode)) {
+                /* only block if the focus is NOT inside an input/textarea/select */
+                const tag = document.activeElement && document.activeElement.tagName;
+                if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) {
+                    e.preventDefault();
+                }
+            }
+        },
+
         _openModal() {
-            this._scrollY = window.pageYOffset;
-            document.body.style.position = 'fixed';
-            document.body.style.top = `-${this._scrollY}px`;
-            document.body.style.width = '100%';
-            document.body.style.overflowY = 'scroll';
+            document.body.style.overflow = 'hidden';
             document.body.classList.add('modal-open');
+            document.documentElement.classList.add('modal-open');
+
+            /* Block wheel / touch / keyboard scroll on the backdrop element */
+            const el = this.$el;
+            this._wheelHandler = (e) => {
+                if (!el.contains(e.target)) return;
+                /* Allow scrolling inside the inner modal panel */
+                const inner = el.querySelector('.modal-inner-scroll');
+                if (inner && inner.contains(e.target)) return;
+                e.preventDefault();
+                e.stopPropagation();
+            };
+            this._touchHandler = (e) => {
+                if (!el.contains(e.target)) return;
+                const inner = el.querySelector('.modal-inner-scroll');
+                if (inner && inner.contains(e.target)) return;
+                e.preventDefault();
+                e.stopPropagation();
+            };
+            this._keyHandler = this._blockKeys.bind(this);
+
+            el.addEventListener('wheel',      this._wheelHandler, { passive: false, capture: true });
+            el.addEventListener('touchmove',  this._touchHandler, { passive: false, capture: true });
+            window.addEventListener('keydown', this._keyHandler,  { capture: true });
+
             this.show = true;
         },
+
         _closeModal() {
             if (typeof $wire !== 'undefined' && $wire.step == 4) {
                 window.location.href = $wire.redirectUrl || '/';
                 return;
             }
+
             this.show = false;
+
+            /* Remove event listeners */
+            const el = this.$el;
+            if (this._wheelHandler)  el.removeEventListener('wheel',      this._wheelHandler, { capture: true });
+            if (this._touchHandler)  el.removeEventListener('touchmove',  this._touchHandler, { capture: true });
+            if (this._keyHandler)   window.removeEventListener('keydown', this._keyHandler,   { capture: true });
+            this._wheelHandler = this._touchHandler = this._keyHandler = null;
+
+            /* Restore body */
             document.body.classList.remove('modal-open');
-            document.body.style.position = '';
-            document.body.style.top = '';
-            document.body.style.width = '';
-            document.body.style.overflowY = '';
-            window.scrollTo(0, this._scrollY);
+            document.documentElement.classList.remove('modal-open');
+            document.body.style.overflow = '';
         }
     }"
     x-init="
-        $watch('show', val => { /* handled by _openModal/_closeModal */ });
-        window.addEventListener('open-login-modal', () => _openModal());
+        window.addEventListener('open-login-modal',  () => _openModal());
         window.addEventListener('close-login-modal', () => _closeModal());
     "
     @close-login-modal.window="_closeModal()"
@@ -50,7 +98,7 @@
             <img src="{{ asset('images/LoginPopup.webp') }}" class="w-full h-full object-cover" alt="Alpha Digital">
         </div>
 
-        <div class="w-full md:w-[55%] flex flex-col pt-8 md:pt-10 px-8 md:px-12 pb-6 bg-white overflow-y-auto relative" style="-ms-overflow-style: none; scrollbar-width: none;">
+        <div class="modal-inner-scroll overscroll-contain w-full md:w-[55%] flex flex-col pt-8 md:pt-10 px-8 md:px-12 pb-6 bg-white overflow-y-auto relative" style="-ms-overflow-style: none; scrollbar-width: none;">
             
             <button @click="_closeModal()" class="absolute top-6 right-6 text-gray-500 hover:text-black z-20 transition-colors outline-none border-none bg-transparent cursor-pointer" aria-label="Close">
                 <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>

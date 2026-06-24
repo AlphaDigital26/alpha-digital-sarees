@@ -1,6 +1,20 @@
 <main>
-    <section class="about-hero" style="background-image: linear-gradient(to bottom, rgba(253,251,247,0) 60%, rgba(253,251,247,1) 100%), url('{{ $story->main_image ? asset('storage/' . $story->main_image) : asset('images/hero-img.webp') }}');">
-        <div class="hero-content" data-aos="fade-up" data-aos-duration="1000">
+    <section class="about-hero relative overflow-hidden">
+        <picture class="absolute inset-0 w-full h-full z-0">
+            @if($story->main_image_mobile)
+            <source media="(max-width: 768px)" srcset="{{ asset('storage/' . $story->main_image_mobile) }}">
+            @endif
+            @if($story->main_image_tablet)
+            <source media="(min-width: 769px) and (max-width: 1024px)" srcset="{{ asset('storage/' . $story->main_image_tablet) }}">
+            @endif
+            <img src="{{ $story->main_image ? asset('storage/' . $story->main_image) : asset('images/hero-img.webp') }}"
+                 alt="{{ $story->main_heading ?? 'Our Story' }}"
+                 class="w-full h-full object-cover">
+        </picture>
+        
+        <div class="absolute inset-0 z-[1]" style="background-image: linear-gradient(to bottom, rgba(253,251,247,0) 60%, rgba(253,251,247,1) 100%);"></div>
+
+        <div class="hero-content relative z-[2]" data-aos="fade-up" data-aos-duration="1000">
             <!-- <span class="label" data-aos="fade-up" data-aos-delay="100">OUR STORY</span> -->
             <h1 data-aos="fade-up" data-aos-delay="300">{!! nl2br(e($story->main_heading)) !!}</h1>
         </div>

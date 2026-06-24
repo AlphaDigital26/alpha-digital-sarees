@@ -22,12 +22,31 @@ class CarouselResource extends Resource
                 Forms\Components\Section::make('Carousel Image')
                     ->schema([
                         Forms\Components\FileUpload::make('image')
-                            ->label('Slide Image')
+                            ->label('Desktop Slide Image')
                             ->image()
                             ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
                             ->maxSize(5120)
                             ->directory('carousels')
-                            ->required() 
+                            ->required()
+                            ->helperText('Landscape orientation recommended (16:9 ratio). Used on all screen sizes unless a mobile image is provided.')
+                            ->columnSpanFull(),
+
+                        Forms\Components\FileUpload::make('image_mobile')
+                            ->label('Mobile Slide Image (Optional – Portrait 4:5)')
+                            ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                            ->maxSize(5120)
+                            ->directory('carousels/mobile')
+                            ->helperText('Upload a portrait image (4:5 ratio, e.g. 900×1125 px) for mobile devices (≤ 768 px wide). If left blank, the desktop image is used on mobile too.')
+                            ->columnSpanFull(),
+
+                        Forms\Components\FileUpload::make('image_tablet')
+                            ->label('Tablet Slide Image (Optional – Landscape 4:3)')
+                            ->image()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/jpg'])
+                            ->maxSize(5120)
+                            ->directory('carousels/tablet')
+                            ->helperText('Upload a landscape image (4:3 ratio, e.g. 1280×960 px) for tablet devices (769 – 1024 px wide). If left blank, the desktop image is used on tablet too.')
                             ->columnSpanFull(),
                     ]),
 
@@ -85,6 +104,14 @@ public static function table(Table $table): Table
                     ->weight('bold')
                     ->placeholder('No heading'),
                     
+                \Filament\Tables\Columns\IconColumn::make('image_mobile')
+                    ->boolean()
+                    ->label('Mobile'),
+
+                \Filament\Tables\Columns\IconColumn::make('image_tablet')
+                    ->boolean()
+                    ->label('Tablet'),
+
                 \Filament\Tables\Columns\IconColumn::make('is_active')
                     ->boolean()
                     ->label('Active'),

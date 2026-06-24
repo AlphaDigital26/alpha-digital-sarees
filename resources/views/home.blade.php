@@ -70,10 +70,18 @@
             <div class="slide flex items-center justify-center text-center md:justify-start md:text-left px-6 md:px-[10%] transition-opacity duration-[400ms] ease-in-out" 
                  :class="{ '!opacity-100 z-10 pointer-events-auto': visibleSlide === {{ $index }}, '!opacity-0 z-0 pointer-events-none': visibleSlide !== {{ $index }} }">
                  
-                <img src="{{ asset('storage/' . $carousel->image) }}" 
-                     alt="{{ $carousel->heading ?? 'Alpha Digital Saree Collection' }}"
-                     @if($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif
-                     class="absolute inset-0 w-full h-full object-cover z-0">
+                <picture>
+                    @if($carousel->image_mobile)
+                    <source media="(max-width: 768px)" srcset="{{ asset('storage/' . $carousel->image_mobile) }}">
+                    @endif
+                    @if($carousel->image_tablet)
+                    <source media="(min-width: 769px) and (max-width: 1024px)" srcset="{{ asset('storage/' . $carousel->image_tablet) }}">
+                    @endif
+                    <img src="{{ asset('storage/' . $carousel->image) }}"
+                         alt="{{ $carousel->heading ?? 'Alpha Digital Saree Collection' }}"
+                         @if($index === 0) fetchpriority="high" loading="eager" @else loading="lazy" @endif
+                         class="absolute inset-0 w-full h-full object-cover z-0">
+                </picture>
                 
                 <div class="hero-content relative z-[2] w-full max-w-[500px] transition-all duration-[600ms] ease-out"
                      :class="{ 'translate-y-0 opacity-100 delay-[200ms]': visibleSlide === {{ $index }}, 'translate-y-8 opacity-0 delay-0': visibleSlide !== {{ $index }} }">
