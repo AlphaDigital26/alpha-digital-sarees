@@ -26,6 +26,7 @@ class Customer extends Authenticatable
         'email_verified_at',
         'otp',
         'otp_expires_at',
+        'google_id', 
     ];
 
     protected $hidden = [
