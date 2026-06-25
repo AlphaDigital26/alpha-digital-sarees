@@ -6,6 +6,7 @@ use App\Models\UserQuery;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -30,6 +31,7 @@ class AdminContactInquiryMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address('contact@adsarees.com', 'Alpha Digital Sarees'),
             subject: 'New Contact Inquiry: ' . $this->query->name,
         );
     }
