@@ -17,6 +17,9 @@ use App\Livewire\Shop\Product as ProductComponent;
 use App\Models\Carousel;
 use App\Models\Product as ProductModel; 
 
+// --- GOOGLE AUTH ---
+use App\Http\Controllers\Auth\GoogleController;
+
 // --- AUTH REDIRECT ---
 Route::get('/login', function () {
     return redirect()->route('home');
@@ -113,3 +116,7 @@ Route::get('/faqs', function () {
 Route::get('/checkout/address', App\Livewire\Checkout\Address::class)->name('checkout.address');
 Route::get('/checkout/summary', App\Livewire\Checkout\Summary::class)->name('checkout.summary');
 Route::get('/checkout/success/{orderId}', App\Livewire\Checkout\Success::class)->name('checkout.success');
+
+// --- GOOGLE AUTH ROUTES ---
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('google.login');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('google.callback');

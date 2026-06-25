@@ -10,6 +10,7 @@
         "filament/filament": "^3.3",
         "intervention/image": "^3.11",
         "laravel/framework": "^11.0",
+        "laravel/socialite": "^5.28",
         "laravel/tinker": "^2.9",
         "livewire/livewire": "^3.8",
         "mews/purifier": "^3.4",
