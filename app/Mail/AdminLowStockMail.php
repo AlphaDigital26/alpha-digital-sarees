@@ -6,6 +6,7 @@ use App\Models\Product;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
+use Illuminate\Mail\Mailables\Address;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
@@ -30,6 +31,7 @@ class AdminLowStockMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address('noreply@adsarees.com', 'Alpha Digital Sarees'),
             subject: $this->product->stock == 0 
                 ? 'OUT OF STOCK Alert: ' . $this->product->name 
                 : 'Low Stock Alert: ' . $this->product->name,

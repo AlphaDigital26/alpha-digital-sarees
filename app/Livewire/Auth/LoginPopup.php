@@ -34,7 +34,12 @@ class LoginPopup extends Component
         $customer = Customer::where('email', $this->email)->first();
 
         if ($customer) {
-            $this->step = 2; // Sign in
+            if (is_null($customer->email_verified_at)) {
+                $this->sendOtp($customer);
+                $this->step = 7; // Go directly to OTP verification step
+            } else {
+                $this->step = 2; // Sign in
+            }
         } else {
             $this->step = 3; // Register
         }
