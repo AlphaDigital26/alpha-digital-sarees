@@ -446,11 +446,20 @@
                         document.body.style.width = '100%';
                         document.body.style.overflowY = 'scroll';
                     } else {
+                        // Temporarily disable smooth scrolling to prevent visible jump
+                        document.documentElement.style.setProperty('scroll-behavior', 'auto', 'important');
+                        
                         document.body.style.position = '';
                         document.body.style.top = '';
                         document.body.style.width = '';
                         document.body.style.overflowY = '';
+                        
                         window.scrollTo(0, this._scrollY);
+                        
+                        // Restore original scroll behavior after layout paint
+                        setTimeout(() => {
+                            document.documentElement.style.removeProperty('scroll-behavior');
+                        }, 10);
                     }
                 });
             },
@@ -515,8 +524,8 @@
                                                data-review="{{ json_encode($reviewData) }}"
                                                data-photo="{{ asset('storage/' . $photo) }}"
                                                @click.prevent="openModal(JSON.parse($el.dataset.review), $el.dataset.photo)" 
-                                               class="block w-20 h-20 rounded overflow-hidden border border-[#E5E0DA] hover:opacity-80 transition cursor-pointer">
-                                                <img src="{{ asset('storage/' . $photo) }}" class="w-full h-full object-cover">
+                                               class="flex-none block w-16 h-16 md:w-20 md:h-20 rounded overflow-hidden border border-[#E5E0DA] hover:opacity-80 transition cursor-pointer relative">
+                                                <img src="{{ asset('storage/' . $photo) }}" class="absolute inset-0 w-full h-full object-cover object-center">
                                             </a>
                                         @endforeach
                                     </div>
@@ -544,61 +553,61 @@
 
             {{-- Review Image Lightbox Modal --}}
             <template x-teleport="body">
-                <div x-show="isOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-4 md:p-10" style="display: none;">
+                <div x-show="isOpen" class="fixed inset-0 z-[9999] flex items-center justify-center p-2 sm:p-4 md:p-10" style="display: none;">
                     <div class="absolute inset-0 bg-black bg-opacity-80" @click="isOpen = false"></div>
                     
-                    <div class="relative z-10 w-full max-w-6xl h-[85vh] flex flex-col md:flex-row bg-white rounded-lg shadow-2xl overflow-hidden animate-fade-in-up">
-                        <button @click="isOpen = false" class="absolute top-4 right-4 z-20 text-gray-400 hover:text-black transition bg-white border border-gray-200 cursor-pointer p-2 rounded-full shadow-md hover:bg-gray-100">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
+                    <div class="relative z-10 w-full max-w-6xl h-[90vh] md:h-[85vh] flex flex-col md:flex-row bg-white rounded-lg shadow-2xl overflow-hidden animate-fade-in-up">
+                        <button @click="isOpen = false" class="absolute top-2 right-2 md:top-4 md:right-4 z-20 text-gray-400 hover:text-black transition bg-white border border-gray-200 cursor-pointer p-1.5 md:p-2 rounded-full shadow-md hover:bg-gray-100">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 md:h-5 md:w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" /></svg>
                         </button>
 
                         <!-- Left: Large Image Area -->
-                        <div class="w-full md:w-[60%] bg-[#F5F0EB] flex items-center justify-center p-4 relative group">
+                        <div class="w-full h-[45%] md:h-full md:w-[60%] bg-[#F5F0EB] flex items-center justify-center p-2 md:p-4 relative group shrink-0">
                             <!-- Prev Arrow -->
-                            <button x-show="review && review.photos && review.photos.length > 1" @click="prevImage()" class="absolute left-4 z-20 text-[#800020] hover:text-white bg-white hover:bg-[#800020] transition border border-[#E5E0DA] cursor-pointer p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 focus:opacity-100">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+                            <button x-show="review && review.photos && review.photos.length > 1" @click="prevImage()" class="absolute left-2 md:left-4 z-20 text-[#800020] hover:text-white bg-white hover:bg-[#800020] transition border border-[#E5E0DA] cursor-pointer p-2 md:p-3 rounded-full shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
                             </button>
                             
                             <img :src="activeImage" class="max-w-full max-h-full object-contain mix-blend-multiply drop-shadow-lg">
                             
                             <!-- Next Arrow -->
-                            <button x-show="review && review.photos && review.photos.length > 1" @click="nextImage()" class="absolute right-4 z-20 text-[#800020] hover:text-white bg-white hover:bg-[#800020] transition border border-[#E5E0DA] cursor-pointer p-3 rounded-full shadow-md opacity-0 group-hover:opacity-100 focus:opacity-100">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
+                            <button x-show="review && review.photos && review.photos.length > 1" @click="nextImage()" class="absolute right-2 md:right-4 z-20 text-[#800020] hover:text-white bg-white hover:bg-[#800020] transition border border-[#E5E0DA] cursor-pointer p-2 md:p-3 rounded-full shadow-md opacity-100 md:opacity-0 md:group-hover:opacity-100 focus:opacity-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 md:h-6 md:w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" /></svg>
                             </button>
                         </div>
 
                         <!-- Right: Review Details -->
-                        <div class="w-full md:w-[40%] p-6 md:p-8 flex flex-col h-full overflow-y-auto bg-white">
-                            <h3 class="font-bold text-lg text-gray-900 mb-6 border-b border-gray-100 pb-3">Customer photos and review</h3>
+                        <div class="w-full h-[55%] md:h-full md:w-[40%] p-4 sm:p-6 md:p-8 flex flex-col overflow-y-auto bg-white grow">
+                            <h3 class="font-bold text-base md:text-lg text-gray-900 mb-4 md:mb-6 border-b border-gray-100 pb-2 md:pb-3 pr-8 md:pr-0">Customer photos and review</h3>
                             
                             <div class="flex items-center gap-3 mb-3">
-                                <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold">
-                                    <span x-text="review.name.charAt(0).toUpperCase()"></span>
+                                <div class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-sm md:text-base">
+                                    <span x-text="review.name ? review.name.charAt(0).toUpperCase() : 'G'"></span>
                                 </div>
-                                <span class="font-bold text-[#1b1c1a]" x-text="review.name"></span>
+                                <span class="font-bold text-[#1b1c1a] text-sm md:text-base" x-text="review.name || 'Guest User'"></span>
                             </div>
 
                             <div class="flex items-center gap-2 mb-4">
                                 <div class="flex gap-0.5">
                                     <template x-for="i in 5">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 fill-current" :class="i <= review.rating ? 'text-[#FF9900]' : 'text-gray-300'" viewBox="0 0 24 24" stroke="none">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-3 h-3 md:w-4 md:h-4 fill-current" :class="i <= review.rating ? 'text-[#FF9900]' : 'text-gray-300'" viewBox="0 0 24 24" stroke="none">
                                             <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon>
                                         </svg>
                                     </template>
                                 </div>
-                                <span class="text-[13px] font-bold text-[#C45500]">Verified Purchase</span>
+                                <span class="text-[12px] md:text-[13px] font-bold text-[#C45500]">Verified Purchase</span>
                             </div>
 
-                            <p class="text-gray-700 text-[14px] leading-relaxed mb-6 whitespace-pre-wrap break-words" x-text="review.comment" style="font-family: 'Manrope', sans-serif;"></p>
+                            <p class="text-gray-700 text-[13px] md:text-[14px] leading-relaxed mb-6 whitespace-pre-wrap break-words" x-text="review.comment" style="font-family: 'Manrope', sans-serif;"></p>
 
                             <!-- Thumbnails Gallery -->
-                            <div class="mt-auto pt-6">
+                            <div class="mt-auto pt-4 md:pt-6">
                                 <div class="flex gap-2 flex-wrap">
                                     <template x-for="photo in review.photos">
                                         <button @click="activeImage = photo" 
-                                                class="w-16 h-16 rounded overflow-hidden border-2 transition focus:outline-none cursor-pointer"
+                                                class="flex-none w-12 h-12 md:w-16 md:h-16 rounded overflow-hidden border-2 transition focus:outline-none cursor-pointer relative"
                                                 :class="activeImage === photo ? 'border-[#e77600] shadow-sm' : 'border-transparent opacity-70 hover:opacity-100 hover:border-gray-300'">
-                                            <img :src="photo" class="w-full h-full object-cover">
+                                            <img :src="photo" class="absolute inset-0 w-full h-full object-cover object-center">
                                         </button>
                                     </template>
                                 </div>
