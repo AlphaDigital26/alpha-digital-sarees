@@ -1,4 +1,21 @@
-<div class="bg-transparent font-sans pb-16 text-[#1b1c1a]">
+<div class="bg-transparent font-sans pb-16 text-[#1b1c1a]"
+     x-data="{ 
+        reviewModalOpen: @entangle('reviewModalOpen').live, 
+        viewReviewModalOpen: @entangle('viewReviewModalOpen').live,
+        cancelModalOpen: @entangle('cancelModalOpen').live,
+        refundModalOpen: @entangle('refundModalOpen').live
+     }"
+     x-effect="
+         if (reviewModalOpen || viewReviewModalOpen || cancelModalOpen || refundModalOpen) {
+             document.body.classList.add('modal-open');
+             document.documentElement.classList.add('modal-open');
+             document.body.style.overflow = 'hidden';
+         } else {
+             document.body.classList.remove('modal-open');
+             document.documentElement.classList.remove('modal-open');
+             document.body.style.overflow = '';
+         }
+     ">
     
     {{-- Header with Back Navigation --}}
     <h2 class="text-lg font-bold text-secondary m-0 uppercase tracking-wide font-serif mb-6 border-b border-outline_variant/50 pb-4 flex items-center gap-3">
@@ -618,7 +635,7 @@
 
 {{-- CANCEL ORDER MODAL --}}
 @if($cancelModalOpen)
-<div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden border border-[#E5E0DA]">
         <div class="px-6 py-4 flex justify-between items-center bg-[#FAFAFA] border-b border-[#E5E0DA]">
             <h3 class="text-lg font-bold m-0 text-[#1b1c1a] flex items-center gap-2">
@@ -672,7 +689,7 @@
 
 {{-- REFUND REQUEST MODAL --}}
 @if($refundModalOpen)
-<div x-data x-init="document.body.style.overflow = 'hidden'; return () => document.body.style.overflow = ''" class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
     <div class="bg-white rounded-lg shadow-xl w-full max-w-md mx-4 overflow-hidden border border-[#E5E0DA]">
         <div class="px-6 py-4 flex justify-between items-center bg-[#FAFAFA] border-b border-[#E5E0DA]">
             <h3 class="text-lg font-bold m-0 text-[#1b1c1a] flex items-center gap-2">
@@ -746,20 +763,49 @@
 
     {{-- REVIEW MODAL --}}
     @if($reviewModalOpen)
-        <div x-data="{ _sy: 0 }" x-init="
-            _sy = window.pageYOffset;
-            document.body.style.position = 'fixed';
-            document.body.style.top = '-' + _sy + 'px';
-            document.body.style.width = '100%';
-            document.body.style.overflowY = 'scroll';
-            return () => {
-                document.body.style.position = '';
-                document.body.style.top = '';
-                document.body.style.width = '';
-                document.body.style.overflowY = '';
-                window.scrollTo(0, _sy);
-            }
-        " class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
+        <div x-data="{
+                _wheelHandler: null,
+                _touchHandler: null,
+                _keyHandler: null,
+                _blockKeys(e) {
+                    const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+                    if (scrollKeys.includes(e.keyCode)) {
+                        const tag = document.activeElement && document.activeElement.tagName;
+                        if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) {
+                            e.preventDefault();
+                        }
+                    }
+                }
+            }" 
+            x-init="
+                const el = $el;
+                this._wheelHandler = (e) => {
+                    if (!el.contains(e.target)) return;
+                    const inner = el.querySelector('.modal-inner-scroll');
+                    if (inner && inner.contains(e.target)) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                };
+                this._touchHandler = (e) => {
+                    if (!el.contains(e.target)) return;
+                    const inner = el.querySelector('.modal-inner-scroll');
+                    if (inner && inner.contains(e.target)) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                };
+                this._keyHandler = this._blockKeys.bind(this);
+
+                el.addEventListener('wheel', this._wheelHandler, { passive: false, capture: true });
+                el.addEventListener('touchmove', this._touchHandler, { passive: false, capture: true });
+                window.addEventListener('keydown', this._keyHandler, { capture: true });
+
+                return () => {
+                    el.removeEventListener('wheel', this._wheelHandler, { capture: true });
+                    el.removeEventListener('touchmove', this._touchHandler, { capture: true });
+                    window.removeEventListener('keydown', this._keyHandler, { capture: true });
+                }
+            " 
+            class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
             <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('reviewModalOpen', false)"></div>
             <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 animate-fade-in-up m-auto flex flex-col max-h-[90vh]">
                 
@@ -783,7 +829,7 @@
                 <form wire:submit.prevent="submitReview" class="flex flex-col flex-grow overflow-hidden">
                     
                     {{-- BODY (Scrollable) --}}
-                    <div class="p-6 md:p-8 py-6 overflow-y-auto flex-grow hide-modal-scroll space-y-6" style="scrollbar-width: none; -ms-overflow-style: none;">
+                    <div class="p-6 md:p-8 py-6 overflow-y-auto flex-grow hide-modal-scroll space-y-6 modal-inner-scroll" style="scrollbar-width: none; -ms-overflow-style: none;">
                         <style>
                             .hide-modal-scroll::-webkit-scrollbar { display: none; }
                         </style>
@@ -867,20 +913,49 @@
 
     {{-- VIEW REVIEW MODAL --}}
     @if($viewReviewModalOpen && $viewingReview)
-        <div x-data="{ _sy: 0 }" x-init="
-            _sy = window.pageYOffset;
-            document.body.style.position = 'fixed';
-            document.body.style.top = '-' + _sy + 'px';
-            document.body.style.width = '100%';
-            document.body.style.overflowY = 'scroll';
-            return () => {
-                document.body.style.position = '';
-                document.body.style.top = '';
-                document.body.style.width = '';
-                document.body.style.overflowY = '';
-                window.scrollTo(0, _sy);
-            }
-        " class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
+        <div x-data="{
+                _wheelHandler: null,
+                _touchHandler: null,
+                _keyHandler: null,
+                _blockKeys(e) {
+                    const scrollKeys = [32, 33, 34, 35, 36, 37, 38, 39, 40];
+                    if (scrollKeys.includes(e.keyCode)) {
+                        const tag = document.activeElement && document.activeElement.tagName;
+                        if (!['INPUT', 'TEXTAREA', 'SELECT'].includes(tag)) {
+                            e.preventDefault();
+                        }
+                    }
+                }
+            }" 
+            x-init="
+                const el = $el;
+                this._wheelHandler = (e) => {
+                    if (!el.contains(e.target)) return;
+                    const inner = el.querySelector('.modal-inner-scroll');
+                    if (inner && inner.contains(e.target)) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                };
+                this._touchHandler = (e) => {
+                    if (!el.contains(e.target)) return;
+                    const inner = el.querySelector('.modal-inner-scroll');
+                    if (inner && inner.contains(e.target)) return;
+                    e.preventDefault();
+                    e.stopPropagation();
+                };
+                this._keyHandler = this._blockKeys.bind(this);
+
+                el.addEventListener('wheel', this._wheelHandler, { passive: false, capture: true });
+                el.addEventListener('touchmove', this._touchHandler, { passive: false, capture: true });
+                window.addEventListener('keydown', this._keyHandler, { capture: true });
+
+                return () => {
+                    el.removeEventListener('wheel', this._wheelHandler, { capture: true });
+                    el.removeEventListener('touchmove', this._touchHandler, { capture: true });
+                    window.removeEventListener('keydown', this._keyHandler, { capture: true });
+                }
+            " 
+            class="fixed inset-0 z-[9999] w-screen flex items-center justify-center p-4 md:p-8">
             <div class="fixed inset-0 bg-[#2A211F] opacity-50" wire:click="$set('viewReviewModalOpen', false)"></div>
             <div class="bg-white rounded-lg shadow-xl w-full max-w-2xl relative z-10 animate-fade-in-up m-auto flex flex-col max-h-[90vh]">
                 
@@ -901,7 +976,7 @@
                 </div>
 
                 {{-- BODY (Scrollable) --}}
-                <div class="p-6 md:p-8 py-6 overflow-y-auto flex-grow hide-modal-scroll" style="scrollbar-width: none; -ms-overflow-style: none;">
+                <div class="p-6 md:p-8 py-6 overflow-y-auto flex-grow hide-modal-scroll modal-inner-scroll" style="scrollbar-width: none; -ms-overflow-style: none;">
                     <style>
                         .hide-modal-scroll::-webkit-scrollbar { display: none; }
                     </style>
@@ -915,7 +990,7 @@
                     @endif
                     
                     @if(is_array($viewingReview->photos) && count($viewingReview->photos) > 0)
-                        <div class="mb-4" x-data="{ localImageModalOpen: false, localModalImageSrc: '' }" x-init="$watch('localImageModalOpen', val => document.body.style.overflow = val ? 'hidden' : '')">
+                        <div class="mb-4" x-data="{ localImageModalOpen: false, localModalImageSrc: '' }">
                             <span class="block text-[13px] font-bold text-gray-700 uppercase tracking-wider mb-2">Attached Photos</span>
                             <div class="flex gap-2 flex-wrap">
                                 @foreach($viewingReview->photos as $photo)

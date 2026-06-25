@@ -24,7 +24,7 @@ class Summary extends BaseCheckoutComponent
     {
         $validation = $this->validateCheckout();
         // If validateCheckout returned a redirect, Livewire handles it automatically via the Redirector
-        if (is_object($validation) && method_exists($validation, 'getStatusCode')) {
+        if (!is_array($validation)) {
             return $validation; // though Livewire redirects usually abort
         }
         
