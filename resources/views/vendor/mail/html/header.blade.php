@@ -3,15 +3,15 @@
     $settings = \App\Models\Setting::first();
 @endphp
 <tr>
-<td class="header">
-<a href="{{ $url }}" style="display: inline-block; text-decoration: none;">
-@if ($settings && $settings->logo_type === 'image' && $settings->logo_image)
-<img src="{{ asset('storage/' . $settings->logo_image) }}" class="logo" alt="{{ $settings->logo_text ?? config('app.name') }}" style="max-height: 50px; width: auto;">
-@else
-<span style="font-size: 19px; font-weight: bold; color: #3d4852; text-decoration: none;">
-    {{ $settings->logo_text ?? config('app.name') }}
-</span>
-@endif
-</a>
-</td>
+    <td class="header">
+        <a href="{{ $url }}" style="display: inline-block;">
+        
+            @if (isset($message) && $message)
+                <img src="{{ $message->embed(public_path('images/logo.png')) }}" class="logo" alt="ALPHA DIGITAL SAREES Logo" style="max-height: 60px; width: auto;">
+            @else
+                <img src="{{ asset('images/logo.png') }}" class="logo" alt="ALPHA DIGITAL SREES Logo" style="max-height: 60px; width: auto;">
+            @endif
+
+        </a>
+    </td>
 </tr>
