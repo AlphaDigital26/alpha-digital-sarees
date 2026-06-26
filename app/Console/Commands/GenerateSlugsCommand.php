@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
@@ -23,10 +22,6 @@ class GenerateSlugsCommand extends Command
      * @var string
      */
     protected $description = 'Generate missing slugs for Products, Occasions, and Fabrics';
-
-    /**
-     * Execute the console command.
-     */
     public function handle()
     {
         $this->info('Generating slugs for Products...');

@@ -64,7 +64,24 @@ class OrderNotificationMail extends Mailable implements ShouldQueue
         };
 
         return new Content(
-            view: $view,
+            markdown: $view,
+            with: [
+                // Safely passing data to your blade templates
+                'customerName' => $this->order->customer->name ?? $this->order->first_name ?? 'Customer',
+                'orderNumber' => $this->order->order_number ?? $this->order->id,
+                'orderDate' => $this->order->created_at ? $this->order->created_at->format('M d, Y') : now()->format('M d, Y'),
+                'paymentMethod' => $this->order->payment_method ?? 'Standard Payment',
+                'orderItems' => $this->order->items ?? [],
+                'subtotal' => $this->order->subtotal ?? 0,
+                'shipping' => $this->order->shipping_cost ?? 0,
+                'total' => $this->order->total ?? 0,
+                'streetAddress' => $this->order->address->street ?? '',
+                'city' => $this->order->address->city ?? '',
+                'state' => $this->order->address->state ?? '',
+                'zipCode' => $this->order->address->zip_code ?? '',
+                'supportEmail' => 'support@adsarees.com',
+                'websiteUrl' => config('app.url', 'https://adsarees.com'),
+            ],
         );
     }
 

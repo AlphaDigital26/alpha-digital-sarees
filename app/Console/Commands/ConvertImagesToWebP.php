@@ -44,7 +44,6 @@ class ConvertImagesToWebP extends Command
         $newRelativePath = preg_replace('/\.[^.]+$/', '.webp', $relativePath);
         $newAbsolutePath = Storage::disk('public')->path($newRelativePath);
 
-        // Simple GD conversion
         $image = null;
         switch (strtolower($extension)) {
             case 'jpeg':
@@ -69,7 +68,6 @@ class ConvertImagesToWebP extends Command
             imagedestroy($image);
             return $newRelativePath;
         }
-
         return $relativePath;
     }
 
