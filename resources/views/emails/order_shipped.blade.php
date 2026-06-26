@@ -23,5 +23,5 @@ Track Your Order
 </x-mail::button>
 
 Warm regards,<br>
-**The ALPHA DIGITAL SREES Team**
+**The ALPHA DIGITAL SAREES Team**
 </x-mail::message>

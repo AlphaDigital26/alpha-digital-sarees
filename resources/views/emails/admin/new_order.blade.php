@@ -31,5 +31,5 @@ View Order in Admin Panel
 </x-mail::button>
 
 Warm regards,<br>
-**The ALPHA DIGITAL SREES System**
+**The ALPHA DIGITAL SAREES System**
 </x-mail::message>
