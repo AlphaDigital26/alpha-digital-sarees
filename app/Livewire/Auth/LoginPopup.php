@@ -117,6 +117,7 @@ class LoginPopup extends Component
             'gender' => 'required|string',
             'agree_tos' => 'accepted', 
         ], [
+            'phone.unique' => 'This phone number is already registered.',
             'dob.before_or_equal' => 'You must be at least 18 years old to create an account.',
         ]);
 
@@ -154,10 +155,23 @@ class LoginPopup extends Component
 
     public function resendOtp()
     {
-        $customer = Customer::where('email', $this->email)->first();
-        if ($customer) {
-            $this->sendOtp($customer);
-            session()->flash('otp_message', 'A new OTP has been sent to your email.');
+        $executed = \Illuminate\Support\Facades\RateLimiter::attempt(
+            'resend-otp:'.$this->email,
+            1,
+            function() {
+                $customer = Customer::where('email', $this->email)->first();
+                if ($customer) {
+                    $this->sendOtp($customer);
+                    session()->flash('otp_message', 'A new OTP has been sent to your email.');
+                    $this->dispatch('otp-resent');
+                }
+            },
+            30
+        );
+
+        if (! $executed) {
+            $seconds = \Illuminate\Support\Facades\RateLimiter::availableIn('resend-otp:'.$this->email);
+            $this->addError('otp_code', "Please wait {$seconds} seconds before requesting a new OTP.");
         }
     }
 

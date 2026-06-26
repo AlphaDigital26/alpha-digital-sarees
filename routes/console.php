@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote')->hourly();
 
 Schedule::command('sitemap:generate')->daily();
+Schedule::command('app:delete-unverified-customers')->daily();

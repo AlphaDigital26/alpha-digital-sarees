@@ -357,12 +357,34 @@
                         <span wire:loading wire:target="verifyOtp">Verifying...</span>
                     </button>
 
-                    <div class="text-center mt-6">
+                    <div class="text-center mt-6" 
+                         x-data="{ 
+                             timer: 30, 
+                             interval: null,
+                             startTimer() {
+                                 this.timer = 30;
+                                 clearInterval(this.interval);
+                                 this.interval = setInterval(() => {
+                                     if (this.timer > 0) {
+                                         this.timer--;
+                                     } else {
+                                         clearInterval(this.interval);
+                                     }
+                                 }, 1000);
+                             }
+                         }" 
+                         x-init="
+                             startTimer();
+                             $wire.on('otp-resent', () => startTimer());
+                         ">
                         <p class="text-[12px] text-gray-500 m-0">
                             Didn't receive the code? 
-                            <button type="button" wire:click="resendOtp" class="text-black hover:text-[#800020] font-bold bg-transparent border-none cursor-pointer p-0 underline ml-1">
+                            <button type="button" x-show="timer === 0" wire:click="resendOtp" class="text-black hover:text-[#800020] font-bold bg-transparent border-none cursor-pointer p-0 underline ml-1">
                                 Resend
                             </button>
+                            <span x-show="timer > 0" x-cloak class="text-gray-400 font-bold ml-1">
+                                Resend in <span x-text="timer"></span>s
+                            </span>
                         </p>
                     </div>
                 </form>

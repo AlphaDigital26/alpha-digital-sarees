@@ -159,6 +159,9 @@ class Summary extends BaseCheckoutComponent
             session()->forget('checkout_address_id');
             
             return redirect()->route('checkout.success', $order->id); 
+        } catch (\Livewire\Features\SupportRedirects\RedirectException $e) {
+            // Re-throw Livewire's redirect exception so the redirect actually happens
+            throw $e;
         } catch (\Exception $e) {
             $this->paymentFailed();
         }
