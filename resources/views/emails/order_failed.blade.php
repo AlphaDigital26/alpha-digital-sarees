@@ -30,5 +30,5 @@ Return to Cart
 If you continue to experience issues, please contact our support team.
 
 Warm regards,<br>
-**The ALPHA DIGITAL SREES Team**
+**The ALPHA DIGITAL SAREES Team**
 </x-mail::message>
