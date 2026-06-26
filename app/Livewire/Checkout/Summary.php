@@ -135,7 +135,6 @@ class Summary extends BaseCheckoutComponent
 
             // Customer Emails
             \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderNotificationMail($order, 'confirmed'));
-            \Illuminate\Support\Facades\Mail::to(auth('customer')->user()->email)->send(new \App\Mail\OrderNotificationMail($order, 'payment_success'));
             
             // Admin Email
             if ($adminEmail) {

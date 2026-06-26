@@ -1,21 +1,27 @@
 <x-mail::message>
-# New Contact Inquiry
+
+# New Contact Inquiry 📬
+
+Hi **Admin**,
 
 You have received a new message from the contact form.
 
-**From:** {{ $query->name }} ({{ $query->email }})
-**Phone:** {{ $query->phone ?? 'N/A' }}
+### Sender Details
+**From:** {{ $query->name }}<br>
+**Email:** {{ $query->email }}<br>
+**Phone:** {{ $query->phone ?? 'N/A' }}<br>
 **Reason:** {{ $query->reason ?? 'General Inquiry' }}
 
-**Message:**
+### Message
+
 <x-mail::panel>
 {{ $query->message }}
 </x-mail::panel>
 
-<x-mail::button :url="url('/admin/user-queries')">
+<x-mail::button :url="url('/admin/user-queries')" color="primary">
 View in Admin Panel
 </x-mail::button>
 
-Thanks,<br>
-{{ config('app.name') }}
+Warm regards,<br>
+**The ALPHA DIGITAL SREES System**
 </x-mail::message>

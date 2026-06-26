@@ -63,6 +63,21 @@ class OrderNotificationMail extends Mailable implements ShouldQueue
             default => 'emails.order_confirmed',
         };
 
+        $items = $this->order->items ?? collect([]);
+        $subtotal = collect($items)->sum(function ($item) {
+            return $item->price * $item->quantity;
+        });
+        
+        $total = $this->order->total_amount ?? 0;
+        $shipping = max(0, $total - $subtotal);
+
+        $customer = $this->order->customer;
+        $address = null;
+        if ($customer && method_exists($customer, 'addresses')) {
+            $address = $customer->addresses()->where('is_default', true)->first() 
+                ?? $customer->addresses()->first();
+        }
+
         return new Content(
             markdown: $view,
             with: [
@@ -71,14 +86,15 @@ class OrderNotificationMail extends Mailable implements ShouldQueue
                 'orderNumber' => $this->order->order_number ?? $this->order->id,
                 'orderDate' => $this->order->created_at ? $this->order->created_at->format('M d, Y') : now()->format('M d, Y'),
                 'paymentMethod' => $this->order->payment_method ?? 'Standard Payment',
-                'orderItems' => $this->order->items ?? [],
-                'subtotal' => $this->order->subtotal ?? 0,
-                'shipping' => $this->order->shipping_cost ?? 0,
-                'total' => $this->order->total ?? 0,
-                'streetAddress' => $this->order->address->street ?? '',
-                'city' => $this->order->address->city ?? '',
-                'state' => $this->order->address->state ?? '',
-                'zipCode' => $this->order->address->zip_code ?? '',
+                'transactionId' => $this->order->razorpay_payment_id ?? null,
+                'orderItems' => $items,
+                'subtotal' => $subtotal,
+                'shipping' => $shipping,
+                'total' => $total,
+                'streetAddress' => $address->address_1 ?? '',
+                'city' => $address->city ?? '',
+                'state' => $address->province ?? '',
+                'zipCode' => $address->postal_code ?? '',
                 'supportEmail' => 'support@adsarees.com',
                 'websiteUrl' => config('app.url', 'https://adsarees.com'),
             ],

@@ -9,6 +9,9 @@ Thank you for your purchase! We have successfully received your payment, and you
 **Order Number:** #{{ $orderNumber }}<br>
 **Order Date:** {{ $orderDate }}<br>
 **Payment Method:** {{ $paymentMethod }}
+@if(!empty($transactionId))
+<br>**Transaction ID:** {{ $transactionId }}
+@endif
 
 ### Order Details
 
@@ -16,7 +19,7 @@ Thank you for your purchase! We have successfully received your payment, and you
 | Item | Quantity | Price |
 | :--- | :--- | :--- |
 @foreach($orderItems as $item)
-| {{ $item->name }} | {{ $item->quantity }} | ₹{{ number_format($item->price, 2) }} |
+| {{ $item->product->name ?? 'Product' }} | {{ $item->quantity }} | ₹{{ number_format($item->price, 2) }} |
 @endforeach
 | | **Subtotal:** | ₹{{ number_format($subtotal, 2) }} |
 | | **Shipping:** | ₹{{ number_format($shipping, 2) }} |
