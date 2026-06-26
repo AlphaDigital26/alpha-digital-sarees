@@ -112,7 +112,21 @@ class LoginPopup extends Component
             'first_name' => 'required|string|max:100',
             'last_name' => 'required|string|max:100',
             'phone' => 'required|numeric|digits:10|unique:customers,phone',
-            'password' => 'required|string|min:6|confirmed',
+            'password' => [
+                'required',
+                'string',
+                'confirmed',
+                \Illuminate\Validation\Rules\Password::min(8)
+                    ->letters()
+                    ->mixedCase()
+                    ->numbers()
+                    ->symbols(),
+                function ($attribute, $value, $fail) {
+                    if (preg_match('/\s/', $value)) {
+                        $fail('The password must not contain spaces.');
+                    }
+                },
+            ],
             'dob' => 'required|date|before_or_equal:-18 years',
             'gender' => 'required|string',
             'agree_tos' => 'accepted', 

@@ -83,16 +83,25 @@
     x-show="show" 
     style="display: none;"
     {{-- z-[9999] so it completely covers the z-1000 navbar --}}
-    class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4"
+    class="fixed inset-0 z-[9999] flex items-center justify-center p-4"
 >
+    <!-- Background overlay isolated to prevent backdrop-filter rendering glitches on focus -->
+    <div 
+        x-show="show"
+        x-transition:enter="transition-opacity ease-linear duration-300"
+        x-transition:enter-start="opacity-0"
+        x-transition:enter-end="opacity-100"
+        class="absolute inset-0 bg-black/60 backdrop-blur-sm"
+        @click="_closeModal()"
+    ></div>
+
     {{-- Made the height responsive (max-h-[95vh]) so it doesn't break on small laptops --}}
     <div 
-        @click.outside="_closeModal()"
         x-show="show"
         x-transition:enter="transition ease-out duration-300"
         x-transition:enter-start="opacity-0 scale-95"
         x-transition:enter-end="opacity-100 scale-100"
-        class="bg-white rounded-2xl shadow-2xl flex max-w-[850px] w-full min-h-[500px] md:h-[550px] max-h-[95vh] overflow-hidden relative"
+        class="bg-white rounded-2xl shadow-2xl flex max-w-[850px] w-full min-h-[500px] md:h-[550px] max-h-[95vh] overflow-hidden relative z-10"
     >
         <div class="hidden md:block md:w-[45%] relative bg-[#F4F0EB]">
             <img src="{{ asset('images/LoginPopup.webp') }}" class="w-full h-full object-cover" alt="Alpha Digital">
@@ -121,8 +130,9 @@
                         @error('email') <span class="text-red-500 text-[11px] font-bold mt-1 block">{{ $message }}</span> @enderror
                     </div>
 
-                    <button type="submit" class="w-full bg-black border-none text-white h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors mt-2 text-[15px] cursor-pointer">
-                        Continue
+                    <button type="submit" class="w-full bg-black border-none text-white h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors mt-2 text-[15px] cursor-pointer" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="checkEmail">Continue</span>
+                        <span wire:loading wire:target="checkEmail">Processing...</span>
                     </button>
 
                     <div class="relative mt-6 mb-6">
@@ -191,8 +201,9 @@
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full bg-black text-white border-none h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors text-[15px] cursor-pointer">
-                        Sign In
+                    <button type="submit" class="w-full bg-black text-white border-none h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors text-[15px] cursor-pointer" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="authenticate">Sign In</span>
+                        <span wire:loading wire:target="authenticate">Signing In...</span>
                     </button>
                 </form>
 
@@ -203,7 +214,53 @@
                 <h2 class="text-lg font-bold text-black text-center mb-1 mt-0">Enter Account Details</h2>
                 <p class="text-[13px] text-gray-500 text-center mb-6 mt-0">Enter below details and update your account</p>
 
-                <form wire:submit.prevent="saveDetails" class="space-y-4 m-0">
+                <form wire:submit.prevent="saveDetails" class="space-y-4 m-0" x-data="{
+                    show: false,
+                    showConfirm: false,
+                    val: '',
+                    reqs: { length: false, upper: false, lower: false, number: false, special: false, noSpace: true },
+                    validate(v) {
+                        this.val = v || '';
+                        this.reqs.length = this.val.length >= 8;
+                        this.reqs.upper = /[A-Z]/.test(this.val);
+                        this.reqs.lower = /[a-z]/.test(this.val);
+                        this.reqs.number = /[0-9]/.test(this.val);
+                        this.reqs.special = /[!@#$%^&*()_+\-=\[\]{}|;:'\',.<>\/?]/.test(this.val);
+                        this.reqs.noSpace = this.val.length > 0 && !/\s/.test(this.val);
+                    },
+                    get score() {
+                        if (!this.val) return 0;
+                        let s = 0;
+                        if (this.reqs.length) s++;
+                        if (this.reqs.upper) s++;
+                        if (this.reqs.lower) s++;
+                        if (this.reqs.number) s++;
+                        if (this.reqs.special) s++;
+                        if (this.reqs.noSpace) s++;
+                        return s;
+                    },
+                    get strengthPercent() { return (this.score / 6) * 100; },
+                    get strengthText() {
+                        if (!this.val) return '';
+                        if (this.score <= 2) return 'Weak';
+                        if (this.score <= 4) return 'Medium';
+                        if (this.score === 6) return 'Strong';
+                        return 'Good';
+                    },
+                    get strengthClass() {
+                        if (this.score <= 2) return 'bg-red-500';
+                        if (this.score <= 4) return 'bg-yellow-500';
+                        return 'bg-green-500';
+                    },
+                    get strengthTextClass() {
+                        if (this.score <= 2) return 'text-red-500';
+                        if (this.score <= 4) return 'text-yellow-600';
+                        return 'text-green-600';
+                    },
+                    get isValid() {
+                        return this.score === 6;
+                    }
+                }">
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-[12px] font-bold text-black mb-1">First Name*</label>
@@ -230,23 +287,47 @@
 
                     <div>
                         <label class="block text-[12px] font-bold text-black mb-1">Password*</label>
-                        <div x-data="{ show: false }" class="relative">
-                            <input :type="show ? 'text' : 'password'" wire:model="password" autocomplete="new-password" placeholder="At least 6 characters" class="w-full border border-gray-300 rounded-md h-[40px] pl-3 pr-10 text-[13px] focus:border-black outline-none transition-colors">
+                        <div class="relative">
+                            <input :type="show ? 'text' : 'password'" wire:model="password" @input="validate($event.target.value)" autocomplete="new-password" placeholder="At least 8 characters" class="w-full border border-gray-300 rounded-md h-[40px] pl-3 pr-10 text-[13px] focus:border-black outline-none transition-colors">
                             <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800020] transition-colors focus:outline-none flex items-center bg-transparent border-none p-0 cursor-pointer" aria-label="Toggle password visibility">
                                 <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
                                 <svg x-show="show" x-cloak style="display: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
                             </button>
                         </div>
-                        @error('password') <span class="text-red-500 text-[10px]">{{ $message }}</span> @enderror
+                        @error('password') <span class="text-red-500 text-[10px] block mt-1">{{ $message }}</span> @enderror
+                        
+                        <!-- Strength indicator -->
+                        <div class="mt-2 flex h-1.5 rounded-full overflow-hidden bg-gray-200" x-show="val.length > 0" x-cloak style="display: none;">
+                            <div class="h-full transition-all duration-500 ease-out" :class="strengthClass" :style="`width: ${strengthPercent}%`"></div>
+                        </div>
+                        <div class="text-[10px] text-right mt-1 font-bold tracking-wide uppercase" :class="strengthTextClass" x-text="strengthText" x-show="val.length > 0" x-cloak style="display: none;"></div>
+
+                        <!-- Checklist -->
+                        <div class="mt-2 grid grid-cols-2 gap-y-1.5 gap-x-2 text-[10.5px]">
+                            <template x-for="(req, i) in [
+                                { label: 'Min 8 characters', met: reqs.length },
+                                { label: 'Uppercase letter', met: reqs.upper },
+                                { label: 'Lowercase letter', met: reqs.lower },
+                                { label: 'Numeric digit', met: reqs.number },
+                                { label: 'Special character', met: reqs.special },
+                                { label: 'No spaces', met: reqs.noSpace }
+                            ]" :key="i">
+                                <div class="flex items-center gap-1.5 transition-colors duration-200" :class="req.met ? 'text-green-600 font-medium' : 'text-gray-400'">
+                                    <svg x-show="req.met" class="w-3 h-3 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" /></svg>
+                                    <svg x-show="!req.met" class="w-3 h-3 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9" /></svg>
+                                    <span x-text="req.label"></span>
+                                </div>
+                            </template>
+                        </div>
                     </div>
 
                     <div>
                         <label class="block text-[12px] font-bold text-black mb-1">Re-enter Password*</label>
-                        <div x-data="{ show: false }" class="relative">
-                            <input :type="show ? 'text' : 'password'" wire:model="password_confirmation" autocomplete="new-password" class="w-full border border-gray-300 rounded-md h-[40px] pl-3 pr-10 text-[13px] focus:border-black outline-none transition-colors">
-                            <button type="button" @click="show = !show" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800020] transition-colors focus:outline-none flex items-center bg-transparent border-none p-0 cursor-pointer" aria-label="Toggle password visibility">
-                                <svg x-show="!show" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
-                                <svg x-show="show" x-cloak style="display: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                        <div class="relative">
+                            <input :type="showConfirm ? 'text' : 'password'" wire:model="password_confirmation" autocomplete="new-password" class="w-full border border-gray-300 rounded-md h-[40px] pl-3 pr-10 text-[13px] focus:border-black outline-none transition-colors">
+                            <button type="button" @click="showConfirm = !showConfirm" class="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-[#800020] transition-colors focus:outline-none flex items-center bg-transparent border-none p-0 cursor-pointer" aria-label="Toggle password visibility">
+                                <svg x-show="!showConfirm" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                                <svg x-show="showConfirm" x-cloak style="display: none;" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
                             </button>
                         </div>
                     </div>
@@ -281,8 +362,9 @@
                         @error('agree_tos') <span class="text-red-500 text-[10px] block mt-0">{{ $message }}</span> @enderror
                     </div>
 
-                    <button type="submit" class="w-full bg-black text-white border-none h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors mt-4 text-[15px] cursor-pointer">
-                        Register
+                    <button type="submit" :disabled="!isValid" class="w-full bg-black text-white border-none h-[46px] font-medium rounded-md hover:bg-gray-800 transition-colors mt-4 text-[15px] cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" wire:loading.attr="disabled">
+                        <span wire:loading.remove wire:target="saveDetails">Register</span>
+                        <span wire:loading wire:target="saveDetails">Registering...</span>
                     </button>
                 </form>
 
@@ -334,6 +416,10 @@
                 </div>
 
             @elseif($step == 7)
+                <button wire:click="$set('step', 1)" class="text-gray-400 absolute top-6 left-6 flex items-center text-xs font-bold hover:text-black bg-transparent border-none cursor-pointer outline-none p-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7" /></svg> Back
+                </button>
+                
                 <h2 class="text-lg font-bold text-black text-center mb-1 mt-0">Verify Your Email</h2>
                 <p class="text-[13px] text-gray-500 text-center mb-2 mt-0">
                     We've sent a 6-digit code to <span class="font-bold text-black">{{ $email }}</span>
