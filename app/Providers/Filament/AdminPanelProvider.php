@@ -39,7 +39,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('alpha-portal')
-            ->login()
+            ->login(\App\Filament\Pages\Auth\Login::class)
             ->sidebarWidth('18rem')
             ->collapsedSidebarWidth('4rem')
             ->sidebarCollapsibleOnDesktop()

@@ -55,12 +55,12 @@ class OrderNotificationMail extends Mailable implements ShouldQueue
     {
         $view = match ($this->type) {
             'admin_new_order' => 'emails.admin.new_order',
-            'confirmed' => 'emails.orders.confirmed',
-            'shipped' => 'emails.orders.shipped',
-            'delivered' => 'emails.orders.delivered',
-            'failed' => 'emails.orders.failed',
-            'payment_success' => 'emails.orders.payment_success',
-            default => 'emails.orders.default',
+            'confirmed' => 'emails.order_confirmed',
+            'shipped' => 'emails.order_shipped',
+            'delivered' => 'emails.order_delivered',
+            'failed' => 'emails.order_failed',
+            'payment_success' => 'emails.payment_success',
+            default => 'emails.order_confirmed',
         };
 
         return new Content(
