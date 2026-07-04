@@ -4,7 +4,7 @@
     <div class="editorial-slider-row">
         <!-- Featured Banner Card -->
         <div class="editorial-banner group">
-            <img src="{{ $image }}" alt="{{ $title }}" class="editorial-banner-img">
+            <img src="{{ $image }}" alt="{{ $title }}" width="400" height="600" class="editorial-banner-img" loading="lazy" decoding="async">
             <div class="editorial-overlay">
                 <h2>{{ $title }}</h2>
                 <a href="{{ $shopLink }}" class="editorial-btn">SHOP NOW</a>
@@ -22,15 +22,28 @@
                     <div class="editorial-card">
                         <a href="{{ route('shop.product', $product->slug ?? $product->id) }}" class="editorial-card-link">
                             @php
-                                $mainImg = is_array($product->images) && count($product->images) > 0 
-                                    ? asset('storage/' . $product->images[0]) 
-                                    : 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80';
-                                $hoverImg = is_array($product->images) && count($product->images) > 1 
-                                    ? asset('storage/' . $product->images[1]) 
-                                    : $mainImg;
+                                $mainImgPath = is_array($product->images) && count($product->images) > 0 ? $product->images[0] : null;
+                                $hoverImgPath = is_array($product->images) && count($product->images) > 1 ? $product->images[1] : $mainImgPath;
+
+                                $getVariants = function($path) {
+                                    if (!$path) return ['src' => 'https://images.unsplash.com/photo-1583391733956-3750e0ff4e8b?auto=format&fit=crop&q=80', 'srcset' => ''];
+                                    $info = pathinfo($path);
+                                    $dir = $info['dirname'] === '.' ? '' : $info['dirname'] . '/';
+                                    $base = $info['filename'];
+                                    $src400 = asset('storage/' . $dir . $base . '-400w.webp');
+                                    $src800 = asset('storage/' . $dir . $base . '-800w.webp');
+                                    $srcOriginal = asset('storage/' . $path);
+                                    return ['src' => $srcOriginal, 'srcset' => "{$src400} 400w, {$src800} 800w, {$srcOriginal} 1200w"];
+                                };
+
+                                $mainImg = $getVariants($mainImgPath);
+                                $hoverImg = $getVariants($hoverImgPath);
                             @endphp
-                            <img src="{{ $mainImg }}" alt="{{ $product->name }}" class="editorial-card-img main-img">
-                            <img src="{{ $hoverImg }}" alt="{{ $product->name }} (Hover)" class="editorial-card-img hover-img">
+                            <img srcset="{{ $mainImg['srcset'] }}" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                 src="{{ $mainImg['src'] }}" width="800" height="1200" alt="{{ $product->name }}" class="editorial-card-img main-img" loading="lazy" decoding="async">
+                            <img data-src="{{ $hoverImg['src'] }}" data-srcset="{{ $hoverImg['srcset'] }}" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                 src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="800" height="1200"
+                                 alt="{{ $product->name }} (Hover)" class="editorial-card-img hover-img lazy-hover" loading="lazy" decoding="async">
                             
                             <button 
                                 wire:click.prevent="toggleWishlist({{ $product->id }})" 

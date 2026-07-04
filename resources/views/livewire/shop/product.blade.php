@@ -114,6 +114,7 @@
                     @foreach($product->images as $img)
                         <img
                             src="{{ asset('storage/' . $img) }}"
+                            alt="Thumbnail" width="100" height="150" loading="lazy" decoding="async"
                             class="thumb {{ $activeImage === $img ? 'active' : '' }}"
                             wire:click="changeImage('{{ $img }}')"
                             style="cursor: pointer;"
@@ -161,6 +162,7 @@
                         wire:target="setActiveImage"
                         wire:loading.class="opacity-50"
                         class="transition-opacity duration-200 main-image-styled"
+                        alt="{{ $product->name }}" width="800" height="1200" fetchpriority="high" decoding="async"
                     >
                     
                     <!-- Amazon-style Zoom Pane (Hidden on mobile) -->
@@ -350,12 +352,22 @@
                     {{-- Loop ALL similar products --}}
                     @foreach($similarProducts as $simProduct)
                         @php
-                            $mainImg = is_array($simProduct->images) && count($simProduct->images) > 0
-                                ? asset('storage/' . $simProduct->images[0])
-                                : 'https://images.unsplash.com/photo-1610030469668-93510ec67d9e?auto=format&fit=crop&w=500';
-                            $hoverImg = is_array($simProduct->images) && count($simProduct->images) > 1
-                                ? asset('storage/' . $simProduct->images[1])
-                                : $mainImg;
+                            $mainImgPath = is_array($simProduct->images) && count($simProduct->images) > 0 ? $simProduct->images[0] : null;
+                            $hoverImgPath = is_array($simProduct->images) && count($simProduct->images) > 1 ? $simProduct->images[1] : $mainImgPath;
+
+                            $getVariants = function($path) {
+                                if (!$path) return ['src' => 'https://images.unsplash.com/photo-1610030469668-93510ec67d9e?auto=format&fit=crop&w=500', 'srcset' => ''];
+                                $info = pathinfo($path);
+                                $dir = $info['dirname'] === '.' ? '' : $info['dirname'] . '/';
+                                $base = $info['filename'];
+                                $src400 = asset('storage/' . $dir . $base . '-400w.webp');
+                                $src800 = asset('storage/' . $dir . $base . '-800w.webp');
+                                $srcOriginal = asset('storage/' . $path);
+                                return ['src' => $srcOriginal, 'srcset' => "{$src400} 400w, {$src800} 800w, {$srcOriginal} 1200w"];
+                            };
+
+                            $mainImg = $getVariants($mainImgPath);
+                            $hoverImg = $getVariants($hoverImgPath);
                         @endphp
                         
                         {{-- Sizing: 2 per row on mobile, 3 on tablet, 4 on large screens --}}
@@ -371,8 +383,11 @@
     </svg>
                                     </div>
                                     
-                                    <img src="{{ $mainImg }}" alt="{{ $simProduct->name }}" class="main-img w-full h-full object-cover">
-                                    <img src="{{ $hoverImg }}" alt="{{ $simProduct->name }} (Hover)" class="hover-img absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                    <img srcset="{{ $mainImg['srcset'] }}" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                         src="{{ $mainImg['src'] }}" width="400" height="600" alt="{{ $simProduct->name }}" class="main-img w-full h-full object-cover" loading="lazy" decoding="async">
+                                    <img data-src="{{ $hoverImg['src'] }}" data-srcset="{{ $hoverImg['srcset'] }}" sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
+                                         src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" width="400" height="600"
+                                         alt="{{ $simProduct->name }} (Hover)" class="hover-img lazy-hover absolute inset-0 w-full h-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-500" loading="lazy" decoding="async">
                                 </div>
                                 
                                 {{-- Text Info --}}

@@ -10,7 +10,7 @@
 
             <div class="footer-brand">
                 @if(!empty($settings->footer_image))
-                    <img src="{{ asset('storage/' . $settings->footer_image) }}" alt="{{ $settings->footer_brand_heading ?? 'Brand Logo' }}" style="max-height: 60px; margin-bottom: 15px;">
+                    <img src="{{ asset('storage/' . $settings->footer_image) }}" alt="{{ $settings->footer_brand_heading ?? 'Brand Logo' }}" width="160" height="60" loading="lazy" decoding="async" style="max-height: 60px; margin-bottom: 15px;">
                 @else
                     <div class="logo">{{ $settings->footer_brand_heading ?? 'ALPHA DIGITAL BY ANKITA' }}</div>
                 @endif

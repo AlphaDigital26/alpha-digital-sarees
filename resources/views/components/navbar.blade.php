@@ -12,7 +12,7 @@
 
         <a href="{{ route('home') }}" wire:navigate class="flex items-center gap-2 text-xl sm:text-2xl font-bold tracking-widest text-[#800020] logo shrink-0 transition-transform hover:scale-105 duration-300">
             @if($settings && $settings->logo_type === 'image' && $settings->logo_image)
-                <img src="{{ asset('storage/' . $settings->logo_image) }}" alt="Alpha Digital Logo" class="h-10 sm:h-14 w-auto object-contain drop-shadow-sm">
+                <img src="{{ asset('storage/' . $settings->logo_image) }}" alt="Alpha Digital Logo" width="160" height="60" fetchpriority="high" class="h-10 sm:h-14 w-auto object-contain drop-shadow-sm">
             @else
                 {{ $settings->logo_text ?? 'ALPHA DIGITAL' }}
             @endif

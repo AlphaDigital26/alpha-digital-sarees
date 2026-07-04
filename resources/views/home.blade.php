@@ -1,4 +1,9 @@
 <x-layouts.app>
+@if(isset($carousels) && $carousels->count() > 0 && $carousels[0]->image)
+    @push('preload')
+        <link rel="preload" as="image" href="{{ asset('storage/' . $carousels[0]->image) }}">
+    @endpush
+@endif
     <section class="hero bg-black" 
              x-data="{
                  activeSlide: 0,
@@ -197,8 +202,9 @@
                 
                 @if(isset($featuredFabrics[0]))
                     <div class="fab-large">
-                        <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[0]->image) }}');">
-                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[0]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[0]->name) }}</a>
+                        <div class="fab-img relative overflow-hidden group">
+                            <img src="{{ asset('storage/' . $featuredFabrics[0]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[0]->name }}">
+                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[0]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[0]->name) }}</a>
                         </div>
                     </div>
                 @endif
@@ -206,22 +212,24 @@
                 <div class="fab-sidebar">
                     
                     @if(isset($featuredFabrics[1]))
-                        @php $fab1Url = asset('storage/' . $featuredFabrics[1]->image); @endphp
-                        <div class="fab-img" style="background-image: url('{{ $fab1Url }}');">
-                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[1]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[1]->name) }}</a>
+                        <div class="fab-img relative overflow-hidden group">
+                            <img src="{{ asset('storage/' . $featuredFabrics[1]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[1]->name }}">
+                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[1]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[1]->name) }}</a>
                         </div>
                     @endif
 
                     <div class="fab-bottom-row">
                         @if(isset($featuredFabrics[2]))
-                            <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[2]->image) }}');">
-                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[2]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[2]->name) }}</a>
+                            <div class="fab-img relative overflow-hidden group">
+                                <img src="{{ asset('storage/' . $featuredFabrics[2]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[2]->name }}">
+                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[2]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[2]->name) }}</a>
                             </div>
                         @endif
                         
                         @if(isset($featuredFabrics[3]))
-                            <div class="fab-img" style="background-image: url('{{ asset('storage/' . $featuredFabrics[3]->image) }}');">
-                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[3]->id]]) }}" class="label" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[3]->name) }}</a>
+                            <div class="fab-img relative overflow-hidden group">
+                                <img src="{{ asset('storage/' . $featuredFabrics[3]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[3]->name }}">
+                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[3]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[3]->name) }}</a>
                             </div>
                         @endif
                     </div>
@@ -251,10 +259,10 @@
 
             <div class="heritage-visual">
                 <div class="main-image-frame">
-                    <img src="{{ asset('images/heritage-main-opt.webp') }}" class="heritage-main-img" alt="Butterfly Saree">
+                    <img src="{{ asset('images/heritage-main-opt.webp') }}" class="heritage-main-img" alt="Butterfly Saree" loading="lazy" decoding="async">
                 </div>
                 <div class="overlap-image-frame">
-                    <img src="{{ asset('images/heritage-sub.webp') }}" class="heritage-sub-img" alt="Butterfly Fabric Detail">
+                    <img src="{{ asset('images/heritage-sub.webp') }}" class="heritage-sub-img" alt="Butterfly Fabric Detail" loading="lazy" decoding="async">
                 </div>
                 <div class="heritage-accent-box"></div>
             </div>
