@@ -72,7 +72,5 @@
             });
         });
     </script>
-
-    <livewire:auth.login-popup />
-</body>
+    </body>
 </html>
