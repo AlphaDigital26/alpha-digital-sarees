@@ -14,6 +14,31 @@ class Review extends Model
         'photos' => 'array',
     ];
 
+    use \App\Traits\OptimizesImages;
+
+    protected static function booted()
+    {
+        static::saved(function ($model) {
+            if (!empty($model->photos) && is_array($model->photos)) {
+                $newPhotos = [];
+                $changed = false;
+
+                foreach ($model->photos as $photo) {
+                    $newPath = $model->optimizeImageToWebp($photo, 800, 800);
+                    $newPhotos[] = $newPath;
+                    if ($newPath !== $photo) {
+                        $changed = true;
+                    }
+                }
+
+                if ($changed) {
+                    $model->photos = $newPhotos;
+                    $model->saveQuietly();
+                }
+            }
+        });
+    }
+
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class);

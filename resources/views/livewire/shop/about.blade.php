@@ -9,7 +9,7 @@
             @endif
             <img src="{{ $story->main_image ? asset('storage/' . $story->main_image) : asset('images/hero-img.webp') }}"
                  alt="{{ $story->main_heading ?? 'Our Story' }}"
-                 class="w-full h-full object-cover">
+                 class="w-full h-full object-cover" fetchpriority="high" decoding="async">
         </picture>
         
         <div class="absolute inset-0 z-[1]" style="background-image: linear-gradient(to bottom, rgba(253,251,247,0) 60%, rgba(253,251,247,1) 100%);"></div>
@@ -34,15 +34,15 @@
         <div class="container craft-grid">
             <div class="craft-images">
                 @if($story->control_image_1)
-                <img src="{{ asset('storage/' . $story->control_image_1) }}" class="img-base" data-aos="fade-right" data-aos-delay="100">
+                <img src="{{ asset('storage/' . $story->control_image_1) }}" class="img-base" data-aos="fade-right" data-aos-delay="100" loading="lazy" decoding="async">
                 @else
-                <img src="{{ asset('images/craftsmanship1.webp') }}" class="img-base" data-aos="fade-right" data-aos-delay="100">
+                <img src="{{ asset('images/craftsmanship1.webp') }}" class="img-base" data-aos="fade-right" data-aos-delay="100" loading="lazy" decoding="async">
                 @endif
 
                 @if($story->control_image_2)
-                <img src="{{ asset('storage/' . $story->control_image_2) }}" class="img-overlay-frame" data-aos="fade-up" data-aos-delay="300">
+                <img src="{{ asset('storage/' . $story->control_image_2) }}" class="img-overlay-frame" data-aos="fade-up" data-aos-delay="300" loading="lazy" decoding="async">
                 @else
-                <img src="{{ asset('images/craftsmanship2.webp') }}" class="img-overlay-frame" data-aos="fade-up" data-aos-delay="300">
+                <img src="{{ asset('images/craftsmanship2.webp') }}" class="img-overlay-frame" data-aos="fade-up" data-aos-delay="300" loading="lazy" decoding="async">
                 @endif
             </div>
             <div class="craft-text" data-aos="fade-left" data-aos-delay="200">
@@ -61,16 +61,16 @@
             </div>
             <div class="journey-grid">
                 @if($story->journey_img_1)
-                    <img src="{{ asset('storage/' . $story->journey_img_1) }}" alt="Collection 1" data-aos="zoom-in" data-aos-delay="100">
+                    <img src="{{ asset('storage/' . $story->journey_img_1) }}" alt="Collection 1" data-aos="zoom-in" data-aos-delay="100" loading="lazy" decoding="async">
                 @endif
                 @if($story->journey_img_2)
-                    <img src="{{ asset('storage/' . $story->journey_img_2) }}" alt="Collection 2" data-aos="zoom-in" data-aos-delay="200">
+                    <img src="{{ asset('storage/' . $story->journey_img_2) }}" alt="Collection 2" data-aos="zoom-in" data-aos-delay="200" loading="lazy" decoding="async">
                 @endif
                 @if($story->journey_img_3)
-                    <img src="{{ asset('storage/' . $story->journey_img_3) }}" alt="Collection 3" data-aos="zoom-in" data-aos-delay="300">
+                    <img src="{{ asset('storage/' . $story->journey_img_3) }}" alt="Collection 3" data-aos="zoom-in" data-aos-delay="300" loading="lazy" decoding="async">
                 @endif
                 @if($story->journey_img_4)
-                    <img src="{{ asset('storage/' . $story->journey_img_4) }}" alt="Collection 4" data-aos="zoom-in" data-aos-delay="400">
+                    <img src="{{ asset('storage/' . $story->journey_img_4) }}" alt="Collection 4" data-aos="zoom-in" data-aos-delay="400" loading="lazy" decoding="async">
                 @endif
             </div>
         </div>
