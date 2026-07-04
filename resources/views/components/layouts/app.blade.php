@@ -23,7 +23,6 @@
     
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
-    @stack('preload')
     
     <script src="https://unpkg.com/lucide@latest"></script>
 
@@ -73,6 +72,5 @@
             });
         });
     </script>
-
-</body>
+    </body>
 </html>
