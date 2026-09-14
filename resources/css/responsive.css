@@ -89,11 +89,9 @@ img {
 
 /* ─── FABRICS SECTION ───────────────────────────────────────────── */
 @media (max-width: 767px) {
-  .fabrics-grid {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)) !important;
-  }
-
   .fab-img {
+    width: calc(50% - 6px) !important;
+    min-width: 140px !important;
     min-height: 160px !important;
   }
 }
