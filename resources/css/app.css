@@ -144,29 +144,14 @@
   }
   
   .fabrics-grid {
-    @apply grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-3 max-w-[1400px] mx-auto;
+    @apply grid gap-3 max-w-[1400px] mx-auto;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   }
-  
+
   .fab-img {
-    @apply bg-cover bg-center h-full min-h-[250px] lg:min-h-[320px] relative flex items-end p-4 rounded-sm;
+    @apply bg-cover bg-center min-h-[250px] relative flex items-end p-4 rounded-sm;
   }
-  
-  .fab-sidebar {
-    @apply flex flex-col gap-3;
-  }
-  
-  .fab-sidebar .fab-img:first-child {
-    @apply min-h-[155px];
-  }
-  
-  .fab-bottom-row {
-    @apply grid grid-cols-2 gap-3;
-  }
-  
-  .fab-bottom-row .fab-img {
-    @apply min-h-[155px];
-  }
-  
+
   .label {
     @apply bg-white text-primary border-none py-2.5 px-5 font-sans font-bold text-[0.65rem] tracking-[1.2px] cursor-pointer transition-all duration-300 shadow-sm hover:bg-primary hover:text-white;
   }
