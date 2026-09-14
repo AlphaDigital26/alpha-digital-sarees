@@ -147,6 +147,35 @@
     </div>
     </section>
 
+    <section id="fabrics" class="content-section bg-neutral">
+        <div class="section-header">
+            <div>
+                <p class="subtitle">OUR TEXTURED HERITAGE</p>
+                <h2>Fabrics</h2>
+            </div>
+        </div>
+
+        @php
+            // Fetch all fabrics marked as featured AND have an image uploaded
+            $featuredFabrics = \App\Models\Fabric::where('is_featured', true)
+                                ->whereNotNull('image')
+                                ->get();
+        @endphp
+
+        @if($featuredFabrics->count() > 0)
+            <div class="fabrics-grid">
+                @foreach($featuredFabrics as $fabric)
+                    <div class="fab-img relative overflow-hidden group">
+                        <img src="{{ asset('storage/' . $fabric->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $fabric->name }}">
+                        <a href="{{ route('shop.index', ['selectedFabrics' => [$fabric->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($fabric->name) }}</a>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-gray-500 italic text-center py-10">Add fabric images in the admin panel and mark them as "Feature on Homepage" to see them here.</p>
+        @endif
+    </section>
+
     <section class="content-section bg-neutral">
         <div class="section-header">
             <div>
@@ -179,66 +208,6 @@
                 <p class="text-gray-500 italic col-span-full">Add products to your admin panel and mark them as "New Arrival" to see them here.</p>
             @endforelse
         </div>
-    </section>
-
-    <section id="fabrics" class="content-section bg-neutral">
-        <div class="section-header">
-            <div>
-                <p class="subtitle">OUR TEXTURED HERITAGE</p>
-                <h2>Fabrics</h2>
-            </div>
-        </div>
-
-        @php
-            // Fetch exactly up to 4 fabrics that are marked as featured AND have an image uploaded
-            $featuredFabrics = \App\Models\Fabric::where('is_featured', true)
-                                ->whereNotNull('image')
-                                ->take(4)
-                                ->get();
-        @endphp
-
-        @if($featuredFabrics->count() > 0)
-            <div class="fabrics-grid">
-                
-                @if(isset($featuredFabrics[0]))
-                    <div class="fab-large">
-                        <div class="fab-img relative overflow-hidden group">
-                            <img src="{{ asset('storage/' . $featuredFabrics[0]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[0]->name }}">
-                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[0]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[0]->name) }}</a>
-                        </div>
-                    </div>
-                @endif
-
-                <div class="fab-sidebar">
-                    
-                    @if(isset($featuredFabrics[1]))
-                        <div class="fab-img relative overflow-hidden group">
-                            <img src="{{ asset('storage/' . $featuredFabrics[1]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[1]->name }}">
-                            <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[1]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[1]->name) }}</a>
-                        </div>
-                    @endif
-
-                    <div class="fab-bottom-row">
-                        @if(isset($featuredFabrics[2]))
-                            <div class="fab-img relative overflow-hidden group">
-                                <img src="{{ asset('storage/' . $featuredFabrics[2]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[2]->name }}">
-                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[2]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[2]->name) }}</a>
-                            </div>
-                        @endif
-                        
-                        @if(isset($featuredFabrics[3]))
-                            <div class="fab-img relative overflow-hidden group">
-                                <img src="{{ asset('storage/' . $featuredFabrics[3]->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $featuredFabrics[3]->name }}">
-                                <a href="{{ route('shop.index', ['selectedFabrics' => [$featuredFabrics[3]->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($featuredFabrics[3]->name) }}</a>
-                            </div>
-                        @endif
-                    </div>
-                </div>
-
-            </div>
-        @else
-            <p class="text-gray-500 italic text-center py-10">Add fabric images in the admin panel and mark them as "Feature on Homepage" to see them here.</p>
-        @endif
     </section>
 
     <section class="heritage-crafted">
