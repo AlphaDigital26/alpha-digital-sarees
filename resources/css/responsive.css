@@ -88,17 +88,9 @@ img {
 }
 
 /* ─── FABRICS SECTION ───────────────────────────────────────────── */
-@media (max-width: 1023px) {
-  .fabrics-grid {
-    grid-template-columns: repeat(3, 1fr) !important;
-    grid-auto-rows: 140px !important;
-  }
-}
-
 @media (max-width: 767px) {
   .fabrics-grid {
     grid-template-columns: repeat(2, 1fr) !important;
-    grid-auto-rows: 120px !important;
     gap: 0.5rem !important;
   }
 

@@ -165,15 +165,7 @@
         @if($featuredFabrics->count() > 0)
             <div class="fabrics-grid">
                 @foreach($featuredFabrics as $fabric)
-                    @php
-                        $pos = $loop->iteration % 6; // 1..6, repeats
-                        $tileClass = match(true) {
-                            $pos === 1 => 'fab-tile-big',
-                            $pos === 4 => 'fab-tile-tall',
-                            default => 'fab-tile-normal',
-                        };
-                    @endphp
-                    <div class="fab-img {{ $tileClass }} relative overflow-hidden group">
+                    <div class="fab-img relative overflow-hidden group">
                         <img src="{{ asset('storage/' . $fabric->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $fabric->name }}">
                         <a href="{{ route('shop.index', ['selectedFabrics' => [$fabric->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($fabric->name) }}</a>
                     </div>
