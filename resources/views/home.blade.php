@@ -163,31 +163,21 @@
         @endphp
 
         @if($featuredFabrics->count() > 0)
-            <div class="fabrics-slider relative group/slider" x-data="{
-                    scrollByAmount(dir) {
-                        const track = this.$refs.track;
-                        const card = track.querySelector('.fab-img');
-                        const amount = card ? (card.offsetWidth + 12) * 2 : track.clientWidth * 0.8;
-                        track.scrollBy({ left: dir * amount, behavior: 'smooth' });
-                    }
-                }">
-                <div class="fabrics-grid" x-ref="track">
-                    @foreach($featuredFabrics as $fabric)
-                        <div class="fab-img relative overflow-hidden group">
-                            <img src="{{ asset('storage/' . $fabric->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $fabric->name }}">
-                            <a href="{{ route('shop.index', ['selectedFabrics' => [$fabric->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($fabric->name) }}</a>
-                        </div>
-                    @endforeach
-                </div>
-
-                @if($featuredFabrics->count() > 4)
-                    <button aria-label="Previous fabrics" @click="scrollByAmount(-1)" class="fab-nav-btn left-0 -translate-x-1/2 md:-translate-x-full">
-                        <svg aria-hidden="true" class="w-5 h-5 md:w-6 md:h-6 ml-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M15 19l-7-7 7-7"></path></svg>
-                    </button>
-                    <button aria-label="Next fabrics" @click="scrollByAmount(1)" class="fab-nav-btn right-0 translate-x-1/2 md:translate-x-full">
-                        <svg aria-hidden="true" class="w-5 h-5 md:w-6 md:h-6 mr-[-2px]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 5l7 7-7 7"></path></svg>
-                    </button>
-                @endif
+            <div class="fabrics-grid">
+                @foreach($featuredFabrics as $fabric)
+                    @php
+                        $pos = $loop->iteration % 6; // 1..6, repeats
+                        $tileClass = match(true) {
+                            $pos === 1 => 'fab-tile-big',
+                            $pos === 4 => 'fab-tile-tall',
+                            default => 'fab-tile-normal',
+                        };
+                    @endphp
+                    <div class="fab-img {{ $tileClass }} relative overflow-hidden group">
+                        <img src="{{ asset('storage/' . $fabric->image) }}" loading="lazy" decoding="async" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" alt="{{ $fabric->name }}">
+                        <a href="{{ route('shop.index', ['selectedFabrics' => [$fabric->id]]) }}" class="label relative z-10" style="text-decoration: none; display: inline-block;">{{ strtoupper($fabric->name) }}</a>
+                    </div>
+                @endforeach
             </div>
         @else
             <p class="text-gray-500 italic text-center py-10">Add fabric images in the admin panel and mark them as "Feature on Homepage" to see them here.</p>

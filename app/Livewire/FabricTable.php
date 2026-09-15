@@ -36,26 +36,7 @@ class FabricTable extends Component implements HasForms, HasTable
                 
             Forms\Components\Toggle::make('is_featured')
                 ->label('Feature on Homepage')
-                ->helperText('Turn this on to show this fabric in the homepage grid (max 4).')
-                // 2. VALIDATION RULE: Enforces the maximum limit of 4 featured fabrics
-                ->rule(static function (?Fabric $record) {
-                    return static function (string $attribute, $value, \Closure $fail) use ($record) {
-                        // Only run the check if the admin is trying to turn the toggle ON
-                        if ($value === true) {
-                            
-                            // Count how many fabrics are currently featured...
-                            $count = Fabric::where('is_featured', true)
-                                // ...but ignore the one we are currently editing (so it doesn't count against itself)
-                                ->when($record, fn ($query) => $query->where('id', '!=', $record->id))
-                                ->count();
-                            
-                            // If there are already 4 or more, block the save and show this message
-                            if ($count >= 4) {
-                                $fail('You already have 4 fabrics featured on the homepage. Please edit another fabric and uncheck it first.');
-                            }
-                        }
-                    };
-                }),
+                ->helperText('Turn this on to show this fabric in the homepage fabrics slider.'),
         ];
     }
 
